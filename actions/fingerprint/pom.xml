@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>loom-worker-fingerprint-action</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>io.metaloom.loom.worker</groupId>
+		<artifactId>loom-worker-actions</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<name>Loom - Worker :: Actions - Fingerprint</name>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.metaloom.loom</groupId>
+				<artifactId>loom-bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.metaloom.video</groupId>
+			<artifactId>video4j-fingerprint</artifactId>
+		</dependency>
+	</dependencies>
+</project>

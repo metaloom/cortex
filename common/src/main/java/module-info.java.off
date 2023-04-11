@@ -1,0 +1,14 @@
+module loom.worker.common {
+	exports io.metaloom.worker.action.media;
+	exports io.metaloom.worker.action.settings;
+	exports io.metaloom.worker.action.common;
+
+	requires utils;
+	requires hash_utils;
+	requires loom.client.common;
+	requires loom.client.grpc;
+	requires loom.proto;
+	requires loom.worker.api;
+	requires loom.worker.fs;
+	requires org.apache.commons.lang3;
+}

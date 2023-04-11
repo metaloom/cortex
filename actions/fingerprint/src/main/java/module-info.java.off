@@ -1,0 +1,12 @@
+module loom.worker.action.fingerprint {
+	exports io.metaloom.worker.action.fp;
+
+	requires loom.client.common;
+	requires loom.client.grpc;
+	requires loom.proto;
+	requires loom.worker.api;
+	requires loom.worker.common;
+	requires opencv;
+	requires video4j;
+	requires video4j.fingerprint;
+}

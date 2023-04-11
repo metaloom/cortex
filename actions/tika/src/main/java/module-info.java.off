@@ -1,0 +1,8 @@
+module loom.worker.action.tika {
+	exports io.metaloom.loom.action.tika;
+
+	requires loom.client.common;
+	requires loom.client.grpc;
+	requires loom.worker.api;
+	requires loom.worker.common;
+}

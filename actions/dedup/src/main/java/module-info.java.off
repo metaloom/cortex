@@ -1,0 +1,5 @@
+module loom.worker.action.dedup {
+	exports io.metaloom.loom.worker.dedup;
+
+	requires loom.worker.api;
+}

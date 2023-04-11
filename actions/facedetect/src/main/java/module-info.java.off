@@ -1,0 +1,11 @@
+module loom.worker.action.facedetect {
+	exports io.metaloom.loom.worker.action.facedetect;
+
+	requires java.desktop;
+	requires loom.client.grpc;
+	requires loom.worker.api;
+	requires loom.worker.common;
+	requires org.slf4j;
+	requires video4j;
+	requires video4j.facedetect;
+}
