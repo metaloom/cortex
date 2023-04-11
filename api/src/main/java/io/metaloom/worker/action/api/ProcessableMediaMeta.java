@@ -2,7 +2,7 @@ package io.metaloom.worker.action.api;
 
 import java.util.List;
 
-import io.metaloom.loom.api.Loom;
+import io.metaloom.worker.LoomWorker;
 
 public enum ProcessableMediaMeta {
 
@@ -16,7 +16,7 @@ public enum ProcessableMediaMeta {
 
 	FACE_CLUSTERS("face_clusters", false, null),
 
-	CHUNK_HASH("chun_hash", true, String.class),
+	CHUNK_HASH("chunk_hash", true, String.class),
 
 	THUMBNAIL_FLAGS("thumbnail_flags", true, String.class),
 
@@ -49,7 +49,7 @@ public enum ProcessableMediaMeta {
 	}
 
 	public static String fullKey(String key) {
-		return Loom.PREFIX + "_" + Loom.VERSION + "_" + key;
+		return LoomWorker.PREFIX + "_" + LoomWorker.VERSION + "_" + key;
 	}
 
 	@Override

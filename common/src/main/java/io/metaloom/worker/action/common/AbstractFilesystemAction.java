@@ -30,6 +30,10 @@ public abstract class AbstractFilesystemAction<T extends ActionSettings> impleme
 		return client;
 	}
 
+	public boolean isOfflineMode() {
+		return client() == null;
+	}
+
 	public T settings() {
 		return settings;
 	}

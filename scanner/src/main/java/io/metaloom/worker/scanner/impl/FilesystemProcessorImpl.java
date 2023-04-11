@@ -1,36 +1,51 @@
-package io.metaloom.loom.worker.processor.impl;
+package io.metaloom.worker.scanner.impl;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.loom.worker.processor.FilesystemProcessor;
+import io.metaloom.fs.FileInfo;
+import io.metaloom.fs.FileState;
+import io.metaloom.fs.linux.LinuxFileIndex;
+import io.metaloom.fs.linux.LinuxFilesystemScanner;
+import io.metaloom.fs.linux.impl.LinuxFilesystemScannerImpl;
 import io.metaloom.utils.fs.FilterHelper;
 import io.metaloom.worker.action.api.ActionResult;
 import io.metaloom.worker.action.api.FilesystemAction;
 import io.metaloom.worker.action.api.ResultState;
 import io.metaloom.worker.action.common.media.ProcessableMediaImpl;
+import io.metaloom.worker.scanner.FilesystemProcessor;
 
 public class FilesystemProcessorImpl implements FilesystemProcessor {
 
 	private final List<FilesystemAction> actions = new ArrayList<>();
 
+	private final LinuxFilesystemScanner scanner = new LinuxFilesystemScannerImpl();
+
 	public static final Logger log = LoggerFactory.getLogger(FilesystemProcessorImpl.class);
 
 	@Override
 	public void analyze(Path path) throws IOException {
+
 		AtomicLong count = new AtomicLong(0);
 		// 1. Scan the whole fs tree and count the files.
-		long total = stream(path).count();
-		stream(path)
-			.map(ProcessableMediaImpl::new)
+		List<FileInfo> newMediaFiles = scanner.scanStream(path)
+			.filter(info -> {
+				return info.state() == FileState.NEW;
+			})
+			.filter(info -> FilterHelper.isVideo(info.path()))
+			.filter(info -> FilterHelper.notEmpty(info.path()))
+			.collect(Collectors.toList());
+
+		long total = newMediaFiles.size();
+
+		newMediaFiles.stream().map(info -> new ProcessableMediaImpl(info.path()))
 			.forEach(media -> {
 				long current = count.incrementAndGet();
 				boolean processed = false;
@@ -61,20 +76,17 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				if (current % 1000 == 0) {
 					log.info("Count: " + current);
 				}
-
 			});
-	}
-
-	private Stream<Path> stream(Path path) throws IOException {
-		return Files.walk(path)
-			.filter(Files::isRegularFile)
-			.filter(FilterHelper::isVideo)
-			.filter(FilterHelper::notEmpty);
 	}
 
 	@Override
 	public void registerAction(FilesystemAction action) {
 		actions.add(action);
+	}
+
+	@Override
+	public LinuxFilesystemScanner getScanner() {
+		return scanner;
 	}
 
 }

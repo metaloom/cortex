@@ -39,7 +39,10 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 				Long count = getZeroChunkCount(media);
 				if (count == null) {
 					String sha512 = media.getHash512();
-					AssetResponse entry = client().loadAsset(sha512).sync();
+					AssetResponse entry = null;
+					if (!isOfflineMode()) {
+						entry = client().loadAsset(sha512).sync();
+					}
 					if (entry == null) {
 						computeSum(media);
 						info = "(computed)";

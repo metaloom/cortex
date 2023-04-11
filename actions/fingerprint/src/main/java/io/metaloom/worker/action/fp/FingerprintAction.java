@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
-import io.metaloom.video4j.Video;
 import io.metaloom.video4j.Video4j;
+import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 import io.metaloom.video4j.fingerprint.Fingerprint;
 import io.metaloom.video4j.fingerprint.v2.MultiSectorVideoFingerprinter;
@@ -78,7 +78,10 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 		if (!settings().isRetryFailed() && (isNull || isCorrect)) {
 			print(media, "DONE", "", start);
 		} else {
-			AssetResponse entry = client().loadAsset(sha512).sync();
+			AssetResponse entry = null;
+			if (!isOfflineMode()) {
+				entry = client().loadAsset(sha512).sync();
+			}
 			// Sync from db
 			if (entry != null) {
 				String dbFP = entry.getFingerprint();
@@ -89,7 +92,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 				}
 			}
 			String path = media.absolutePath();
-			try (Video video = Videos.open(path)) {
+			try (VideoFile video = Videos.open(path)) {
 				Fingerprint fingerprint = hasher.hash(video);
 				if (fingerprint == null) {
 					print(media, "NULL", "(no result)", start);

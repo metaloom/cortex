@@ -1,4 +1,4 @@
-package io.metaloom.loom.worker.settings;
+package io.metaloom.worker.scanner;
 
 import io.metaloom.loom.worker.action.consistency.ConsistencyActionSettings;
 import io.metaloom.loom.worker.action.facedetect.FacedetectActionSettings;

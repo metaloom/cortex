@@ -9,7 +9,8 @@ import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.loom.worker.settings.FilesystemProcessorSetting;
+import io.metaloom.worker.processor.impl.DefaultMediaProcessorImpl;
+import io.metaloom.worker.scanner.FilesystemProcessorSetting;
 import picocli.CommandLine.Command;
 
 @Command(name = "process", aliases = { "p" }, description = "Process command")
@@ -24,7 +25,7 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 			FilesystemProcessorSetting settings = new FilesystemProcessorSetting();
 			settings.getProcessorSettings().setPort(getPort());
 			settings.getProcessorSettings().setHostname(getHostname());
-			new DefaultProcessor(settings).process(folder);
+			new DefaultMediaProcessorImpl(settings).process(folder);
 			return OK.code();
 		} catch (Exception e) {
 			log.error("Restoring collections failed.", e);

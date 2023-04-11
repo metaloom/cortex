@@ -17,4 +17,4 @@ dependency-reduced-pom.xml
 *.iml
 
 #dlib models
-worker/actions/facedetect/dlib/
+scanner/dlib/
