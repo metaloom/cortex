@@ -4,6 +4,8 @@
 
 It supports a range of functions, including **face detection**, **thumbnail generation**, **consistency checking**, **hashing**, **metadata extraction** and **media fingerprinting**, all of which can be performed in offline and online mode.
 
+*Loom // Cortex* is the central media asset parser component of the *Loom* Headless Media Asset Management System from [MetaLoom](https://metaloom.io/).
+
 ## Features 
 
 **Processing** - The ability to process media in offline mode means that it can perform bulk media processing securely at a very large scale.
