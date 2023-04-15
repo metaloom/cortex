@@ -1,22 +1,22 @@
-module loom.worker.cli {
-	exports io.metaloom.loom.worker.cli.cmd;
-	exports io.metaloom.loom.worker.processor.impl;
-	exports io.metaloom.loom.worker.processor;
-	exports io.metaloom.loom.worker.settings;
-	exports io.metaloom.loom.worker.cli;
+module loom.cortex.cli {
+	exports io.metaloom.loom.cortex.cli.cmd;
+	exports io.metaloom.loom.cortex.processor.impl;
+	exports io.metaloom.loom.cortex.processor;
+	exports io.metaloom.loom.cortex.settings;
+	exports io.metaloom.loom.cortex.cli;
 
 	requires info.picocli;
 	requires logback.classic;
 	requires logback.core;
 	requires loom.client.common;
 	requires loom.client.grpc;
-	requires loom.worker.api;
-	requires loom.worker.common;
-	requires loom.worker.action.fingerprint;
-	requires loom.worker.action.hash;
-	requires loom.worker.action.thumbnail;
-	requires loom.worker.action.consistency;
-	requires loom.worker.action.facedetect;
+	requires loom.cortex.api;
+	requires loom.cortex.common;
+	requires loom.cortex.action.fingerprint;
+	requires loom.cortex.action.hash;
+	requires loom.cortex.action.thumbnail;
+	requires loom.cortex.action.consistency;
+	requires loom.cortex.action.facedetect;
 	requires org.slf4j;
 	requires utils;
 }

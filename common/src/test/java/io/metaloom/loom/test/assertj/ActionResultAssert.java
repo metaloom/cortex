@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.worker.action.api.ActionResult;
-import io.metaloom.worker.action.api.ResultState;
+import io.metaloom.cortex.action.api.ActionResult;
+import io.metaloom.cortex.action.api.ResultState;
 
 public class ActionResultAssert extends AbstractAssert<ActionResultAssert, ActionResult> {
 

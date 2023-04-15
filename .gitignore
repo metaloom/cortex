@@ -15,6 +15,7 @@ dependency-reduced-pom.xml
 .idea
 .factorypath
 *.iml
+.vscode
 
 #dlib models
 scanner/dlib/

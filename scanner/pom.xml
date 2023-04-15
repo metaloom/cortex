@@ -3,16 +3,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>loom-worker-scanner</artifactId>
+  <artifactId>loom-cortex-scanner</artifactId>
   <packaging>jar</packaging>
 
   <parent>
-    <groupId>io.metaloom.loom.worker</groupId>
-    <artifactId>loom-worker</artifactId>
+    <groupId>io.metaloom.loom.cortex</groupId>
+    <artifactId>loom-cortex</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Loom - Worker :: Scanner</name>
+  <name>Loom - Cortex :: Scanner</name>
 
   <dependencyManagement>
     <dependencies>
@@ -32,34 +32,34 @@
       <artifactId>differential-filesystem-scanner</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-common</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-common</artifactId>
     </dependency>
 
     <!-- Actions -->
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-hash-action</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-hash-action</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-thumbnail-action</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-thumbnail-action</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-facedetect-action</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-facedetect-action</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-fingerprint-action</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-fingerprint-action</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.metaloom.loom.worker</groupId>
-      <artifactId>loom-worker-consistency-action</artifactId>
+      <groupId>io.metaloom.loom.cortex</groupId>
+      <artifactId>loom-cortex-consistency-action</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

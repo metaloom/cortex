@@ -1,17 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loom-worker-cli</artifactId>
+	<artifactId>loom-cortex-cli</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>io.metaloom.loom.worker</groupId>
-		<artifactId>loom-worker</artifactId>
+		<groupId>io.metaloom.loom.cortex</groupId>
+		<artifactId>loom-cortex</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<name>Loom - Worker :: CLI</name>
-
+	
 	<properties>
-		<mainClass>io.metaloom.loom.worker.cli.WorkerCLI</mainClass>
+		<mainClass>io.metaloom.loom.cortex.cli.LoomCortexCLI</mainClass>
 	</properties>
 
 	<dependencyManagement>
@@ -28,8 +28,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.metaloom.loom.worker</groupId>
-			<artifactId>loom-worker-scanner</artifactId>
+			<groupId>io.metaloom.loom.cortex</groupId>
+			<artifactId>loom-cortex-scanner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

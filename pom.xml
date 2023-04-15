@@ -2,8 +2,8 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.metaloom.loom.worker</groupId>
-  <artifactId>loom-worker</artifactId>
+  <groupId>io.metaloom.loom.cortex</groupId>
+  <artifactId>loom-cortex</artifactId>
 
   <packaging>pom</packaging>
   <parent>
@@ -12,9 +12,9 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <url>https://github.com/metaloom/loom-worker</url>
+  <url>https://github.com/metaloom/loom-cortex</url>
   <inceptionYear>2023</inceptionYear>
-  <name>Loom :: Worker</name>
+  <name>Loom :: Cortex</name>
 
   <modules>
     <module>api</module>
@@ -24,6 +24,67 @@
     <module>scanner</module>
     <module>cli</module>
   </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <loom.version>1.0.0-SNAPSHOT</loom.version>
+    <loom.client.version>1.0.0-SNAPSHOT</loom.client.version>
+  </properties>
+
+  <!-- Only manage internal project deps here. External deps will be managed via
+  bom pom -->
+  <dependencyManagement>
+
+    <!-- Cortex -->
+    <dependencies>
+      <dependency>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-scanner</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-fs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-common</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+
+      <!-- Loom / Nexus -->
+      <dependency>
+        <groupId>io.metaloom.loom</groupId>
+        <artifactId>loom-test</artifactId>
+        <version>${loom.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.metaloom.loom</groupId>
+        <artifactId>loom-api</artifactId>
+        <version>${loom.version}</version>
+      </dependency>
+
+      <!-- Loom Client -->
+      <dependency>
+        <groupId>io.metaloom.loom.client</groupId>
+        <artifactId>loom-client-grpc</artifactId>
+        <version>${loom.client.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>

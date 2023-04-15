@@ -1,4 +1,4 @@
-module loom.worker.api {
-	exports io.metaloom.worker.action.api.setting;
-	exports io.metaloom.worker.action.api;
+module loom.cortex.api {
+	exports io.metaloom.cortex.action.api.setting;
+	exports io.metaloom.cortex.action.api;
 }

@@ -2,8 +2,8 @@ package io.metaloom.loom.test.assertj;
 
 import org.assertj.core.api.Assertions;
 
-import io.metaloom.worker.action.api.ActionResult;
-import io.metaloom.worker.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.ActionResult;
+import io.metaloom.cortex.action.api.ProcessableMedia;
 
 public class LoomWorkerAssertions extends Assertions {
 

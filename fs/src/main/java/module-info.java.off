@@ -1,4 +1,4 @@
-module loom.worker.fs {
-	exports io.metaloom.worker.fs.impl;
-	exports io.metaloom.worker.fs.scanner.impl;
+module loom.cortex.fs {
+	exports io.metaloom.cortex.fs.impl;
+	exports io.metaloom.cortex.fs.scanner.impl;
 }

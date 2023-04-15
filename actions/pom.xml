@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loom-worker-actions</artifactId>
+	<artifactId>loom-cortex-actions</artifactId>
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>io.metaloom.loom.worker</groupId>
-		<artifactId>loom-worker</artifactId>
+		<groupId>io.metaloom.loom.cortex</groupId>
+		<artifactId>loom-cortex</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
@@ -19,7 +19,7 @@
 		<module>tika</module>
 	</modules>
 
-	<name>Loom - Worker :: Actions</name>
+	<name>Loom - Cortex :: Actions</name>
 
 	<dependencyManagement>
 		<dependencies>
@@ -35,8 +35,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.metaloom.loom.worker</groupId>
-			<artifactId>loom-worker-common</artifactId>
+			<groupId>io.metaloom.loom.cortex</groupId>
+			<artifactId>loom-cortex-common</artifactId>
 		</dependency>
 
 		<!--Test -->
@@ -46,8 +46,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.metaloom.loom.worker</groupId>
-			<artifactId>loom-worker-common</artifactId>
+			<groupId>io.metaloom.loom.cortex</groupId>
+			<artifactId>loom-cortex-common</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>

@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loom-worker-api</artifactId>
+	<artifactId>loom-cortex-api</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>io.metaloom.loom.worker</groupId>
-		<artifactId>loom-worker</artifactId>
+		<groupId>io.metaloom.loom.cortex</groupId>
+		<artifactId>loom-cortex</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<name>Loom - Worker :: API</name>
+	<name>Loom - Cortex :: API</name>
 
 	<dependencyManagement>
 		<dependencies>

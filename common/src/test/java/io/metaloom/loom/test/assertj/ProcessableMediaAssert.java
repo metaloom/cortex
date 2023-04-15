@@ -1,14 +1,14 @@
 package io.metaloom.loom.test.assertj;
 
-import static io.metaloom.worker.action.api.ProcessableMediaMeta.ZERO_CHUNK_COUNT;
+import static io.metaloom.cortex.action.api.ProcessableMediaMeta.ZERO_CHUNK_COUNT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.worker.action.api.ProcessableMedia;
-import io.metaloom.worker.action.api.ProcessableMediaMeta;
+import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.ProcessableMediaMeta;
 
 public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAssert, ProcessableMedia> {
 
