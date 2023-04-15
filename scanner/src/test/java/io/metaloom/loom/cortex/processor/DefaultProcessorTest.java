@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
 import io.metaloom.cortex.scanner.FilesystemProcessorSetting;
+import io.metaloom.loom.test.LocalTestData;
 
 public class DefaultProcessorTest {
 

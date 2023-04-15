@@ -36,9 +36,16 @@
   <!-- Only manage internal project deps here. External deps will be managed via
   bom pom -->
   <dependencyManagement>
-
-    <!-- Cortex -->
     <dependencies>
+      <dependency>
+        <groupId>io.metaloom.loom</groupId>
+        <artifactId>loom-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Cortex -->
       <dependency>
         <groupId>io.metaloom.loom.cortex</groupId>
         <artifactId>loom-cortex-common</artifactId>
@@ -92,6 +99,11 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.metaloom.loom.test</groupId>
+      <artifactId>loom-test-env</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

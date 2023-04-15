@@ -46,13 +46,7 @@
       <artifactId>picocli-codegen</artifactId>
     </dependency>
 
-
     <!--Test-->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>

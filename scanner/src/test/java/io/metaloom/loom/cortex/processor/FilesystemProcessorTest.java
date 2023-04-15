@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.scanner.FilesystemProcessor;
 import io.metaloom.cortex.scanner.impl.FilesystemProcessorImpl;
+import io.metaloom.loom.test.LocalTestData;
 
 public class FilesystemProcessorTest {
 
