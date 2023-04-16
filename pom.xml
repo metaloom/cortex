@@ -76,12 +76,6 @@
       <!-- Loom / Nexus -->
       <dependency>
         <groupId>io.metaloom.loom</groupId>
-        <artifactId>loom-test</artifactId>
-        <version>${loom.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.metaloom.loom</groupId>
         <artifactId>loom-api</artifactId>
         <version>${loom.version}</version>
       </dependency>
@@ -97,14 +91,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>io.metaloom.loom.test</groupId>
       <artifactId>loom-test-env</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>

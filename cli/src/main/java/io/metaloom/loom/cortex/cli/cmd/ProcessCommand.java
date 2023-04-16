@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
 import io.metaloom.cortex.scanner.FilesystemProcessorSetting;
 import picocli.CommandLine.Command;
@@ -23,9 +24,12 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 		try {
 			Path folder = Paths.get(path);
 			FilesystemProcessorSetting settings = new FilesystemProcessorSetting();
-			settings.getProcessorSettings().setPort(getPort());
-			settings.getProcessorSettings().setHostname(getHostname());
-			new DefaultMediaProcessorImpl(settings).process(folder);
+//			settings.getProcessorSettings().setPort(getPort());
+//			settings.getProcessorSettings().setHostname(getHostname());
+			// TODO configure thumbnail dir
+			settings.getThumbnailSettings().setThumbnailPath("/opt/metaloom/loom-thumbnaildir");
+			MediaProcessor processor = new DefaultMediaProcessorImpl(settings);
+			processor.process(folder);
 			return OK.code();
 		} catch (Exception e) {
 			log.error("Restoring collections failed.", e);

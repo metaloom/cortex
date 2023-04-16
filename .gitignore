@@ -19,3 +19,4 @@ dependency-reduced-pom.xml
 
 #dlib models
 scanner/dlib/
+cli/dlib

@@ -41,11 +41,6 @@
 
 		<!--Test -->
 		<dependency>
-			<groupId>io.metaloom.loom</groupId>
-			<artifactId>loom-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.metaloom.loom.cortex</groupId>
 			<artifactId>loom-cortex-common</artifactId>
 			<type>test-jar</type>

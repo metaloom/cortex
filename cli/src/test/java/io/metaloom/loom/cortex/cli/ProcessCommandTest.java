@@ -1,15 +1,25 @@
 package io.metaloom.loom.cortex.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.loom.cortex.cli.cmd.ProcessCommand;
 import io.metaloom.loom.test.LocalTestData;
 
 public class ProcessCommandTest {
 
+	@BeforeAll
+	public static void setup() throws IOException {
+		LocalTestData.resetXattr();
+	}
+
 	@Test
 	public void testCommand() {
-		ProcessCommand cmd = new ProcessCommand();
-		cmd.analyze(LocalTestData.localDir().toString());
+		String path = LocalTestData.localDir().toString();
+		int code = LoomCortexCLI.execute("p", "analyze", path);
+		assertEquals(0, code, "The command should not have failed");
 	}
 }
