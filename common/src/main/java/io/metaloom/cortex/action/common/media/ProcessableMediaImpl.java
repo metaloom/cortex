@@ -6,7 +6,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,11 @@ public class ProcessableMediaImpl extends AbstractFilesystemMedia {
 	@Override
 	public Path path() {
 		return path;
+	}
+
+	@Override
+	public long size() throws IOException {
+		return Files.size(path);
 	}
 
 	@Override

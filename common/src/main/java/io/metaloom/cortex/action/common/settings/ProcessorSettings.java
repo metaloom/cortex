@@ -5,6 +5,8 @@ public class ProcessorSettings {
 	private int port;
 	private String hostname;
 
+	private boolean dryrun;
+
 	public int getPort() {
 		return port;
 	}
@@ -20,6 +22,15 @@ public class ProcessorSettings {
 
 	public ProcessorSettings setHostname(String hostname) {
 		this.hostname = hostname;
+		return this;
+	}
+
+	public boolean isDryrun() {
+		return dryrun;
+	}
+
+	public ProcessorSettings setDryrun(boolean dryrun) {
+		this.dryrun = dryrun;
 		return this;
 	}
 }

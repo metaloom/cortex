@@ -14,7 +14,7 @@
 
   <url>https://github.com/metaloom/loom-cortex</url>
   <inceptionYear>2023</inceptionYear>
-  <name>Loom :: Cortex</name>
+  <name>Loom // Cortex</name>
 
   <modules>
     <module>api</module>

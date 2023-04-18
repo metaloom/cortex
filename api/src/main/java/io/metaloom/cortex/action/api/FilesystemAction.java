@@ -1,5 +1,7 @@
 package io.metaloom.cortex.action.api;
 
+import java.io.IOException;
+
 public interface FilesystemAction {
 
 	/**
@@ -14,8 +16,9 @@ public interface FilesystemAction {
 	 * 
 	 * @param media
 	 * @return
+	 * @throws IOException 
 	 */
-	ActionResult process(ProcessableMedia media);
+	ActionResult process(ProcessableMedia media) throws IOException;
 
 	void print(ProcessableMedia file, String result, String msg, long start);
 
@@ -26,5 +29,7 @@ public interface FilesystemAction {
 	}
 
 	void set(long current, long total);
+
+	boolean isDryrun();
 
 }

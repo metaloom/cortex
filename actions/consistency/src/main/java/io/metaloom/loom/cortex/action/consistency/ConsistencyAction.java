@@ -33,39 +33,40 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 		if (!media.isVideo() && !media.isAudio()) {
 			print(media, "SKIPPED", "(no video or audio)", start);
 			return ActionResult.skipped(true, start);
-		} else {
-			try {
-				String info = "";
-				Long count = getZeroChunkCount(media);
-				if (count == null) {
-					String sha512 = media.getHash512();
-					AssetResponse entry = null;
-					if (!isOfflineMode()) {
-						entry = client().loadAsset(sha512).sync();
-					}
-					if (entry == null) {
+		}
+
+		try {
+			String info = "";
+			Long count = getZeroChunkCount(media);
+			if (count == null) {
+				String sha512 = media.getHash512();
+				AssetResponse entry = null;
+				if (!isOfflineMode()) {
+					entry = client().loadAsset(sha512).sync();
+				}
+				if (entry == null) {
+					computeSum(media);
+					info = "(computed)";
+				} else {
+					Long dbCount = entry.getZeroChunkCount();
+					if (dbCount != null) {
+						writeZeroChunkCount(media, dbCount);
+						info = "(from db)";
+					} else {
 						computeSum(media);
 						info = "(computed)";
-					} else {
-						Long dbCount = entry.getZeroChunkCount();
-						if (dbCount != null) {
-							writeZeroChunkCount(media, dbCount);
-							info = "(from db)";
-						} else {
-							computeSum(media);
-							info = "(computed)";
-						}
 					}
-				} else {
-					info = "(from file)";
 				}
-				print(media, "DONE", info, start);
-				return ActionResult.processed(CONTINUE_NEXT, start);
-			} catch (NoSuchAlgorithmException | IOException e) {
-				e.printStackTrace();
-				return ActionResult.failed(CONTINUE_NEXT, start);
+			} else {
+				info = "(from file)";
 			}
+			print(media, "DONE", info, start);
+			return ActionResult.processed(CONTINUE_NEXT, start);
+		} catch (NoSuchAlgorithmException | IOException e) {
+			e.printStackTrace();
+			return ActionResult.failed(CONTINUE_NEXT, start);
 		}
+
 	}
 
 	private Long getZeroChunkCount(ProcessableMedia media) {

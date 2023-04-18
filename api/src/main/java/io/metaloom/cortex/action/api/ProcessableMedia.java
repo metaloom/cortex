@@ -5,11 +5,15 @@ import static io.metaloom.cortex.action.api.ProcessableMediaMeta.ZERO_CHUNK_COUN
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Media which will be processable via cortex actions.
+ */
 public interface ProcessableMedia {
 
 	boolean isVideo();
@@ -31,6 +35,14 @@ public interface ProcessableMedia {
 	 * @return
 	 */
 	Path path();
+
+	/**
+	 * Size in bytes.
+	 * 
+	 * @return
+	 * @throws IOException 
+	 */
+	long size() throws IOException;
 
 	/**
 	 * Return the absolute filesystem path for the media.

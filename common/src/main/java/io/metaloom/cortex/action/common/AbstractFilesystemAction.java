@@ -99,4 +99,9 @@ public abstract class AbstractFilesystemAction<T extends ActionSettings> impleme
 		this.total = total;
 	}
 
+	@Override
+	public boolean isDryrun() {
+		return processorSettings.isDryrun();
+	}
+
 }
