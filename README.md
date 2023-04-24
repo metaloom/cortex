@@ -6,7 +6,7 @@ It supports a range of functions, including **face detection**, **thumbnail gene
 
 *Loom // Cortex* is the central media asset parser component of the *Loom* Headless Media Asset Management System from [MetaLoom](https://metaloom.io/).
 
-[![](https://dcbadge.vercel.app/api/server/NCU9tWGz3v)](https://discord.gg/NCU9tWGz3v)
+[![](https://dcbadge.vercel.app/api/server/3Dy2SxKUtw)](https://discord.gg/3Dy2SxKUtw)
 
 ## Features 
 
