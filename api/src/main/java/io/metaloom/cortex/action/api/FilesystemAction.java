@@ -16,7 +16,7 @@ public interface FilesystemAction {
 	 * 
 	 * @param media
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	ActionResult process(ProcessableMedia media) throws IOException;
 

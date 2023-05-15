@@ -6,38 +6,47 @@ import io.metaloom.cortex.LoomWorker;
 
 public enum ProcessableMediaMeta {
 
-	SHA_512("sha512", true, String.class),
+	SHA_512("sha512", 1, true, String.class),
 
-	SHA_256("sha256", true, String.class),
+	SHA_256("sha256", 1, true, String.class),
 
-	ZERO_CHUNK_COUNT("zero_chunk_count", true, Long.class),
+	MD5("md5", 1, true, String.class),
 
-	FACES("faces", false, List.class),
+	ZERO_CHUNK_COUNT("zero_chunk_count", 1, true, Long.class),
 
-	FACE_CLUSTERS("face_clusters", false, null),
+	FACES("faces", 1, false, List.class),
 
-	CHUNK_HASH("chunk_hash", true, String.class),
+	FACE_CLUSTERS("face_clusters", 1, false, null),
 
-	THUMBNAIL_FLAGS("thumbnail_flags", true, String.class),
+	CHUNK_HASH("chunk_hash", 1, true, String.class),
 
-	TIKA_FLAGS("tika_flags", true, String.class),
+	THUMBNAIL_FLAGS("thumbnail_flags", 1, true, String.class),
 
-	FINGERPRINT("fingerprint", true, String.class);
+	TIKA_FLAGS("tika_flags", 1, true, String.class),
+
+	FINGERPRINT("fingerprint", 1, true, String.class);
 
 	private String name;
+
+	private int version;
 
 	private boolean persisted;
 
 	private Class<?> type;
 
-	private ProcessableMediaMeta(String name, boolean persisted, Class<?> type) {
+	private ProcessableMediaMeta(String name, int version, boolean persisted, Class<?> type) {
 		this.name = name;
 		this.persisted = persisted;
 		this.type = type;
+		this.version = version;
 	}
 
 	public String key() {
-		return fullKey(name);
+		return fullKey(name, version);
+	}
+
+	public int version() {
+		return version;
 	}
 
 	public boolean isPersisted() {
@@ -48,8 +57,8 @@ public enum ProcessableMediaMeta {
 		return type;
 	}
 
-	public static String fullKey(String key) {
-		return LoomWorker.PREFIX + "_" + LoomWorker.VERSION + "_" + key;
+	public static String fullKey(String key, int version) {
+		return LoomWorker.PREFIX + "_" + LoomWorker.VERSION + "_" + key + "_v" + version;
 	}
 
 	@Override

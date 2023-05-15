@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.action.api.FilesystemAction;
 import io.metaloom.cortex.action.fp.FingerprintAction;
 import io.metaloom.cortex.action.hash.ChunkHashAction;
+import io.metaloom.cortex.action.hash.MD5Action;
 import io.metaloom.cortex.action.hash.SHA256Action;
 import io.metaloom.cortex.action.hash.SHA512Action;
 import io.metaloom.cortex.processor.MediaProcessor;
@@ -20,8 +21,6 @@ import io.metaloom.cortex.scanner.impl.FilesystemProcessorImpl;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.client.grpc.impl.LoomGRPCClientImpl.Builder;
 import io.metaloom.loom.cortex.action.consistency.ConsistencyAction;
-import io.metaloom.loom.cortex.action.facedetect.FacedetectAction;
-import io.metaloom.loom.cortex.action.thumbnail.ThumbnailAction;
 
 public class DefaultMediaProcessorImpl implements MediaProcessor {
 
@@ -60,8 +59,9 @@ public class DefaultMediaProcessorImpl implements MediaProcessor {
 		registerAction(new ConsistencyAction(client, settings.getProcessorSettings(), settings.getConsistencySettings()));
 		registerAction(new ChunkHashAction(client, settings.getProcessorSettings(), settings.getHashSettings()));
 		registerAction(new SHA256Action(client, settings.getProcessorSettings(), settings.getHashSettings()));
-		registerAction(new ThumbnailAction(client, settings.getProcessorSettings(), settings.getThumbnailSettings()));
-		registerAction(new FacedetectAction(client, settings.getProcessorSettings(), settings.getFacedetectActionSettings()));
+		//registerAction(new MD5Action(client, settings.getProcessorSettings(), settings.getHashSettings()));
+		//registerAction(new ThumbnailAction(client, settings.getProcessorSettings(), settings.getThumbnailSettings()));
+		//registerAction(new FacedetectAction(client, settings.getProcessorSettings(), settings.getFacedetectActionSettings()));
 		registerAction(new FingerprintAction(client, settings.getProcessorSettings(), settings.getFingerprintActionSettings()));
 		processor.analyze(folder);
 	}

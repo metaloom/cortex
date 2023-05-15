@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_256;
+import static io.metaloom.cortex.action.api.ProcessableMediaMeta.MD5;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +13,15 @@ import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 
-public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
+public class MD5Action extends AbstractFilesystemAction<HashActionSettings> {
 
-	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
+	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
 
-	public static final String SHA256_ATTR_KEY = "sha256sum";
+	public static final String MD5SUM_ATTR_KEY = "md5sum";
 
-	private static final String NAME = "sha256-hash";
+	private static final String NAME = "md5-hash";
 
-	public SHA256Action(LoomGRPCClient client, ProcessorSettings proocessorSettings, HashActionSettings settings) {
+	public MD5Action(LoomGRPCClient client, ProcessorSettings proocessorSettings, HashActionSettings settings) {
 		super(client, proocessorSettings, settings);
 	}
 
@@ -33,18 +33,18 @@ public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
 	@Override
 	public ActionResult process(ProcessableMedia media) {
 		long start = System.currentTimeMillis();
-		String sha256 = getHash256(media);
+		String md5 = getHashMD5(media);
 		String info = "";
-		if (sha256 == null) {
+		if (md5 == null) {
 			String sha512 = media.getHash512();
 			AssetResponse asset = client().loadAsset(sha512).sync();
 			if (asset == null) {
 				info = "hashed";
-				getHash256(media);
+				getHashMD5(media);
 			} else {
-				String dbHash256 = asset.getSha256Sum();
-				if (dbHash256 != null) {
-					writeHash256(media, dbHash256);
+				String dbMD5 = asset.getMd5Sum();
+				if (dbMD5 != null) {
+					writeHashMD5(media, dbMD5);
 					info = "from db";
 				}
 			}
@@ -54,17 +54,17 @@ public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
 		}
 	}
 
-	private void writeHash256(ProcessableMedia media, String hashSum) {
-		media.put(SHA_256, hashSum);
+	private void writeHashMD5(ProcessableMedia media, String hashSum) {
+		media.put(MD5, hashSum);
 	}
 
-	private String getHash256(ProcessableMedia media) {
-		String hashSum256 = media.get(SHA_256);
-		if (hashSum256 == null) {
-			hashSum256 = HashUtils.computeSHA256(media.file());
-			media.put(SHA_256, hashSum256);
+	private String getHashMD5(ProcessableMedia media) {
+		String md5sum = media.get(MD5);
+		if (md5sum == null) {
+			md5sum = HashUtils.computeMD5(media.path());
+			media.put(MD5, md5sum);
 		}
-		return hashSum256;
+		return md5sum;
 	}
 
 }

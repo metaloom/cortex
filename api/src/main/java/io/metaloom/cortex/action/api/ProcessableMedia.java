@@ -40,7 +40,7 @@ public interface ProcessableMedia {
 	 * Size in bytes.
 	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	long size() throws IOException;
 
@@ -125,5 +125,7 @@ public interface ProcessableMedia {
 			return null;
 		}
 	}
+
+
 
 }

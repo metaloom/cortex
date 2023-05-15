@@ -16,8 +16,8 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 		super(actual, ProcessableMediaAssert.class);
 	}
 
-	public ProcessableMediaAssert hasXAttr(String key) {
-		String fullKey = ProcessableMediaMeta.fullKey(key);
+	public ProcessableMediaAssert hasXAttr(String key, int version) {
+		String fullKey = ProcessableMediaMeta.fullKey(key, version);
 		assertTrue(actual.listXAttr().contains(fullKey),"The attr " + fullKey + " was not found in the media file.");
 		return this;
 	}

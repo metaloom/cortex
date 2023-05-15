@@ -45,10 +45,10 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionSettings> {
 				return parseMedia(start, media);
 				// TODO utilize and store result
 			} else {
-				//TODO check whether db needs tika update
+				// TODO check whether db needs tika update
 				return parseMedia(start, media);
 				// TODO check response and assert whether processing is needed
-				//return done(media, start, "from db");
+				// return done(media, start, "from db");
 				// writeFlags(media, DONE_FLAG);
 			}
 		} else {

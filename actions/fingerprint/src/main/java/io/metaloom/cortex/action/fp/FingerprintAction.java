@@ -53,19 +53,26 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 				return ActionResult.skipped(true, start);
 			}
 		}
-		String sha512 = media.getHash512();
-		try {
-			processMedia(sha512, media);
-			return ActionResult.processed(true, start);
-		} catch (Exception e) {
-			error(media, "Failure for " + media.path());
-			if (log.isErrorEnabled()) {
-				log.error("Error while processing media " + media.path(), e);
+		String fingerprint = getFingerprint(media);
+		String info = "";
+		if (fingerprint == null) {
+			String sha512 = media.getHash512();
+			try {
+				info = "computed";
+				processMedia(sha512, media);
+				 return ActionResult.processed(true, start);
+			} catch (Exception e) {
+				error(media, "Failure for " + media.path());
+				if (log.isErrorEnabled()) {
+					log.error("Error while processing media " + media.path(), e);
+				}
+				if (getFingerprint(media) == null) {
+					writeFingerprint(media, "NULL");
+				}
+				return ActionResult.failed(true, start);
 			}
-			if (getFingerprint(media) == null) {
-				writeFingerprint(media, "NULL");
-			}
-			return ActionResult.failed(true, start);
+		} else {
+			return done(media, start, info);
 		}
 
 	}
@@ -78,13 +85,13 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 		if (!settings().isRetryFailed() && (isNull || isCorrect)) {
 			print(media, "DONE", "", start);
 		} else {
-			AssetResponse entry = null;
+			AssetResponse asset = null;
 			if (!isOfflineMode()) {
-				entry = client().loadAsset(sha512).sync();
+				asset = client().loadAsset(sha512).sync();
 			}
 			// Sync from db
-			if (entry != null) {
-				String dbFP = entry.getFingerprint();
+			if (asset != null) {
+				String dbFP = asset.getFingerprint();
 				if (dbFP != null) {
 					writeFingerprint(media, dbFP);
 					print(media, "DONE", "(from db)", start);
