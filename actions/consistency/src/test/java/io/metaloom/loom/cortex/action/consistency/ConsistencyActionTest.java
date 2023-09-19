@@ -1,7 +1,7 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_512;
+import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.IOException;
 
@@ -12,7 +12,6 @@ import io.metaloom.cortex.action.api.ProcessableMedia;
 import io.metaloom.cortex.action.media.AbstractWorkerTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.cortex.action.consistency.ConsistencyAction;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.Testdata;
 

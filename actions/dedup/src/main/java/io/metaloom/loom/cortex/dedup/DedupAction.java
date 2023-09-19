@@ -44,10 +44,10 @@ public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
 
 		// We found an item. Lets check it.
 		if (asset != null) {
-			if (asset.getPath() == null) {
+			if (asset.getFilename() == null) {
 				return done(media, start, "Source from db has no current path");
 			}
-			File dbFile = new File(asset.getPath());
+			File dbFile = new File(asset.getFilename());
 			if (!dbFile.exists()) {
 				return done(media, start, "Source from db not found for currentpath");
 			}
@@ -57,7 +57,7 @@ public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
 			} else {
 				AssetRequest newAsset = AssetRequest.newBuilder()
 					.setSha512Sum(sha512)
-					.setPath(media.absolutePath())
+					.setFilename(media.absolutePath())
 					.build();
 				// client().storeAsset(sha512)
 				ProcessableMedia foundMedia = new ProcessableMediaImpl(dbFile.toPath());

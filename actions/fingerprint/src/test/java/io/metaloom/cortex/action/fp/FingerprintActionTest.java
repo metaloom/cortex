@@ -1,8 +1,8 @@
 package io.metaloom.cortex.action.fp;
 
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 import static io.metaloom.cortex.action.api.ProcessableMediaMeta.FINGERPRINT;
 import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_512;
+import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.IOException;
 
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import io.metaloom.cortex.action.api.ActionResult;
 import io.metaloom.cortex.action.api.ProcessableMedia;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
-import io.metaloom.cortex.action.fp.FingerprintAction;
-import io.metaloom.cortex.action.fp.FingerprintActionSettings;
 import io.metaloom.cortex.action.media.AbstractWorkerTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;

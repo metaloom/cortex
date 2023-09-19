@@ -18,15 +18,15 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 
 	public ProcessableMediaAssert hasXAttr(String key, int version) {
 		String fullKey = ProcessableMediaMeta.fullKey(key, version);
-		assertTrue(actual.listXAttr().contains(fullKey),"The attr " + fullKey + " was not found in the media file.");
+		assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
 		return this;
 	}
 
 	public ProcessableMediaAssert hasXAttr(ProcessableMediaMeta... metas) {
 		for (ProcessableMediaMeta meta : metas) {
-			assertTrue( meta.isPersisted(),"The key is not enabled for persistance via xattr. It should thus not be present and must not be checked");
+			assertTrue(meta.isPersisted(), "The key is not enabled for persistance via xattr. It should thus not be present and must not be checked");
 			String fullKey = meta.key();
-			assertTrue( actual.listXAttr().contains(fullKey),"The attr " + fullKey + " was not found in the media file.");
+			assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
 		}
 		return this;
 	}
@@ -37,7 +37,11 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 	}
 
 	public ProcessableMediaAssert hasXAttr(int count) {
-		assertEquals(count, actual.listXAttr().size(), "The count of xattr did not match the expected count.");
+		int actualCount = actual.listXAttr().size();
+		if (count != actualCount) {
+			String allKeys = String.join(" ,\n", actual.listXAttr());
+			assertEquals(count, actualCount, "The count of xattr did not match the expected count. Got:\n" + allKeys);
+		}
 		return this;
 	}
 
