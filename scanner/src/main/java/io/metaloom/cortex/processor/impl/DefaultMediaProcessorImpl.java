@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.action.api.FilesystemAction;
 import io.metaloom.cortex.action.fp.FingerprintAction;
 import io.metaloom.cortex.action.hash.ChunkHashAction;
-import io.metaloom.cortex.action.hash.MD5Action;
 import io.metaloom.cortex.action.hash.SHA256Action;
 import io.metaloom.cortex.action.hash.SHA512Action;
 import io.metaloom.cortex.processor.MediaProcessor;

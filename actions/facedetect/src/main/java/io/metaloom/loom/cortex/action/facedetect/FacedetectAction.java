@@ -22,8 +22,6 @@ import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.cortex.action.facedetect.cluster.ClusterResult;
-import io.metaloom.loom.cortex.action.facedetect.cluster.FaceClusterer;
 import io.metaloom.video.facedetect.Face;
 import io.metaloom.video.facedetect.FaceVideoFrame;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
@@ -47,7 +45,6 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 		throws FileNotFoundException {
 		super(client, processorSettings, settings);
 		try {
-
 			DLibModelProvisioner.extractModelData(Paths.get("dlib"));
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to extract dlib models", e);
@@ -83,7 +80,7 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 		long start = System.currentTimeMillis();
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
-		List<? extends Face> result = detector.detect(image);
+		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
 			media.put(ProcessableMediaMeta.FACES, result);
@@ -105,7 +102,7 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 					CVUtils.boxFrame2(frame, settings().getVideoScaleSize());
 					return frame;
 				})
-				.map(detector::detect)
+				.map(frame -> detector.detectFaces(frame))
 				.filter(FaceVideoFrame::hasFace);
 			// .map(metrics::track)
 			// .map(detector::markFaces)
@@ -114,20 +111,14 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 
 			frameStream.forEach(frame -> {
 				for (Face face : frame.faces()) {
-					if (face.getEmbeddings() != null) {
+					if (face.getEmbedding() != null) {
 						faces.add(face);
 					}
 				}
 			});
 		}
-		ClusterResult clusterResult = clusterFaces(faces);
-		media.put(ProcessableMediaMeta.FACE_CLUSTERS, clusterResult);
 		media.put(ProcessableMediaMeta.FACES, faces);
 		return done(media, start, "facedetection completed");
-	}
-
-	private ClusterResult clusterFaces(List<Face> faces) {
-		return FaceClusterer.clusterFaces(faces, settings().getFaceClusterEPS(), settings().getFaceClusterMinimum());
 	}
 
 }

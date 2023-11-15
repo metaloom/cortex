@@ -2,14 +2,7 @@ package io.metaloom.cortex.action.api;
 
 import java.io.IOException;
 
-public interface FilesystemAction {
-
-	/**
-	 * Name of the action.
-	 * 
-	 * @return
-	 */
-	String name();
+public interface FilesystemAction extends CortexAction {
 
 	/**
 	 * Process the media.
@@ -30,6 +23,5 @@ public interface FilesystemAction {
 
 	void set(long current, long total);
 
-	boolean isDryrun();
 
 }

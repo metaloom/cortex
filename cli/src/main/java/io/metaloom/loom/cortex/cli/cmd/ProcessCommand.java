@@ -24,8 +24,8 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 		try {
 			Path folder = Paths.get(path);
 			FilesystemProcessorSetting settings = new FilesystemProcessorSetting();
-//			settings.getProcessorSettings().setPort(getPort());
-//			settings.getProcessorSettings().setHostname(getHostname());
+			settings.getProcessorSettings().setPort(getPort());
+			settings.getProcessorSettings().setHostname(getHostname());
 			// TODO configure thumbnail dir
 			settings.getThumbnailSettings().setThumbnailPath("/opt/metaloom/loom-thumbnaildir");
 			MediaProcessor processor = new DefaultMediaProcessorImpl(settings);

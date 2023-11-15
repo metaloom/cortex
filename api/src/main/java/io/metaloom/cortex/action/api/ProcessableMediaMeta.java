@@ -16,8 +16,6 @@ public enum ProcessableMediaMeta {
 
 	FACES("faces", 1, false, List.class),
 
-	FACE_CLUSTERS("face_clusters", 1, false, null),
-
 	CHUNK_HASH("chunk_hash", 1, true, String.class),
 
 	THUMBNAIL_FLAGS("thumbnail_flags", 1, true, String.class),
