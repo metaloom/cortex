@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -22,8 +21,8 @@ import io.metaloom.video4j.utils.ImageUtils;
 
 public class FeatureSceneDetector extends AbstractSceneDetector {
 
-	private final double FEATURE_THRESHOLD = 1200;
-	private final int MAX_CORNORS = 10;
+	private final double FEATURE_THRESHOLD = 2000;
+	private final int MAX_CORNORS = 100;
 
 	public FeatureSceneDetector() {
 	}
@@ -35,25 +34,30 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 		detect(video, (img, frame) -> {
 
 			MatOfPoint corners = new MatOfPoint();
-			double qualityLevel = 0.10f;
+			double qualityLevel = 0.30f;
 			double minDistance = 10f;
 			Mat mask = MatProvider.mat();
-			int blockSize = 5;
+			int blockSize = 15;
 			int gradientSize = 3;
-			boolean useHarrisDetector = true;
+			boolean useHarrisDetector = false;
 			double k = 0.04f;
 			// Mat greyImage = CVUtils.toGreyScale(frame.mat());
 			Mat colorFrame = frame.mat();
-			Mat cannyFrame = CVUtils.canny(colorFrame, 60f, 60f);
-			Mat greyFrame = MatProvider.mat();
-			Mat colorCannyFrame = CVUtils.toBGR(cannyFrame);
+			Mat grayFrame = CVUtils.toGrayScale(colorFrame);
+			// CVUtils.increaseContrast(grayFrame, grayFrame, 0.05f, 0.5f);
 
-			Core.addWeighted(colorCannyFrame, 0.8f, colorFrame, 1f, 1f, greyFrame);
+			// Mat cannyFrame = CVUtils.canny(greyFrame, 60f, 60f);
+			Mat cannyFrame = MatProvider.mat();
+			Imgproc.Canny(grayFrame, cannyFrame, 50f, 70f);
+			Imgproc.dilate(cannyFrame, cannyFrame, MatProvider.mat());
+
+			// Mat greyFrame = MatProvider.mat();
+			// Mat colorCannyFrame = CVUtils.toBGR(cannyFrame);
+			// Core.addWeighted(colorCannyFrame, 0.25f, colorFrame, 1.f, 1.0f, grayFrame);
 
 			Graphics g = img.getGraphics();
-			g.drawImage(ImageUtils.matToBufferedImage(greyFrame), 1, 1, null);
-			greyFrame = CVUtils.toGreyScale(greyFrame);
-			Imgproc.goodFeaturesToTrack(greyFrame, corners, MAX_CORNORS, qualityLevel, minDistance, mask, blockSize, gradientSize, useHarrisDetector,
+			g.drawImage(ImageUtils.matToBufferedImage(cannyFrame), 1, 1, null);
+			Imgproc.goodFeaturesToTrack(cannyFrame, corners, MAX_CORNORS, qualityLevel, minDistance, mask, blockSize, gradientSize, useHarrisDetector,
 				k);
 			// System.out.println("Got: " + corners.toList().size());
 
@@ -64,7 +68,7 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 			}
 
 			EuclideanDistance d = new EuclideanDistance();
-			double[] frameAVector = toVector(corners, MAX_CORNORS*2);
+			double[] frameAVector = toVector(corners, MAX_CORNORS * 2);
 			if (prevVector.get() == null) {
 				prevVector.set(new DetectionVector(frameAVector));
 			}
@@ -73,7 +77,7 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 			double delta = d.compute(frameAVector, prevVector.get().vector);
 			System.out.println(video.currentFrame() + " Delta: " + String.format("%.2f", delta));
 			prevVector.set(new DetectionVector(frameAVector));
-			return new DetectionResult(delta > FEATURE_THRESHOLD, delta, FEATURE_THRESHOLD);
+			return new DetectionResult( delta, FEATURE_THRESHOLD);
 		});
 
 	}
@@ -83,7 +87,7 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 	}
 
 	private double[] toVector(MatOfPoint corners, int dim) {
-		DoubleStream stream = corners.toList().stream().sorted((p1,p2) -> {
+		DoubleStream stream = corners.toList().stream().sorted((p1, p2) -> {
 			return Double.compare(p1.x, p2.x);
 		}).mapMultiToDouble((p, consumer) -> {
 			consumer.accept(p.x);
@@ -105,29 +109,5 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 		}
 		System.out.println();
 	}
-
-	// CVUtils.harris(frame);
-	// CVUtils.toGreyScale(frame);
-	// CVUtils.normalize(frame.mat(), frame.mat(), 0, 30);
-	// CVUtils.canny(frame, 30f, 30f);
-
-	// Mat hMat = CVUtils.houghLines(frame.mat(), 1, Math.PI / 180, 60, 0f, 0f);
-	// Mat hMat2 = CVUtils.houghLinesP(frame.mat(), 1, Math.PI / 180, 50, 50f, 0f);
-	// frame.setMat(hMat);
-	// CVUtils.houghLines(frame, 1, Math.PI / 180, 50, 50f, 10f);
-	// frame.setMat(CVUtils.blur(frame.mat(), new Dimension(50,50), new Point(-1,-1)));
-	// CVUtils.toGreyScale(frame);
-	// Imgproc.resize(frame.mat(), frame.mat(), new Size(256, 256), 0, 0, Imgproc.INTER_LINEAR);
-	// double delta = diff(previousFrame, frame);
-	// double delta =0f;
-
-	// SparsePyrLKOpticalFlow flow = SparsePyrLKOpticalFlow.create();
-	// if (previousFrame != null) {
-	// Mat prevPts = MatProvider.mat();
-	// Mat nextPts = MatProvider.mat();
-	// Mat status = null;
-	// Mat err = null;
-	// flow.calc(previousFrame.mat(), frame.mat(), prevPts, nextPts, status, err);
-	// }
 
 }

@@ -31,14 +31,14 @@ public class HistogramSceneDetector extends AbstractSceneDetector {
 			Mat dst = MatProvider.mat();
 			Core.addWeighted(cannyFrame, 0.6f, colorFrame, 0.2f, 1f, dst);
 			frame.setMat(dst);
-			double delta = diff2(frame, prevFrame.get());
+			double delta = diff(frame, prevFrame.get());
 			prevFrame.set(frame);
-			return new DetectionResult(delta > HIST_THRESHOLD, delta, HIST_THRESHOLD);
+			return new DetectionResult(delta, HIST_THRESHOLD);
 		});
 
 	}
 
-	private double diff2(VideoFrame previousFrame, VideoFrame frame) {
+	private double diff(VideoFrame previousFrame, VideoFrame frame) {
 		// Mat hsvFrameA = MatProvider.mat();
 		// Mat hsvFrameB = MatProvider.mat();
 		// Imgproc.cvtColor(previousFrame.mat(), hsvFrameA, Imgproc.COLOR_BGR2HSV);
