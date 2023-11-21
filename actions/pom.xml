@@ -19,6 +19,7 @@
         <module>fingerprint</module>
         <module>facedetect</module>
         <module>scene-detection</module>
+        <module>ocr</module>
         <module>tika</module>
     </modules>
 

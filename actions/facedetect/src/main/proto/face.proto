@@ -18,13 +18,19 @@ message FaceData {
   repeated FaceEntry faces = 3;
 }
 
+message FaceAttribute {
+  string key = 1;
+  string value = 2;
+}
+
 message FaceEntry {
   int32 startX = 1;
   int32 startY = 2;
   int32 width  = 3;
   int32 height = 4;
   string label = 5;
-  repeated float embedding = 6;
+  repeated float embedding = 6 [packed=true];
+  repeated FaceAttribute attribute = 7;
   
 }
 
