@@ -18,7 +18,7 @@ import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.Testdata;
-import io.metaloom.video.facedetect.Face;
+import io.metaloom.video.facedetect.face.Face;
 
 public class FacedetectActionTest extends AbstractWorkerTest {
 

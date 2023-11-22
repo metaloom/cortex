@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Point;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.video.facedetect.Face;
-import io.metaloom.video4j.proto.FaceEntry;
+import io.metaloom.video.facedetect.face.Face;
 
 public class FaceAssert extends AbstractAssert<FaceAssert, Face> {
 
@@ -27,26 +25,11 @@ public class FaceAssert extends AbstractAssert<FaceAssert, Face> {
 		return this;
 	}
 
-	public FaceAssert matches(FaceEntry entry) {
-		assertEquals(entry.getStartX(), actual.box().x);
-		assertEquals(entry.getStartY(), actual.box().y);
-
-		assertEquals(entry.getWidth(), actual.box().width);
-		assertEquals(entry.getHeight(), actual.box().height);
-
-		assertEquals(entry.getLabel(), actual.label());
-
-		Float[] readEmbedding = entry.getEmbeddingList().toArray(new Float[entry.getEmbeddingCount()]);
-		float[] readEmbeddingF = ArrayUtils.toPrimitive(readEmbedding);
-		assertArrayEquals(readEmbeddingF, actual.getEmbedding());
-		return this;
-	}
-
 	public FaceAssert matches(Face face) {
-		assertEquals(face.box().x, actual.box().x);
-		assertEquals(face.box().y, actual.box().y);
-		assertEquals(face.box().getWidth(), actual.box().width);
-		assertEquals(face.box().getHeight(), actual.box().height);
+		assertEquals(face.box().getStartX(), actual.box().getStartX());
+		assertEquals(face.box().getStartY(), actual.box().getStartY());
+		assertEquals(face.box().getWidth(), actual.box().getWidth());
+		assertEquals(face.box().getHeight(), actual.box().getHeight());
 		assertEquals(face.label(), actual.label());
 		assertArrayEquals(face.getEmbedding(), actual.getEmbedding());
 		assertEquals(face.getLandmarks().size(), actual.getLandmarks().size());

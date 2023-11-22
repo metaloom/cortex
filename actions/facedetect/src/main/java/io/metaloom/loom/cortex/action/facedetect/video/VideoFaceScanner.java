@@ -8,10 +8,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.video.facedetect.Face;
 import io.metaloom.video.facedetect.FaceVideoFrame;
 import io.metaloom.video.facedetect.FacedetectorUtils;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
+import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;

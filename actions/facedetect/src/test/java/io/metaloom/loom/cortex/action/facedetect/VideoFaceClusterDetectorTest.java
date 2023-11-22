@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.loom.cortex.action.facedetect.video.VideoFaceScanner;
-import io.metaloom.video.facedetect.Face;
+import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 import io.metaloom.video4j.utils.SimpleImageViewer;
