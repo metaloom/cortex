@@ -6,11 +6,11 @@ import static io.metaloom.cortex.api.action.ActionResult.SKIP_NEXT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.ProcessorSettings;
 import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class SceneDetectionAction extends AbstractFilesystemAction {

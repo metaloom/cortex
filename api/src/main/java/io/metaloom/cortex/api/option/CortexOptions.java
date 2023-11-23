@@ -6,7 +6,9 @@ public class CortexOptions {
 
 	private String loomHost;
 	private int loomPort;
-	private ActionOptions actions;
+
+	private ActionOptions actions = new ActionOptions();
+	private ProcessorSettings processorSettings = new ProcessorSettings();
 
 	public CortexOptions() {
 	}
@@ -25,5 +27,13 @@ public class CortexOptions {
 
 	public void setLoomPort(int loomPort) {
 		this.loomPort = loomPort;
+	}
+
+	public ActionOptions getActions() {
+		return actions;
+	}
+
+	public ProcessorSettings getProcessorSettings() {
+		return processorSettings;
 	}
 }

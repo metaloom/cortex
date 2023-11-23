@@ -8,6 +8,8 @@ public class ActionOptions {
 
 	private final ThumbnailOptions thumbnail = new ThumbnailOptions();
 
+	private ConsistencyOptions consistency = new ConsistencyOptions();
+
 	private final HashOptions hash = new HashOptions();
 
 	public FacedetectOptions getFacedetection() {
@@ -24,6 +26,10 @@ public class ActionOptions {
 
 	public HashOptions getHash() {
 		return hash;
+	}
+
+	public ConsistencyOptions getConsistency() {
+		return consistency;
 	}
 
 }

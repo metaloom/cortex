@@ -63,6 +63,12 @@
             <artifactId>dagger</artifactId>
         </dependency>
 
+        <!--YAML-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.mockito</groupId>

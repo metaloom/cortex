@@ -1,4 +1,4 @@
-package io.metaloom.cortex.action.common;
+package io.metaloom.cortex.common.action;
 
 import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 import static io.metaloom.utils.ConvertUtils.toHumanTime;

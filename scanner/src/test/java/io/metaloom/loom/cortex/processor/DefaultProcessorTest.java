@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
-import io.metaloom.cortex.scanner.FilesystemProcessorSetting;
 import io.metaloom.loom.test.LocalTestData;
 
 public class DefaultProcessorTest {
@@ -20,9 +20,9 @@ public class DefaultProcessorTest {
 
 	@Test
 	public void testProcessor() throws IOException {
-		FilesystemProcessorSetting settings = new FilesystemProcessorSetting();
-		settings.getThumbnailSettings().setThumbnailPath(LocalTestData.thumbnailDir().toString());
-		MediaProcessor processor = new DefaultMediaProcessorImpl(settings);
+		CortexOptions options = new CortexOptions();
+		options.getActions().getThumbnail().setThumbnailPath(LocalTestData.thumbnailDir().toString());
+		MediaProcessor processor = new DefaultMediaProcessorImpl(options);
 		processor.process(LocalTestData.localDir());
 	}
 }

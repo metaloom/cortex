@@ -5,12 +5,12 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.ProcessorSettings;
 import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.api.option.action.ThumbnailOptions;
+import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
@@ -124,7 +124,7 @@ public class ThumbnailAction extends AbstractFilesystemAction {
 	 * @return
 	 */
 	private boolean hasThumbnail(LoomMedia media) {
-		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
+		File outputFile = new File(options().getThumbnail().getThumbnailPath(), media.getSHA512() + ".jpg");
 		return outputFile.exists();
 	}
 

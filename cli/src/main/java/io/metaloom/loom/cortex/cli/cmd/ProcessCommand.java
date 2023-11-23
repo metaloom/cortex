@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
-import io.metaloom.cortex.scanner.FilesystemProcessorSetting;
 import picocli.CommandLine.Command;
 
 @Command(name = "process", aliases = { "p" }, description = "Process command")
@@ -23,12 +22,12 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 	public int analyze(String path) {
 		try {
 			Path folder = Paths.get(path);
-			FilesystemProcessorSetting settings = new FilesystemProcessorSetting();
-			settings.getProcessorSettings().setPort(getPort());
-			settings.getProcessorSettings().setHostname(getHostname());
-			// TODO configure thumbnail dir
-			settings.getThumbnailSettings().setThumbnailPath("/opt/metaloom/loom-thumbnaildir");
-			MediaProcessor processor = new DefaultMediaProcessorImpl(settings);
+//			ActionOptions options = new ActionOptions();
+//			options.getProcessorSettings().setPort(getPort());
+//			options.getProcessorSettings().setHostname(getHostname());
+//			// TODO configure thumbnail dir
+//			options.getThumbnailSettings().setThumbnailPath("/opt/metaloom/loom-thumbnaildir");
+			MediaProcessor processor = new DefaultMediaProcessorImpl(null);
 			processor.process(folder);
 			return OK.code();
 		} catch (Exception e) {
