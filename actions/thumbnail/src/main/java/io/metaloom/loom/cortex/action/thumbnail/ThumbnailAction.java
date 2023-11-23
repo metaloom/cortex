@@ -12,6 +12,7 @@ import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.api.option.action.ThumbnailOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -70,12 +71,12 @@ public class ThumbnailAction extends AbstractFilesystemAction {
 			}
 		}
 
-		String sha512 = media.getSHA512();
+		SHA512 sha512 = media.getSHA512();
 		processMedia(sha512, media);
 		return ActionResult.processed(true, start);
 	}
 
-	private void processMedia(String sha512, LoomMedia media) {
+	private void processMedia(SHA512 sha512, LoomMedia media) {
 		long start = System.currentTimeMillis();
 		File outputFile = new File(options().getThumbnail().getThumbnailPath(), media.getSHA512() + ".jpg");
 		String flags = media.getThumbnailFlags();

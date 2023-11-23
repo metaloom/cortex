@@ -10,6 +10,7 @@ import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -55,7 +56,7 @@ public class FingerprintAction extends AbstractFilesystemAction {
 		String fingerprint = media.getFingerprint();
 		String info = "";
 		if (fingerprint == null) {
-			String sha512 = media.getSHA512();
+			SHA512 sha512 = media.getSHA512();
 			try {
 				info = "computed";
 				processMedia(sha512, media);
@@ -76,7 +77,7 @@ public class FingerprintAction extends AbstractFilesystemAction {
 
 	}
 
-	private void processMedia(String sha512, LoomMedia media) throws InterruptedException {
+	private void processMedia(SHA512 sha512, LoomMedia media) throws InterruptedException {
 		long start = System.currentTimeMillis();
 		String fp = media.getFingerprint();
 		boolean isNull = fp != null && fp.equals("NULL");

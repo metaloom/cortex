@@ -11,7 +11,8 @@ import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.Testdata;
-import io.metaloom.utils.hash.SHA512Sum;
+import io.metaloom.utils.hash.SHA256;
+import io.metaloom.utils.hash.SHA512;
 
 public abstract class AbstractMediaTest {
 
@@ -20,7 +21,7 @@ public abstract class AbstractMediaTest {
 	
 	protected Testdata data;
 
-	public static final SHA512Sum HASH = SHA512Sum.fromString(
+	public static final SHA512 HASH = SHA512.fromString(
 		"e7c22b994c59d9cf2b48e549b1e24666636045930d3da7c1acb299d1c3b7f931f94aae41edda2c2b207a36e10f8bcb8d45223e54878f5b316e7ce3b6bc019629");
 
 	@BeforeEach
@@ -53,11 +54,11 @@ public abstract class AbstractMediaTest {
 		return data.sampleVideoChunkHash();
 	}
 
-	public String sampleVideoSHA512() {
+	public SHA512 sampleVideoSHA512() {
 		return data.sampleVideoSHA512();
 	}
 
-	public String sampleVideoSHA256() {
+	public SHA256 sampleVideoSHA256() {
 		return data.sampleVideoSHA256();
 	}
 

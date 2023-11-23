@@ -14,6 +14,7 @@ import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
+import io.metaloom.utils.hash.SHA512;
 
 @Singleton
 public class ChunkHashAction extends AbstractFilesystemAction {
@@ -38,7 +39,7 @@ public class ChunkHashAction extends AbstractFilesystemAction {
 		String info = "";
 		String chunkHash = getChunkHash(media);
 		if (chunkHash == null) {
-			String sha512 = media.getSHA512();
+			SHA512 sha512 = media.getSHA512();
 			AssetResponse entry = client().loadAsset(sha512).sync();
 			if (entry == null) {
 				info = "hashed";

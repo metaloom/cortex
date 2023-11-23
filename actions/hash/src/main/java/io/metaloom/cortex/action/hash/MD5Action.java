@@ -14,6 +14,8 @@ import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
+import io.metaloom.utils.hash.MD5;
+import io.metaloom.utils.hash.SHA512;
 
 @Singleton
 public class MD5Action extends AbstractFilesystemAction {
@@ -35,10 +37,10 @@ public class MD5Action extends AbstractFilesystemAction {
 	@Override
 	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
-		String md5 = getHashMD5(media);
+		MD5 md5 = getHashMD5(media);
 		String info = "";
 		if (md5 == null) {
-			String sha512 = media.getSHA512();
+			SHA512 sha512 = media.getSHA512();
 			AssetResponse asset = client().loadAsset(sha512).sync();
 			if (asset == null) {
 				info = "hashed";
@@ -46,7 +48,7 @@ public class MD5Action extends AbstractFilesystemAction {
 			} else {
 				String dbMD5 = asset.getMd5Sum();
 				if (dbMD5 != null) {
-					writeHashMD5(media, dbMD5);
+					writeHashMD5(media, MD5.fromString(dbMD5));
 					info = "from db";
 				}
 			}
@@ -56,14 +58,14 @@ public class MD5Action extends AbstractFilesystemAction {
 		}
 	}
 
-	private void writeHashMD5(LoomMedia media, String hashSum) {
+	private void writeHashMD5(LoomMedia media, MD5 hashSum) {
 		media.setMD5(hashSum);
 	}
 
-	private String getHashMD5(LoomMedia media) {
-		String md5sum = media.getMD5();
+	private MD5 getHashMD5(LoomMedia media) {
+		MD5 md5sum = media.getMD5();
 		if (md5sum == null) {
-			md5sum = HashUtils.computeMD5(media.path());
+			md5sum = MD5.fromString(HashUtils.computeMD5(media.path()));
 			media.setMD5(md5sum);
 		}
 		return md5sum;

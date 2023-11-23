@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.media;
 
-import static io.metaloom.cortex.api.action.media.action.HashMedia.*;
+import static io.metaloom.cortex.api.action.media.action.HashMedia.MD5_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.action.media.action.HashMedia;
+import io.metaloom.utils.hash.MD5;
+import io.metaloom.utils.hash.SHA512;
 
 public class HashMediaTest extends AbstractMediaTest {
 
@@ -18,7 +20,7 @@ public class HashMediaTest extends AbstractMediaTest {
 	public void testSHA512() throws IOException {
 		LoomMedia media = sampleVideoMedia();
 		assertNotNull(media.getSHA512(), "The sha512sum should always be computed");
-		media.put(HashMedia.SHA_512_KEY, "abcd");
+		media.put(HashMedia.SHA_512_KEY, SHA512.fromString("abcd"));
 		assertEquals("abcd", media.get(HashMedia.SHA_512_KEY));
 		assertEquals(1, media.listXAttr().size());
 
@@ -30,9 +32,9 @@ public class HashMediaTest extends AbstractMediaTest {
 	public void testMD5() throws IOException {
 		LoomMedia media = sampleVideoMedia();
 		assertNull(media.getMD5());
-		media.put(MD5_KEY, "abcd");
+		media.put(MD5_KEY, MD5.fromString("abcd"));
 		assertEquals("abcd", media.get(MD5_KEY));
-		media.put(MD5_KEY, "dcba");
+		media.put(MD5_KEY, MD5.fromString("dcba"));
 		assertEquals("dcba", media.get(MD5_KEY));
 		assertEquals(1, media.listXAttr().size());
 		assertEquals("dcba", media.getMD5());

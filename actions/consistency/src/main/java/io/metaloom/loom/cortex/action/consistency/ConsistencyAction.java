@@ -12,6 +12,7 @@ import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 import io.metaloom.utils.hash.partial.PartialFile;
 
 public class ConsistencyAction extends AbstractFilesystemAction {
@@ -39,7 +40,7 @@ public class ConsistencyAction extends AbstractFilesystemAction {
 			String info = "";
 			Long count = media.getZeroChunkCount();
 			if (count == null) {
-				String sha512 = media.getSHA512();
+				SHA512 sha512 = media.getSHA512();
 				AssetResponse entry = null;
 				if (!isOfflineMode()) {
 					entry = client().loadAsset(sha512).sync();

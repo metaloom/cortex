@@ -10,6 +10,7 @@ import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 
 public class TikaAction extends AbstractFilesystemAction {
 
@@ -38,7 +39,7 @@ public class TikaAction extends AbstractFilesystemAction {
 			return skipped(media, start, "(previously failed)");
 		} else if (flags == null) {
 			String info = "";
-			String sha512 = media.getSHA512();
+			SHA512 sha512 = media.getSHA512();
 			AssetResponse entry = client().loadAsset(sha512).sync();
 			if (entry == null) {
 				return parseMedia(start, media);

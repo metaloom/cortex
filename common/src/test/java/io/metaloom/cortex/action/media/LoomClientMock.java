@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.media;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -16,7 +16,7 @@ public class LoomClientMock {
 		LoomClientRequest<AssetResponse> req = mock(LoomClientRequest.class);
 		AssetResponse response = mock(AssetResponse.class);
 		when(req.sync()).thenReturn(response);
-		when(mock.loadAsset(anyString())).thenReturn(req);
+		when(mock.loadAsset(any())).thenReturn(req);
 		return mock;
 	}
 }

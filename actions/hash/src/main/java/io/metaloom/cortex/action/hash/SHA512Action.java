@@ -15,6 +15,7 @@ import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 
 @Singleton
 public class SHA512Action extends AbstractFilesystemAction {
@@ -36,7 +37,7 @@ public class SHA512Action extends AbstractFilesystemAction {
 	@Override
 	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
-		String hash = media.getSHA512();
+		SHA512 hash = media.getSHA512();
 		AssetResponse asset = client().loadAsset(hash).sync();
 		String info = "";
 		if (asset == null) {

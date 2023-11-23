@@ -20,6 +20,7 @@ import io.metaloom.fs.FileState;
 import io.metaloom.fs.linux.LinuxFilesystemScanner;
 import io.metaloom.fs.linux.impl.LinuxFilesystemScannerImpl;
 import io.metaloom.utils.fs.FilterHelper;
+import io.metaloom.utils.hash.SHA512;
 
 public class FilesystemProcessorImpl implements FilesystemProcessor {
 
@@ -70,7 +71,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				if (processed) {
 					System.out.println();
 				}
-				String hashsum = media.getSHA512();
+				SHA512 hashsum = media.getSHA512();
 				log.trace("Adding " + hashsum);
 				if (current % 1000 == 0) {
 					log.info("Count: " + current);

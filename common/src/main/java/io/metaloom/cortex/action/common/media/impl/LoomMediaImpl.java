@@ -19,6 +19,7 @@ import io.metaloom.cortex.api.action.media.LoomMetaKey;
 import io.metaloom.utils.fs.FilterHelper;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.HashUtils;
+import io.metaloom.utils.hash.SHA512;
 
 public class LoomMediaImpl extends AbstractFilesystemMedia {
 
@@ -130,10 +131,10 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	}
 
 	@Override
-	public String getSHA512() {
-		String hashSum512 = get(SHA_512_KEY);
+	public SHA512 getSHA512() {
+		SHA512 hashSum512 = get(SHA_512_KEY);
 		if (hashSum512 == null) {
-			hashSum512 = HashUtils.computeSHA512(file());
+			hashSum512 = SHA512.fromString(HashUtils.computeSHA512(file()));
 			put(SHA_512_KEY, hashSum512);
 		}
 		return hashSum512;

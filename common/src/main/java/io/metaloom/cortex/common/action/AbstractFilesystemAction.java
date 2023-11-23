@@ -43,7 +43,7 @@ public abstract class AbstractFilesystemAction implements FilesystemAction {
 	}
 
 	protected String shortHash(LoomMedia media) {
-		return media.getSHA512().substring(0, 8);
+		return media.getSHA512().toString().substring(0, 8);
 	}
 
 	protected ActionResult completed(LoomMedia media, long start, String msg) {

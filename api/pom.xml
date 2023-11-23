@@ -29,5 +29,9 @@
             <groupId>io.metaloom.loom</groupId>
             <artifactId>loom-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.metaloom.utils</groupId>
+            <artifactId>hash-utils</artifactId>
+        </dependency>
     </dependencies>
 </project>

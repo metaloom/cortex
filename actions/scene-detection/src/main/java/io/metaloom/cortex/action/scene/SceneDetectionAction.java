@@ -12,6 +12,7 @@ import io.metaloom.cortex.api.option.ProcessorSettings;
 import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.utils.hash.SHA512;
 
 public class SceneDetectionAction extends AbstractFilesystemAction {
 
@@ -31,15 +32,13 @@ public class SceneDetectionAction extends AbstractFilesystemAction {
 	@Override
 	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
-		String hash = media.getSHA512();
+		SHA512 hash = media.getSHA512();
 		if (media.isVideo()) {
-			
 			print(media, "DONE", "", start);
 			return ActionResult.processed(CONTINUE_NEXT, start);
 		} else {
 			return ActionResult.processed(SKIP_NEXT, start);
 		}
-
 	}
 
 }

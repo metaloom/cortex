@@ -12,9 +12,9 @@ import io.metaloom.cortex.action.common.bson.BSON;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.action.media.LoomMetaKey;
 import io.metaloom.cortex.api.action.media.param.BSONAttr;
-import io.metaloom.utils.fs.FolderUtils;
 import io.metaloom.utils.fs.XAttrUtils;
-import io.metaloom.utils.hash.SHA512Sum;
+import io.metaloom.utils.hash.HashUtils;
+import io.metaloom.utils.hash.SHA512;
 
 public abstract class AbstractFilesystemMedia implements LoomMedia {
 
@@ -44,7 +44,7 @@ public abstract class AbstractFilesystemMedia implements LoomMedia {
 
 	protected <T> T readLocalStorage(LoomMetaKey<T> metaKey) {
 		try {
-			Path filePath = toFilePath(basePath, SHA512Sum.fromString(getSHA512()));
+			Path filePath = toFilePath(basePath, getSHA512());
 			if (Files.exists(filePath)) {
 				try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
 					return (T) BSON.readValue(fis, metaKey.getValueClazz());
@@ -59,11 +59,11 @@ public abstract class AbstractFilesystemMedia implements LoomMedia {
 
 	protected <T> LoomMedia writeLocalStorage(LoomMetaKey<T> metaKey, T value) {
 		try {
-			Path dirPath = FolderUtils.segmentPath(basePath, SHA512Sum.fromString(getSHA512()));
+			Path dirPath = HashUtils.segmentPath(basePath, getSHA512());
 			if (!Files.exists(dirPath)) {
 				Files.createDirectories(dirPath);
 			}
-			Path filePath = toFilePath(basePath, SHA512Sum.fromString(getSHA512()));
+			Path filePath = toFilePath(basePath, getSHA512());
 
 			try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
 				BSON.writeValue(fos, value);
@@ -74,8 +74,8 @@ public abstract class AbstractFilesystemMedia implements LoomMedia {
 		}
 	}
 
-	private static Path toFilePath(Path basePath, SHA512Sum hash) throws IOException {
-		Path dirPath = FolderUtils.segmentPath(basePath, hash);
+	private static Path toFilePath(Path basePath, SHA512 hash) throws IOException {
+		Path dirPath = HashUtils.segmentPath(basePath, hash);
 		return dirPath.resolve(Paths.get(hash.toString() + "_bson.loom"));
 	}
 

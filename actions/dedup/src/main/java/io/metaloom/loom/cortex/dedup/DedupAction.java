@@ -20,6 +20,7 @@ import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetRequest;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.fs.FileUtils;
+import io.metaloom.utils.hash.SHA512;
 
 @Singleton
 public class DedupAction extends AbstractFilesystemAction {
@@ -43,7 +44,7 @@ public class DedupAction extends AbstractFilesystemAction {
 	@Override
 	public ActionResult process(LoomMedia media) throws IOException {
 		long start = System.currentTimeMillis();
-		String sha512 = media.getSHA512();
+		SHA512 sha512 = media.getSHA512();
 
 		// Lets load the entry for the hash of the file
 		AssetResponse asset = client().loadAsset(sha512).sync();
@@ -62,7 +63,7 @@ public class DedupAction extends AbstractFilesystemAction {
 				return done(media, start, "same file");
 			} else {
 				AssetRequest newAsset = AssetRequest.newBuilder()
-					.setSha512Sum(sha512)
+					.setSha512Sum(sha512.toString())
 					.setFilename(media.absolutePath())
 					.build();
 				// client().storeAsset(sha512)
@@ -72,7 +73,7 @@ public class DedupAction extends AbstractFilesystemAction {
 				}
 
 				// The hash matches the local file
-				if (sha512.equalsIgnoreCase(foundMedia.getSHA512())) {
+				if (sha512.equals(foundMedia.getSHA512())) {
 					String pathA = media.absolutePath();
 					String pathB = foundMedia.absolutePath();
 

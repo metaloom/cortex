@@ -47,6 +47,13 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 		return this;
 	}
 
+	public <T> ProcessableMediaAssert hasXAttr(LoomMetaKey<T> meta, T value) {
+		T actualValue = actual.get(meta);
+		assertNotNull(actualValue, "Did not find attribute value for " + meta);
+		assertEquals(value, actualValue, "The value for " + meta + " did not match up.");
+		return this;
+	}
+
 	public ProcessableMediaAssert hasXAttr(LoomMetaKey<String> meta, String value) {
 		String actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
