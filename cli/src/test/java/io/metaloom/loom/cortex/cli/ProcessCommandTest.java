@@ -19,7 +19,7 @@ public class ProcessCommandTest {
 	@Test
 	public void testCommand() {
 		String path = LocalTestData.localDir().toString();
-		int code = LoomCortexCLI.execute("p", "analyze", path);
+		int code = CortexCLIMain.execute("p", "analyze", path);
 		assertEquals(0, code, "The command should not have failed");
 	}
 }

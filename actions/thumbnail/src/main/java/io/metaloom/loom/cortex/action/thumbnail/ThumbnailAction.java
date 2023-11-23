@@ -5,17 +5,19 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.action.ThumbnailOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 import io.metaloom.video4j.preview.PreviewGenerator;
 
-public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSettings> {
+public class ThumbnailAction extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(ThumbnailAction.class);
 
@@ -31,11 +33,12 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 		Video4j.init();
 	}
 
-	public ThumbnailAction(LoomGRPCClient client, ProcessorSettings processorSettings, ThumbnailActionSettings settings) {
-		super(client, processorSettings, settings);
-		int tileSize = settings.getTileSize();
-		int cols = settings.getCols();
-		int rows = settings.getRows();
+	public ThumbnailAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+		super(client, processorSettings, options);
+		ThumbnailOptions thumbnailOptions = options.getThumbnail();
+		int tileSize = thumbnailOptions.getTileSize();
+		int cols = thumbnailOptions.getCols();
+		int rows = thumbnailOptions.getRows();
 		this.gen = new PreviewGenerator(tileSize, cols, rows);
 	}
 
@@ -46,7 +49,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 
 	@Override
 	public ActionResult process(LoomMedia media) {
-		if (settings().getThumbnailPath() == null) {
+		if (options().getThumbnail().getThumbnailPath() == null) {
 			throw new RuntimeException("No thumbnail output directory has been configured");
 		}
 		long start = System.currentTimeMillis();
@@ -54,12 +57,12 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 			print(media, "SKIPPED", "(no video)", start);
 			return ActionResult.skipped(true, start);
 		}
-		if (!new File(settings().getThumbnailPath()).exists()) {
+		if (!new File(options().getThumbnail().getThumbnailPath()).exists()) {
 			print(media, "SKIPPED", "(thumbnail dir not found)", start);
 			return ActionResult.skipped(true, start);
 		}
 
-		if (!settings().isProcessIncomplete()) {
+		if (!options().getThumbnail().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
 				print(media, "SKIPPED", "(is incomplete)", start);
@@ -74,7 +77,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 
 	private void processMedia(String sha512, LoomMedia media) {
 		long start = System.currentTimeMillis();
-		File outputFile = new File(settings().getThumbnailPath(), media.getSHA512() + ".jpg");
+		File outputFile = new File(options().getThumbnail().getThumbnailPath(), media.getSHA512() + ".jpg");
 		String flags = media.getThumbnailFlags();
 		boolean isNull = flags != null && flags.equals(NULL_FLAG);
 		boolean isDone = flags != null && flags.equals(DONE_FLAG);
@@ -92,7 +95,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 			return;
 		}
 
-		if (!settings().isRetryFailed() && isNull) {
+		if (!options().getThumbnail().isRetryFailed() && isNull) {
 			print(media, "FAILED", "(previously failed)", start);
 			return;
 		}
@@ -121,7 +124,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 	 * @return
 	 */
 	private boolean hasThumbnail(LoomMedia media) {
-		File outputFile = new File(settings().getThumbnailPath(), media.getSHA512() + ".jpg");
+		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
 		return outputFile.exists();
 	}
 

@@ -1,16 +1,16 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.cortex.action.api.media.action.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
 import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class ConsistencyActionTest extends AbstractMediaTest {

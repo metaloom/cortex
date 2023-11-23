@@ -1,18 +1,25 @@
 package io.metaloom.cortex.action.media;
 
-import static io.metaloom.cortex.action.api.media.action.FacedetectionMedia.FACEDETECTION_PARAMS_KEY;
+import static io.metaloom.cortex.api.action.media.action.FacedetectionMedia.FACEDETECTION_PARAMS_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.api.media.param.FaceDetectionParameters;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.media.param.FaceDetectionParameters;
 
 public class FacedetectMediaTest extends AbstractMediaTest {
+
+	@BeforeEach
+	public void setup() throws IOException {
+		//FileUtils.deleteDirectory(BASE_DIR.toFile());
+	}
 
 	@Test
 	public void testFaceCount() throws IOException {
@@ -45,6 +52,23 @@ public class FacedetectMediaTest extends AbstractMediaTest {
 
 		LoomMedia media3 = media(media.path());
 		assertEquals(42, media3.getFacedetectionParams().getCount());
+	}
+
+	@Test
+	public void testStorage() {
+
+	}
+
+	@Test
+	public void testWriteRead() throws IOException {
+//		FaceData faceData = new FaceData();
+//		faceData.getEntries().add(new FaceImpl().setLabel("blub"));
+//		Path path = STORAGE.store(HASH, faceData);
+//		assertTrue(Files.exists(path));
+//
+//		FaceData readData = STORAGE.load(HASH);
+//		assertNotNull(readData);
+//		assertEquals("blub", readData.getEntries().get(0).label());
 	}
 
 }

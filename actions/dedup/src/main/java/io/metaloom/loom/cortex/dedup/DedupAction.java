@@ -4,28 +4,34 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.media.LoomMediaImpl;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetRequest;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.fs.FileUtils;
 
-public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
+@Singleton
+public class DedupAction extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(DedupAction.class);
 
 	public static final String NAME = "deduplicate";
 
-	public DedupAction(LoomGRPCClient client, ProcessorSettings processorSettings, DedupActionSettings settings)
+	@Inject
+	public DedupAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options)
 		throws FileNotFoundException {
-		super(client, processorSettings, settings);
+		super(client, processorSettings, options);
 
 	}
 

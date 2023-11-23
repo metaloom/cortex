@@ -42,6 +42,12 @@
             <artifactId>picocli-codegen</artifactId>
         </dependency>
 
+        <!-- DI -->
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+        </dependency>
+
         <!--Test-->
         <dependency>
             <groupId>org.testcontainers</groupId>

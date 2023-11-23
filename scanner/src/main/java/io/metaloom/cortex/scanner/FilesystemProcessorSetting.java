@@ -1,67 +1,67 @@
 package io.metaloom.cortex.scanner;
 
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
-import io.metaloom.cortex.action.fp.FingerprintActionSettings;
-import io.metaloom.cortex.action.hash.HashActionSettings;
-import io.metaloom.loom.cortex.action.consistency.ConsistencyActionSettings;
-import io.metaloom.loom.cortex.action.facedetect.FacedetectActionSettings;
-import io.metaloom.loom.cortex.action.thumbnail.ThumbnailActionSettings;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ConsistencyOptions;
+import io.metaloom.cortex.api.option.action.FacedetectOptions;
+import io.metaloom.cortex.api.option.action.FingerprintOptions;
+import io.metaloom.cortex.api.option.action.HashOptions;
+import io.metaloom.cortex.api.option.action.ThumbnailOptions;
 
 public class FilesystemProcessorSetting {
 
 	private ProcessorSettings processorSettings = new ProcessorSettings();
 
-	private ThumbnailActionSettings thumbnailSettings = new ThumbnailActionSettings();
+	private ThumbnailOptions thumbnailSettings = new ThumbnailOptions();
 
-	private HashActionSettings hashSettings = new HashActionSettings();
+	private HashOptions hashSettings = new HashOptions();
 
-	private ConsistencyActionSettings consistencySettings = new ConsistencyActionSettings();
+	private ConsistencyOptions consistencySettings = new ConsistencyOptions();
 
-	private FingerprintActionSettings fingerprintActionSettings = new FingerprintActionSettings();
+	private FingerprintOptions fingerprintActionSettings = new FingerprintOptions();
 
-	private FacedetectActionSettings facedetectActionSettings = new FacedetectActionSettings();
+	private FacedetectOptions facedetectActionSettings = new FacedetectOptions();
 
-	public HashActionSettings getHashSettings() {
+	public HashOptions getHashSettings() {
 		return hashSettings;
 	}
 
-	public FilesystemProcessorSetting setHashSettings(HashActionSettings hashSettings) {
+	public FilesystemProcessorSetting setHashSettings(HashOptions hashSettings) {
 		this.hashSettings = hashSettings;
 		return this;
 	}
 
-	public ConsistencyActionSettings getConsistencySettings() {
+	public ConsistencyOptions getConsistencySettings() {
 		return consistencySettings;
 	}
 
-	public FilesystemProcessorSetting setConsistencySettings(ConsistencyActionSettings consistencySettings) {
+	public FilesystemProcessorSetting setConsistencySettings(ConsistencyOptions consistencySettings) {
 		this.consistencySettings = consistencySettings;
 		return this;
 	}
 
-	public FacedetectActionSettings getFacedetectActionSettings() {
+	public FacedetectOptions getFacedetectActionSettings() {
 		return facedetectActionSettings;
 	}
 
-	public FilesystemProcessorSetting setFacedetectActionSettings(FacedetectActionSettings facedetectActionSettings) {
+	public FilesystemProcessorSetting setFacedetectActionSettings(FacedetectOptions facedetectActionSettings) {
 		this.facedetectActionSettings = facedetectActionSettings;
 		return this;
 	}
 
-	public FingerprintActionSettings getFingerprintActionSettings() {
+	public FingerprintOptions getFingerprintActionSettings() {
 		return fingerprintActionSettings;
 	}
 
-	public FilesystemProcessorSetting setFingerprintActionSettings(FingerprintActionSettings fingerprintActionSettings) {
+	public FilesystemProcessorSetting setFingerprintActionSettings(FingerprintOptions fingerprintActionSettings) {
 		this.fingerprintActionSettings = fingerprintActionSettings;
 		return this;
 	}
 
-	public ThumbnailActionSettings getThumbnailSettings() {
+	public ThumbnailOptions getThumbnailSettings() {
 		return thumbnailSettings;
 	}
 
-	public FilesystemProcessorSetting setThumbnailSettings(ThumbnailActionSettings thumbnailSettings) {
+	public FilesystemProcessorSetting setThumbnailSettings(ThumbnailOptions thumbnailSettings) {
 		this.thumbnailSettings = thumbnailSettings;
 		return this;
 	}

@@ -1,14 +1,14 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.media.action.ChunkMedia.CHUNK_HASH_KEY;
+import static io.metaloom.cortex.api.action.media.action.ChunkMedia.CHUNK_HASH_KEY;
 import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class ChunkHashActionTest extends AbstractChunkActionTest<ChunkHashAction> {

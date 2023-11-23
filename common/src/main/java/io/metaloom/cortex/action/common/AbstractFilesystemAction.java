@@ -1,28 +1,28 @@
 package io.metaloom.cortex.action.common;
 
-import static io.metaloom.cortex.action.api.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 import static io.metaloom.utils.ConvertUtils.toHumanTime;
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.FilesystemAction;
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.api.setting.ActionSettings;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.FilesystemAction;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
-public abstract class AbstractFilesystemAction<T extends ActionSettings> implements FilesystemAction {
+public abstract class AbstractFilesystemAction implements FilesystemAction {
 
 	private long current;
 	private long total;
 
 	private final LoomGRPCClient client;
-	private final T settings;
+	private final ActionOptions options;
 	private final ProcessorSettings processorSettings;
 
-	public AbstractFilesystemAction(LoomGRPCClient client, ProcessorSettings processorSettings, T settings) {
+	public AbstractFilesystemAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
 		this.client = client;
-		this.settings = settings;
+		this.options = options;
 		this.processorSettings = processorSettings;
 	}
 
@@ -34,8 +34,8 @@ public abstract class AbstractFilesystemAction<T extends ActionSettings> impleme
 		return client() == null;
 	}
 
-	public T settings() {
-		return settings;
+	public ActionOptions options() {
+		return options;
 	}
 
 	public ProcessorSettings processorSettings() {

@@ -3,10 +3,11 @@ package io.metaloom.cortex.action.fp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video4j.Video4j;
@@ -16,7 +17,7 @@ import io.metaloom.video4j.fingerprint.Fingerprint;
 import io.metaloom.video4j.fingerprint.v2.MultiSectorVideoFingerprinter;
 import io.metaloom.video4j.fingerprint.v2.impl.MultiSectorVideoFingerprinterImpl;
 
-public class FingerprintAction extends AbstractFilesystemAction<FingerprintActionSettings> {
+public class FingerprintAction extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(FingerprintAction.class);
 
@@ -28,8 +29,8 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 		Video4j.init();
 	}
 
-	public FingerprintAction(LoomGRPCClient client, ProcessorSettings processorSettings, FingerprintActionSettings settings) {
-		super(client, processorSettings, settings);
+	public FingerprintAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+		super(client, processorSettings, options);
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 			print(media, "SKIPPED", "(no video)", start);
 			return ActionResult.skipped(true, start);
 		}
-		if (!settings().isProcessIncomplete()) {
+		if (!options().getFingerprint().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
 				print(media, "SKIPPED", "(is incomplete)", start);
@@ -80,7 +81,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 		String fp = media.getFingerprint();
 		boolean isNull = fp != null && fp.equals("NULL");
 		boolean isCorrect = fp != null && fp.length() == 66;
-		if (!settings().isRetryFailed() && (isNull || isCorrect)) {
+		if (!options().getFingerprint().isRetryFailed() && (isNull || isCorrect)) {
 			print(media, "DONE", "", start);
 		} else {
 			AssetResponse asset = null;

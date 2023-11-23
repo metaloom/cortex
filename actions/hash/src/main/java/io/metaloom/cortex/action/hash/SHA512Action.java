@@ -1,23 +1,29 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 
-public class SHA512Action extends AbstractFilesystemAction<HashActionSettings> {
+@Singleton
+public class SHA512Action extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
-	public SHA512Action(LoomGRPCClient client, ProcessorSettings processorSettings, HashActionSettings settings) {
-		super(client, processorSettings, settings);
+	@Inject
+	public SHA512Action(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+		super(client, processorSettings, options);
 	}
 
 	private static final String NAME = "sha512-hash";

@@ -2,7 +2,7 @@ package io.metaloom.loom.cortex.cli.cmd;
 
 import static io.metaloom.loom.cortex.cli.ExitCode.OK;
 
-import io.metaloom.loom.cortex.cli.LoomCortexCLI;
+import io.metaloom.loom.cortex.cli.CortexCLI;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.ParentCommand;
@@ -15,7 +15,7 @@ public class AbstractLoomWorkerCommand implements LoomWorkerCommand {
 	CommandSpec spec;
 
 	@ParentCommand
-	private LoomCortexCLI parent;
+	private CortexCLI parent;
 
 	@Override
 	public Integer call() {

@@ -1,6 +1,6 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.action.api.media.action.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
 import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.FileNotFoundException;
@@ -9,11 +9,13 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.action.FacedetectOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class FacedetectActionTest extends AbstractMediaTest {
@@ -46,7 +48,8 @@ public class FacedetectActionTest extends AbstractMediaTest {
 
 	public FacedetectAction mockAction() throws FileNotFoundException {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new FacedetectAction(client, new ProcessorSettings(),
-			new FacedetectActionSettings().setMinFaceHeightFactor(0.05f).setVideoScaleSize(512));
+		ActionOptions options = new ActionOptions();
+		options.getFacedetection().setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
+		return new FacedetectAction(client, new ProcessorSettings(), options);
 	}
 }

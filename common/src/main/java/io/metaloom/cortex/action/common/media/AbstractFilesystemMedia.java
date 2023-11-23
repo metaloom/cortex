@@ -8,10 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.api.media.LoomMetaKey;
-import io.metaloom.cortex.action.api.media.param.BSONAttr;
 import io.metaloom.cortex.action.common.bson.BSON;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.media.LoomMetaKey;
+import io.metaloom.cortex.api.action.media.param.BSONAttr;
 import io.metaloom.utils.fs.FolderUtils;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.SHA512Sum;

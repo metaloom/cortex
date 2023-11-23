@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.api.media.action.HashMedia;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.media.action.HashMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class SHA256ActionTest extends AbstractChunkActionTest<SHA256Action> {

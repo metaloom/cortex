@@ -1,24 +1,25 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.cortex.action.api.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.partial.PartialFile;
 
-public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActionSettings> {
+public class ConsistencyAction extends AbstractFilesystemAction {
 
 	private static final String NAME = "consistency";
 
-	public ConsistencyAction(LoomGRPCClient client, ProcessorSettings processorSettings, ConsistencyActionSettings settings) {
-		super(client, processorSettings, settings);
+	public ConsistencyAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+		super(client, processorSettings, options);
 	}
 
 	@Override

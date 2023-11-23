@@ -1,24 +1,30 @@
 package io.metaloom.cortex.action.hash;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 
-public class ChunkHashAction extends AbstractFilesystemAction<HashActionSettings> {
+@Singleton
+public class ChunkHashAction extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(ChunkHashAction.class);
 
 	private static final String NAME = "chunk-hash";
 
-	public ChunkHashAction(LoomGRPCClient client, ProcessorSettings processorSettings, HashActionSettings settings) {
-		super(client, processorSettings, settings);
+	@Inject
+	public ChunkHashAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+		super(client, processorSettings, options);
 	}
 
 	@Override
@@ -58,6 +64,5 @@ public class ChunkHashAction extends AbstractFilesystemAction<HashActionSettings
 		}
 		return chunkHashSum;
 	}
-
 
 }

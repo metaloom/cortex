@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.media;
 
-import static io.metaloom.cortex.action.api.media.action.HashMedia.*;
+import static io.metaloom.cortex.api.action.media.action.HashMedia.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -9,8 +9,8 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.api.media.action.HashMedia;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.media.action.HashMedia;
 
 public class HashMediaTest extends AbstractMediaTest {
 

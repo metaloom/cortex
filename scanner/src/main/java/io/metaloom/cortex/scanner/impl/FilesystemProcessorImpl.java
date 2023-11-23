@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.FilesystemAction;
-import io.metaloom.cortex.action.api.ResultState;
-import io.metaloom.cortex.action.common.media.LoomMediaImpl;
+import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.FilesystemAction;
+import io.metaloom.cortex.api.action.ResultState;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
 import io.metaloom.fs.FileInfo;
 import io.metaloom.fs.FileState;

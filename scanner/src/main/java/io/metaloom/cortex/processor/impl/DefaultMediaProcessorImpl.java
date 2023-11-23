@@ -8,11 +8,11 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.FilesystemAction;
 import io.metaloom.cortex.action.fp.FingerprintAction;
 import io.metaloom.cortex.action.hash.ChunkHashAction;
 import io.metaloom.cortex.action.hash.SHA256Action;
 import io.metaloom.cortex.action.hash.SHA512Action;
+import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
 import io.metaloom.cortex.scanner.FilesystemProcessorSetting;

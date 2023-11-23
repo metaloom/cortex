@@ -1,6 +1,7 @@
 package io.metaloom.loom.cortex.action.thumbnail;
 
-import static io.metaloom.cortex.action.api.media.LoomMedia.*;
+import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.api.action.media.action.ThumbnailMedia.THUMBNAIL_FLAGS_KEY;
 import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,11 +13,13 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.action.ThumbnailOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class ThumbnailActionTest extends AbstractMediaTest {
@@ -44,6 +47,8 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 
 	public ThumbnailAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new ThumbnailAction(client, new ProcessorSettings(), new ThumbnailActionSettings().setThumbnailPath(thumbnailDir.getAbsolutePath()));
+		ActionOptions options = new ActionOptions();
+		options.getThumbnail().setThumbnailPath(thumbnailDir.getAbsolutePath());
+		return new ThumbnailAction(client, new ProcessorSettings(), options);
 	}
 }

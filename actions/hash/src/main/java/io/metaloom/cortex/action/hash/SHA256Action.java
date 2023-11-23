@@ -1,26 +1,30 @@
 package io.metaloom.cortex.action.hash;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.settings.ProcessorSettings;
+import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.option.ProcessorSettings;
+import io.metaloom.cortex.api.option.action.ActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 
-public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
+@Singleton
+public class SHA256Action extends AbstractFilesystemAction {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
 
-	public static final String SHA256_ATTR_KEY = "sha256sum";
-
 	private static final String NAME = "sha256-hash";
 
-	public SHA256Action(LoomGRPCClient client, ProcessorSettings proocessorSettings, HashActionSettings settings) {
-		super(client, proocessorSettings, settings);
+	@Inject
+	public SHA256Action(LoomGRPCClient client, ProcessorSettings proocessorSettings, ActionOptions options) {
+		super(client, proocessorSettings, options);
 	}
 
 	@Override

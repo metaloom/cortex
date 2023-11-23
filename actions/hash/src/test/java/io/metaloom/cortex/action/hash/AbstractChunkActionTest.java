@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import io.metaloom.cortex.action.api.FilesystemAction;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
+import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public abstract class AbstractChunkActionTest<T extends FilesystemAction> extends AbstractMediaTest {
