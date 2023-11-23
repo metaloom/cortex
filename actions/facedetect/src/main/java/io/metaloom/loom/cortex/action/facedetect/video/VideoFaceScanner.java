@@ -53,7 +53,9 @@ public class VideoFaceScanner {
 		long nWindowFrame = window.frame().number();
 		long nFrameStart = nWindowFrame - windowSize;
 		long nFrameEnd = nWindowFrame + windowSize;
-		System.out.println("Tuning window: " + window.nWindow());
+		if (log.isDebugEnabled()) {
+			log.debug("Tuning window: " + window.nWindow());
+		}
 
 		List<Face> faces = new ArrayList<>();
 		// Backward

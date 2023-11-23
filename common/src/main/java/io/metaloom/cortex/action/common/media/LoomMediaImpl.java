@@ -1,7 +1,5 @@
 package io.metaloom.cortex.action.common.media;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_512;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,21 +11,21 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
+import io.metaloom.cortex.action.api.media.LoomMetaKey;
 import io.metaloom.utils.fs.FilterHelper;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.HashUtils;
 
-public class ProcessableMediaImpl extends AbstractFilesystemMedia {
+public class LoomMediaImpl extends AbstractFilesystemMedia {
 
 	private Path path;
 
 	private Map<String, Object> attrCache = new HashMap<>();
 
-	private Boolean complete;
-
-	public ProcessableMediaImpl(Path path) {
+	public LoomMediaImpl(Path path) {
 		this.path = path;
 	}
 
@@ -44,6 +42,11 @@ public class ProcessableMediaImpl extends AbstractFilesystemMedia {
 	@Override
 	public boolean isVideo() {
 		return FilterHelper.isVideo(path());
+	}
+
+	@Override
+	public boolean isDocument() {
+		return FilterHelper.isDocument(path());
 	}
 
 	@Override
@@ -81,55 +84,58 @@ public class ProcessableMediaImpl extends AbstractFilesystemMedia {
 		return XAttrUtils.listAttr(path());
 	}
 
-	private <T> T readAttr(String attrKey, Class<T> classOfT) {
-		return XAttrUtils.readAttr(path(), attrKey, classOfT);
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T get(LoomMetaKey<T> key) {
+		String fullKey = key.fullKey();
+		T cacheValue = (T) attrCache.get(fullKey);
+		if (cacheValue != null) {
+			return cacheValue;
+		} else {
+			switch (key.type()) {
+			case XATTR:
+				return readXAttr(key);
+			case FS:
+				return readLocalStorage(key);
+			case HEAP:
+				// We already tried the cache. Just return null
+				return null;
+			default:
+				throw new RuntimeException("Invalid persistance type");
+			}
+		}
 	}
 
-	private ProcessableMedia writeAttr(String attrKey, Object value) {
-		XAttrUtils.writeAttr(path(), attrKey, value);
-		attrCache.put(attrKey, value);
+	@Override
+	public <T> LoomMedia put(LoomMetaKey<T> metaKey, T value) {
+		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
+		String fullKey = metaKey.fullKey();
+		switch (metaKey.type()) {
+		case XATTR:
+			writeXAttr(metaKey, value);
+			attrCache.put(fullKey, value);
+			break;
+		case FS:
+			writeLocalStorage(metaKey, value);
+			attrCache.put(fullKey, value);
+			break;
+		case HEAP:
+			attrCache.put(fullKey, value);
+			break;
+		default:
+			throw new RuntimeException("Invalid persistance type");
+		}
 		return this;
 	}
 
 	@Override
-	public String getHash512() {
-		String hashSum512 = get(SHA_512);
+	public String getSHA512() {
+		String hashSum512 = get(SHA_512_KEY);
 		if (hashSum512 == null) {
 			hashSum512 = HashUtils.computeSHA512(file());
-			put(SHA_512, hashSum512);
+			put(SHA_512_KEY, hashSum512);
 		}
 		return hashSum512;
 	}
 
-	@Override
-	public Boolean isComplete() {
-		return complete;
-	}
-
-	@Override
-	public <T> T get(String key, Class<T> classOfT) {
-		return classOfT.cast(attrCache.computeIfAbsent(key, attrKey -> {
-			Object cacheValue = attrCache.get(attrKey);
-			if (cacheValue == null) {
-				return readAttr(key, classOfT);
-			}
-			return null;
-		}));
-	}
-
-	@Override
-	public ProcessableMedia put(String key, Object value, boolean writeToXattr) {
-		Object cacheValue = attrCache.get(key);
-		// No need to do anything if the cache is still valid
-		if (value == null && cacheValue == null || value.equals(cacheValue)) {
-			return this;
-		}
-
-		if (writeToXattr) {
-			writeAttr(key, value);
-		} else {
-			attrCache.put(key, value);
-		}
-		return this;
-	}
 }

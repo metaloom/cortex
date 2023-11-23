@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
-import io.metaloom.cortex.action.common.media.ProcessableMediaImpl;
+import io.metaloom.cortex.action.common.media.LoomMediaImpl;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetRequest;
@@ -35,9 +35,9 @@ public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) throws IOException {
+	public ActionResult process(LoomMedia media) throws IOException {
 		long start = System.currentTimeMillis();
-		String sha512 = media.getHash512();
+		String sha512 = media.getSHA512();
 
 		// Lets load the entry for the hash of the file
 		AssetResponse asset = client().loadAsset(sha512).sync();
@@ -60,13 +60,13 @@ public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
 					.setFilename(media.absolutePath())
 					.build();
 				// client().storeAsset(sha512)
-				ProcessableMedia foundMedia = new ProcessableMediaImpl(dbFile.toPath());
+				LoomMedia foundMedia = new LoomMediaImpl(dbFile.toPath());
 				if (!foundMedia.exists() || !media.exists()) {
 					return done(media, start, "Source or dup not found");
 				}
 
 				// The hash matches the local file
-				if (sha512.equalsIgnoreCase(foundMedia.getHash512())) {
+				if (sha512.equalsIgnoreCase(foundMedia.getSHA512())) {
 					String pathA = media.absolutePath();
 					String pathB = foundMedia.absolutePath();
 
@@ -104,7 +104,7 @@ public class DedupAction extends AbstractFilesystemAction<DedupActionSettings> {
 
 	}
 
-	protected ActionResult moveMedia(ProcessableMedia media, File targetFolder, long start, String msg) {
+	protected ActionResult moveMedia(LoomMedia media, File targetFolder, long start, String msg) {
 		try {
 			File targetFile = FileUtils.autoRotate(media.file(), targetFolder);
 			print(media, "MOVING", "[" + media.path() + "] to [" + targetFolder.getAbsolutePath() + "] " + msg, start);

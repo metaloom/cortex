@@ -1,12 +1,10 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.CHUNK_HASH;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -29,12 +27,12 @@ public class ChunkHashAction extends AbstractFilesystemAction<HashActionSettings
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		String info = "";
 		String chunkHash = getChunkHash(media);
 		if (chunkHash == null) {
-			String sha512 = media.getHash512();
+			String sha512 = media.getSHA512();
 			AssetResponse entry = client().loadAsset(sha512).sync();
 			if (entry == null) {
 				info = "hashed";
@@ -42,7 +40,7 @@ public class ChunkHashAction extends AbstractFilesystemAction<HashActionSettings
 			} else {
 				String dbHash = entry.getChunkHash();
 				if (dbHash != null) {
-					writeChunkHash(media, dbHash);
+					media.setChunkHash(dbHash);
 					info = "from db";
 				}
 			}
@@ -52,17 +50,14 @@ public class ChunkHashAction extends AbstractFilesystemAction<HashActionSettings
 		}
 	}
 
-	private String getChunkHash(ProcessableMedia media) {
-		String chunkHashSum = media.get(CHUNK_HASH);
+	private String getChunkHash(LoomMedia media) {
+		String chunkHashSum = media.getChunkHash();
 		if (chunkHashSum == null) {
 			chunkHashSum = HashUtils.computeChunkHash(media.file());
-			writeChunkHash(media, chunkHashSum);
+			media.setChunkHash(chunkHashSum);
 		}
 		return chunkHashSum;
 	}
 
-	private void writeChunkHash(ProcessableMedia media, String hashSum) {
-		media.put(CHUNK_HASH, hashSum);
-	}
 
 }

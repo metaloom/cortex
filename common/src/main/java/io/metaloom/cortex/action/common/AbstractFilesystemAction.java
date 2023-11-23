@@ -6,7 +6,7 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 
 import io.metaloom.cortex.action.api.ActionResult;
 import io.metaloom.cortex.action.api.FilesystemAction;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.api.setting.ActionSettings;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -42,38 +42,38 @@ public abstract class AbstractFilesystemAction<T extends ActionSettings> impleme
 		return processorSettings;
 	}
 
-	protected String shortHash(ProcessableMedia media) {
-		return media.getHash512().substring(0, 8);
+	protected String shortHash(LoomMedia media) {
+		return media.getSHA512().substring(0, 8);
 	}
 
-	protected ActionResult completed(ProcessableMedia media, long start, String msg) {
+	protected ActionResult completed(LoomMedia media, long start, String msg) {
 		print(media, "COMPLETED", "(" + msg + ")", start);
 		return ActionResult.processed(true, start);
 	}
 
-	protected ActionResult skipped(ProcessableMedia media, long start, String msg) {
+	protected ActionResult skipped(LoomMedia media, long start, String msg) {
 		print(media, "SKIPPED", "(" + msg + ")", start);
 		return ActionResult.skipped(true, start);
 	}
 
-	protected ActionResult failure(ProcessableMedia media, long start, String msg) {
+	protected ActionResult failure(LoomMedia media, long start, String msg) {
 		print(media, "FAILURE", "(" + msg + ")", start);
 		return ActionResult.failed(true, start);
 	}
 
-	protected ActionResult done(ProcessableMedia media, long start, String info) {
+	protected ActionResult done(LoomMedia media, long start, String info) {
 		print(media, "DONE", "(" + info + ")", start);
 		return ActionResult.processed(CONTINUE_NEXT, start);
 	}
 
 	@Override
-	public void error(ProcessableMedia media, String msg) {
+	public void error(LoomMedia media, String msg) {
 		String prefix = prefix(media);
 		System.err.println(prefix + msg);
 	}
 
 	@Override
-	public void print(ProcessableMedia file, String result, String msg, long start) {
+	public void print(LoomMedia file, String result, String msg, long start) {
 		if (result == null) {
 			result = "";
 		}
@@ -84,9 +84,9 @@ public abstract class AbstractFilesystemAction<T extends ActionSettings> impleme
 		System.out.println(prefix + result + time + msg);
 	}
 
-	private String prefix(ProcessableMedia media) {
+	private String prefix(LoomMedia media) {
 		String progress = rightPad("[" + current + "/" + total + "] ", 17);
-		if (media.getHash512() == null) {
+		if (media.getSHA512() == null) {
 			return progress + rightPad("[" + name() + "]", 28);
 		} else {
 			return progress + rightPad(shortHash(media) + " [" + name() + "]", 28);

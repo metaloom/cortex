@@ -1,13 +1,12 @@
 package io.metaloom.loom.cortex.action.consistency;
 
 import static io.metaloom.cortex.action.api.ActionResult.CONTINUE_NEXT;
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.ZERO_CHUNK_COUNT;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -28,7 +27,7 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		if (!media.isVideo() && !media.isAudio()) {
 			print(media, "SKIPPED", "(no video or audio)", start);
@@ -37,9 +36,9 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 
 		try {
 			String info = "";
-			Long count = getZeroChunkCount(media);
+			Long count = media.getZeroChunkCount();
 			if (count == null) {
-				String sha512 = media.getHash512();
+				String sha512 = media.getSHA512();
 				AssetResponse entry = null;
 				if (!isOfflineMode()) {
 					entry = client().loadAsset(sha512).sync();
@@ -50,7 +49,7 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 				} else {
 					Long dbCount = entry.getZeroChunkCount();
 					if (dbCount != null) {
-						writeZeroChunkCount(media, dbCount);
+						media.setZeroChunkCount(dbCount);
 						info = "(from db)";
 					} else {
 						computeSum(media);
@@ -69,17 +68,10 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 
 	}
 
-	private Long getZeroChunkCount(ProcessableMedia media) {
-		return media.get(ZERO_CHUNK_COUNT);
-	}
 
-	private void writeZeroChunkCount(ProcessableMedia media, Long count) {
-		media.put(ZERO_CHUNK_COUNT, count);
-	}
-
-	private void computeSum(ProcessableMedia media) throws NoSuchAlgorithmException, IOException {
+	private void computeSum(LoomMedia media) throws NoSuchAlgorithmException, IOException {
 		PartialFile pf = new PartialFile(media.path());
 		long count = pf.computeZeroChunkCount();
-		media.put(ZERO_CHUNK_COUNT, count);
+		media.setZeroChunkCount(count);
 	}
 }

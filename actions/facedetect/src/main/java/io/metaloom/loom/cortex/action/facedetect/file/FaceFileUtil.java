@@ -30,7 +30,6 @@ public class FaceFileUtil {
 
 		SimpleModule module = new SimpleModule();
 		module.setAbstractTypes(resolver);
-
 		MAPPER.registerModule(module);
 
 	}

@@ -1,12 +1,10 @@
 package io.metaloom.cortex.action.fp;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.FINGERPRINT;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -40,7 +38,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		if (!media.isVideo()) {
 			print(media, "SKIPPED", "(no video)", start);
@@ -53,10 +51,10 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 				return ActionResult.skipped(true, start);
 			}
 		}
-		String fingerprint = getFingerprint(media);
+		String fingerprint = media.getFingerprint();
 		String info = "";
 		if (fingerprint == null) {
-			String sha512 = media.getHash512();
+			String sha512 = media.getSHA512();
 			try {
 				info = "computed";
 				processMedia(sha512, media);
@@ -66,8 +64,8 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 				if (log.isErrorEnabled()) {
 					log.error("Error while processing media " + media.path(), e);
 				}
-				if (getFingerprint(media) == null) {
-					writeFingerprint(media, "NULL");
+				if (media.getFingerprint() == null) {
+					media.setFingerprint("NULL");
 				}
 				return ActionResult.failed(true, start);
 			}
@@ -77,9 +75,9 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 
 	}
 
-	private void processMedia(String sha512, ProcessableMedia media) throws InterruptedException {
+	private void processMedia(String sha512, LoomMedia media) throws InterruptedException {
 		long start = System.currentTimeMillis();
-		String fp = getFingerprint(media);
+		String fp = media.getFingerprint();
 		boolean isNull = fp != null && fp.equals("NULL");
 		boolean isCorrect = fp != null && fp.length() == 66;
 		if (!settings().isRetryFailed() && (isNull || isCorrect)) {
@@ -93,7 +91,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 			if (asset != null) {
 				String dbFP = asset.getFingerprint();
 				if (dbFP != null) {
-					writeFingerprint(media, dbFP);
+					media.setFingerprint(dbFP);
 					print(media, "DONE", "(from db)", start);
 					return;
 				}
@@ -103,22 +101,15 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintActio
 				Fingerprint fingerprint = hasher.hash(video);
 				if (fingerprint == null) {
 					print(media, "NULL", "(no result)", start);
-					writeFingerprint(media, "NULL");
+					media.setFingerprint("NULL");
 				} else {
 					String hash = fingerprint.hex();
 					print(media, "DONE", "", start);
-					writeFingerprint(media, hash);
+					media.setFingerprint(hash);
 				}
 			}
 		}
 	}
 
-	private String getFingerprint(ProcessableMedia media) {
-		return media.get(FINGERPRINT);
-	}
-
-	private void writeFingerprint(ProcessableMedia media, String fp) {
-		media.put(FINGERPRINT, fp);
-	}
 
 }

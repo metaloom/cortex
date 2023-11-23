@@ -6,9 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -16,19 +14,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
-import io.metaloom.cortex.action.api.ProcessableMediaMeta;
+import io.metaloom.cortex.action.api.media.LoomMedia;
+import io.metaloom.cortex.action.api.media.flag.FaceDetectionFlags;
+import io.metaloom.cortex.action.api.media.param.FaceDetectionParameters;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.video.facedetect.FaceVideoFrame;
+import io.metaloom.loom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
-import io.metaloom.video4j.Video;
 import io.metaloom.video4j.Video4j;
+import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
-import io.metaloom.video4j.opencv.CVUtils;
 
 public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionSettings> {
 
@@ -36,6 +34,11 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 
 	private static final String NAME = "facedetect";
 	protected final DLibFacedetector detector;
+	protected final VideoFaceScanner videoDetector = new VideoFaceScanner();
+
+	private static final int WINDOW_COUNT = 10;
+	private static final int WINDOW_SIZE = 10;
+	private static final int WINDOW_STEPS = 5;
 
 	static {
 		Video4j.init();
@@ -51,7 +54,6 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 		}
 		this.detector = DLibFacedetector.create();
 		this.detector.setMinFaceHeightFactor(settings.getMinFaceHeightFactor());
-
 	}
 
 	@Override
@@ -60,7 +62,7 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		try {
 			if (media.isVideo()) {
@@ -76,48 +78,35 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionS
 		}
 	}
 
-	private ActionResult processImage(ProcessableMedia media) throws IOException {
+	private ActionResult processImage(LoomMedia media) throws IOException {
 		long start = System.currentTimeMillis();
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
 		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
-			media.put(ProcessableMediaMeta.FACES, result);
+			media.setFaceCount(result.size());
+			media.setFacedetectionFlags(FaceDetectionFlags.SUCCESS);
+			FaceDetectionParameters params = new FaceDetectionParameters();
+			params.setCount(result.size());
+			//TODO add face data
+			media.setFacedetectionParams(params);
 		}
 		// TODO handle faces / get embeddings
 		return done(media, start, "image processed");
 	}
 
-	private ActionResult processVideo(ProcessableMedia media) {
+	private ActionResult processVideo(LoomMedia media) {
 		long start = System.currentTimeMillis();
-		List<Face> faces = new ArrayList<>();
-		try (Video video = Videos.open(media.absolutePath())) {
-			// FacedetectorMetrics metrics = FacedetectorMetrics.create();
-			Stream<FaceVideoFrame> frameStream = video.streamFrames()
-				.filter(frame -> {
-					return frame.number() % settings().getVideoChopRate() == 0;
-				})
-				.map(frame -> {
-					CVUtils.boxFrame2(frame, settings().getVideoScaleSize());
-					return frame;
-				})
-				.map(frame -> detector.detectFaces(frame))
-				.filter(FaceVideoFrame::hasFace);
-			// .map(metrics::track)
-			// .map(detector::markFaces)
-			// .map(detector::markLandmarks);
-			// VideoUtils.showVideoFrameStream(frameStream);
-
-			frameStream.forEach(frame -> {
-				for (Face face : frame.faces()) {
-					if (face.getEmbedding() != null) {
-						faces.add(face);
-					}
-				}
-			});
+		try (VideoFile video = Videos.open(media.absolutePath())) {
+			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
+			media.setFaceCount(faces.size());
+			//TODO add params, flags
+		} catch (InterruptedException e) {
+			log.error("Failed to process video", e);
+			return ActionResult.failed(CONTINUE_NEXT, start);
 		}
-		media.put(ProcessableMediaMeta.FACES, faces);
+
 		return done(media, start, "facedetection completed");
 	}
 

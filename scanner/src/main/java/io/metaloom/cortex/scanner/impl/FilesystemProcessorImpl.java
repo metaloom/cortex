@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.action.api.ActionResult;
 import io.metaloom.cortex.action.api.FilesystemAction;
 import io.metaloom.cortex.action.api.ResultState;
-import io.metaloom.cortex.action.common.media.ProcessableMediaImpl;
+import io.metaloom.cortex.action.common.media.LoomMediaImpl;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
 import io.metaloom.fs.FileInfo;
 import io.metaloom.fs.FileState;
@@ -44,7 +44,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 
 		long total = newMediaFiles.size();
 
-		newMediaFiles.stream().map(info -> new ProcessableMediaImpl(info.path()))
+		newMediaFiles.stream().map(info -> new LoomMediaImpl(info.path()))
 			.forEach(media -> {
 				long current = count.incrementAndGet();
 				boolean processed = false;
@@ -70,7 +70,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				if (processed) {
 					System.out.println();
 				}
-				String hashsum = media.getHash512();
+				String hashsum = media.getSHA512();
 				log.trace("Adding " + hashsum);
 				if (current % 1000 == 0) {
 					log.info("Count: " + current);

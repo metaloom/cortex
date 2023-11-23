@@ -1,14 +1,12 @@
 package io.metaloom.loom.cortex.action.thumbnail;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.THUMBNAIL_FLAGS;
-
 import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -47,7 +45,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		if (settings().getThumbnailPath() == null) {
 			throw new RuntimeException("No thumbnail output directory has been configured");
 		}
@@ -69,15 +67,15 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 			}
 		}
 
-		String sha512 = media.getHash512();
+		String sha512 = media.getSHA512();
 		processMedia(sha512, media);
 		return ActionResult.processed(true, start);
 	}
 
-	private void processMedia(String sha512, ProcessableMedia media) {
+	private void processMedia(String sha512, LoomMedia media) {
 		long start = System.currentTimeMillis();
-		File outputFile = new File(settings().getThumbnailPath(), media.getHash512() + ".jpg");
-		String flags = getThumbnailFlags(media);
+		File outputFile = new File(settings().getThumbnailPath(), media.getSHA512() + ".jpg");
+		String flags = media.getThumbnailFlags();
 		boolean isNull = flags != null && flags.equals(NULL_FLAG);
 		boolean isDone = flags != null && flags.equals(DONE_FLAG);
 
@@ -88,7 +86,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 
 		if (hasThumbnail(media)) {
 			if (!isDone) {
-				writeThumbnailFlags(media, "DONE");
+				media.setThumbnailFlags("DONE");
 			}
 			print(media, "DONE", "", start);
 			return;
@@ -104,24 +102,16 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 			try (VideoFile video = Videos.open(path)) {
 				gen.save(video, outputFile);
 				print(media, "DONE", "", start);
-				writeThumbnailFlags(media, DONE_FLAG);
+				media.setThumbnailFlags(DONE_FLAG);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			writeThumbnailFlags(media, NULL_FLAG);
+			media.setThumbnailFlags(NULL_FLAG);
 			// TODO update failed status
 			// touchFailed(media);
 			error(media, "NULL");
 		}
 
-	}
-
-	private void writeThumbnailFlags(ProcessableMedia media, String flags) {
-		media.put(THUMBNAIL_FLAGS, flags);
-	}
-
-	private String getThumbnailFlags(ProcessableMedia media) {
-		return media.get(THUMBNAIL_FLAGS);
 	}
 
 	/**
@@ -130,8 +120,8 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionSet
 	 * @param media
 	 * @return
 	 */
-	private boolean hasThumbnail(ProcessableMedia media) {
-		File outputFile = new File(settings().getThumbnailPath(), media.getHash512() + ".jpg");
+	private boolean hasThumbnail(LoomMedia media) {
+		File outputFile = new File(settings().getThumbnailPath(), media.getSHA512() + ".jpg");
 		return outputFile.exists();
 	}
 

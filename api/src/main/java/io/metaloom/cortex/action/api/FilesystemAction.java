@@ -2,6 +2,8 @@ package io.metaloom.cortex.action.api;
 
 import java.io.IOException;
 
+import io.metaloom.cortex.action.api.media.LoomMedia;
+
 public interface FilesystemAction extends CortexAction {
 
 	/**
@@ -11,11 +13,11 @@ public interface FilesystemAction extends CortexAction {
 	 * @return
 	 * @throws IOException
 	 */
-	ActionResult process(ProcessableMedia media) throws IOException;
+	ActionResult process(LoomMedia media) throws IOException;
 
-	void print(ProcessableMedia file, String result, String msg, long start);
+	void print(LoomMedia file, String result, String msg, long start);
 
-	void error(ProcessableMedia media, String msg);
+	void error(LoomMedia media, String msg);
 
 	default void flush() {
 		// NOOP

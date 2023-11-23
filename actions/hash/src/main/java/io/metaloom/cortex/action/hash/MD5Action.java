@@ -1,12 +1,10 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.MD5;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -16,8 +14,6 @@ import io.metaloom.utils.hash.HashUtils;
 public class MD5Action extends AbstractFilesystemAction<HashActionSettings> {
 
 	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
-
-	public static final String MD5SUM_ATTR_KEY = "md5sum";
 
 	private static final String NAME = "md5-hash";
 
@@ -31,12 +27,12 @@ public class MD5Action extends AbstractFilesystemAction<HashActionSettings> {
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		String md5 = getHashMD5(media);
 		String info = "";
 		if (md5 == null) {
-			String sha512 = media.getHash512();
+			String sha512 = media.getSHA512();
 			AssetResponse asset = client().loadAsset(sha512).sync();
 			if (asset == null) {
 				info = "hashed";
@@ -54,15 +50,15 @@ public class MD5Action extends AbstractFilesystemAction<HashActionSettings> {
 		}
 	}
 
-	private void writeHashMD5(ProcessableMedia media, String hashSum) {
-		media.put(MD5, hashSum);
+	private void writeHashMD5(LoomMedia media, String hashSum) {
+		media.setMD5(hashSum);
 	}
 
-	private String getHashMD5(ProcessableMedia media) {
-		String md5sum = media.get(MD5);
+	private String getHashMD5(LoomMedia media) {
+		String md5sum = media.getMD5();
 		if (md5sum == null) {
 			md5sum = HashUtils.computeMD5(media.path());
-			media.put(MD5, md5sum);
+			media.setMD5(md5sum);
 		}
 		return md5sum;
 	}

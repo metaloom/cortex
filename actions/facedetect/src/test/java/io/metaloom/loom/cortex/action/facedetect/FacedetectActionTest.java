@@ -1,49 +1,47 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.FACES;
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_512;
+import static io.metaloom.cortex.action.api.media.action.HashMedia.SHA_512_KEY;
 import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
-import io.metaloom.cortex.action.media.AbstractWorkerTest;
+import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.test.TestEnvHelper;
-import io.metaloom.loom.test.Testdata;
-import io.metaloom.video.facedetect.face.Face;
 
-public class FacedetectActionTest extends AbstractWorkerTest {
+public class FacedetectActionTest extends AbstractMediaTest {
+
+	private FacedetectAction action;
+
+	@BeforeEach
+	public void setupAction() throws IOException {
+		action = mockAction();
+	}
 
 	@Test
 	public void testVideo() throws IOException {
-		FacedetectAction action = mockAction();
-		Testdata data = TestEnvHelper.prepareTestdata("action-test");
-		ProcessableMedia media = media(data.sampleVideo3Path());
+		LoomMedia media = sampleVideoMedia2();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
-		assertThat(media).hasXAttr(1).hasXAttr(SHA_512);
-		List<Face> faces = media.get(FACES);
-		System.out.println("Faces: " + faces.size());
+		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);
+		System.out.println("Faces: " + media.getFaceCount());
 	}
 
 	@Test
 	public void testImage() throws IOException {
 		FacedetectAction action = mockAction();
-		Testdata data = TestEnvHelper.prepareTestdata("action-test");
-		ProcessableMedia media = media(data.sampleImage1Path());
+		LoomMedia media = sampleImageMedia1();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
-		assertThat(media).hasXAttr(1).hasXAttr(SHA_512);
-		List<Face> faces = media.get(FACES);
-		System.out.println("Faces: " + faces.size());
+		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);
+		System.out.println("Faces: " + media.getFaceCount());
 	}
 
 	public FacedetectAction mockAction() throws FileNotFoundException {

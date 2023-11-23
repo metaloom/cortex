@@ -49,6 +49,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.undercouch</groupId>
+            <artifactId>bson4jackson</artifactId>
+            <!-- TODO remove version since it is already in bom - added to fix eclipse issue -->
+            <version>2.15.0</version>
+        </dependency>
 
         <!-- Test -->
         <dependency>

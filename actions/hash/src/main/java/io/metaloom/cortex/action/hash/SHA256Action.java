@@ -1,12 +1,10 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.SHA_256;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -31,12 +29,12 @@ public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
-		String sha256 = getHash256(media);
+		String sha256 = media.getSHA256();
 		String info = "";
 		if (sha256 == null) {
-			String sha512 = media.getHash512();
+			String sha512 = media.getSHA512();
 			AssetResponse asset = client().loadAsset(sha512).sync();
 			if (asset == null) {
 				info = "hashed";
@@ -54,15 +52,15 @@ public class SHA256Action extends AbstractFilesystemAction<HashActionSettings> {
 		}
 	}
 
-	private void writeHash256(ProcessableMedia media, String hashSum) {
-		media.put(SHA_256, hashSum);
+	private void writeHash256(LoomMedia media, String hashSum) {
+		media.setSHA256(hashSum);
 	}
 
-	private String getHash256(ProcessableMedia media) {
-		String hashSum256 = media.get(SHA_256);
+	private String getHash256(LoomMedia media) {
+		String hashSum256 = media.getSHA256();
 		if (hashSum256 == null) {
 			hashSum256 = HashUtils.computeSHA256(media.file());
-			media.put(SHA_256, hashSum256);
+			media.setSHA256(hashSum256);
 		}
 		return hashSum256;
 	}

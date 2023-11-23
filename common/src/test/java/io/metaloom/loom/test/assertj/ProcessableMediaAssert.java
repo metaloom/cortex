@@ -1,14 +1,15 @@
 package io.metaloom.loom.test.assertj;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.ZERO_CHUNK_COUNT;
+import static io.metaloom.cortex.action.api.media.LoomMetaType.XATTR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.cortex.action.api.ProcessableMedia;
-import io.metaloom.cortex.action.api.ProcessableMediaMeta;
+import io.metaloom.cortex.action.api.media.LoomMetaKey;
+import io.metaloom.cortex.action.api.media.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.action.ChunkMedia;
 
 public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAssert, ProcessableMedia> {
 
@@ -16,16 +17,17 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 		super(actual, ProcessableMediaAssert.class);
 	}
 
-	public ProcessableMediaAssert hasXAttr(String key, int version) {
-		String fullKey = ProcessableMediaMeta.fullKey(key, version);
+	public ProcessableMediaAssert hasXAttr(LoomMetaKey<?> metaKey) {
+		String fullKey = metaKey.fullKey();
 		assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
 		return this;
 	}
 
-	public ProcessableMediaAssert hasXAttr(ProcessableMediaMeta... metas) {
-		for (ProcessableMediaMeta meta : metas) {
-			assertTrue(meta.isPersisted(), "The key is not enabled for persistance via xattr. It should thus not be present and must not be checked");
-			String fullKey = meta.key();
+	public ProcessableMediaAssert hasXAttr(LoomMetaKey<?>... keys) {
+		for (LoomMetaKey<?> metaKey : keys) {
+			assertEquals(XATTR, metaKey.type(),
+				"The key is not enabled for persistance via xattr. It should thus not be present and must not be checked");
+			String fullKey = metaKey.fullKey();
 			assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
 		}
 		return this;
@@ -45,14 +47,14 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 		return this;
 	}
 
-	public ProcessableMediaAssert hasXAttr(ProcessableMediaMeta meta, String value) {
+	public ProcessableMediaAssert hasXAttr(LoomMetaKey<String> meta, String value) {
 		String actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
 		assertEquals(value, actualValue, "The value for " + meta + " did not match up.");
 		return this;
 	}
 
-	public ProcessableMediaAssert hasXAttr(ProcessableMediaMeta meta, long value) {
+	public ProcessableMediaAssert hasXAttr(LoomMetaKey<Long> meta, long value) {
 		Long actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
 		assertEquals(value, actualValue.longValue(), "The value for " + meta + " did not match up.");
@@ -60,7 +62,7 @@ public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAsser
 	}
 
 	public ProcessableMediaAssert isConsistent() {
-		hasXAttr(ZERO_CHUNK_COUNT, 0L);
+		hasXAttr(ChunkMedia.ZERO_CHUNK_COUNT_KEY, 0L);
 		return this;
 	}
 

@@ -1,12 +1,10 @@
 package io.metaloom.loom.cortex.action.tika;
 
-import static io.metaloom.cortex.action.api.ProcessableMediaMeta.TIKA_FLAGS;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.api.ActionResult;
-import io.metaloom.cortex.action.api.ProcessableMedia;
+import io.metaloom.cortex.action.api.media.LoomMedia;
 import io.metaloom.cortex.action.common.AbstractFilesystemAction;
 import io.metaloom.cortex.action.common.settings.ProcessorSettings;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -32,14 +30,14 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionSettings> {
 	}
 
 	@Override
-	public ActionResult process(ProcessableMedia media) {
+	public ActionResult process(LoomMedia media) {
 		long start = System.currentTimeMillis();
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
 			return skipped(media, start, "(previously failed)");
 		} else if (flags == null) {
 			String info = "";
-			String sha512 = media.getHash512();
+			String sha512 = media.getSHA512();
 			AssetResponse entry = client().loadAsset(sha512).sync();
 			if (entry == null) {
 				return parseMedia(start, media);
@@ -56,26 +54,24 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionSettings> {
 		}
 	}
 
-	private ActionResult parseMedia(long start, ProcessableMedia media) {
+	private ActionResult parseMedia(long start, LoomMedia media) {
 		try {
 			String result = MediaTikaParser.parse(media);
-			writeFlags(media, DONE_FLAG);
+			// TODO store result
+			media.setTikaFlags(DONE_FLAG);
+
 			return done(media, start, "processed");
 		} catch (Exception e) {
 			log.error("Error while processing media " + media.path(), e);
-			writeFlags(media, NULL_FLAG);
+			media.setTikaFlags(DONE_FLAG);
 			return failure(media, start, "failed processing");
 		}
 	}
 
-	private void writeFlags(ProcessableMedia media, String flags) {
-		media.put(TIKA_FLAGS, flags);
-	}
-
-	private String getFlags(ProcessableMedia media) {
-		String tikaFlags = media.get(TIKA_FLAGS);
+	private String getFlags(LoomMedia media) {
+		String tikaFlags = media.getTikaFlags();
 		if (tikaFlags == null) {
-			media.put(TIKA_FLAGS, tikaFlags);
+			media.setTikaFlags(tikaFlags);
 		}
 		return tikaFlags;
 	}
