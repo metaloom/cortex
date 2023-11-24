@@ -1,4 +1,6 @@
-package io.metaloom.cortex.api.option.action;
+package io.metaloom.cortex.action.hash;
+
+import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
 public class HashOptions extends AbstractActionOptions<HashOptions> {
 

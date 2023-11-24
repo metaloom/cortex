@@ -12,8 +12,7 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.Testdata;
@@ -32,6 +31,6 @@ public class FingerprintActionTest extends AbstractMediaTest {
 
 	public FingerprintAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new FingerprintAction(client, new ProcessorSettings(), new ActionOptions());
+		return new FingerprintAction(client, new CortexOptions(), new FingerprintOptions());
 	}
 }

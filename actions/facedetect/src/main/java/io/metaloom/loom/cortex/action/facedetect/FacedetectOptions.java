@@ -1,6 +1,13 @@
-package io.metaloom.cortex.api.option.action;
+package io.metaloom.loom.cortex.action.facedetect;
 
-public class FacedetectOptions {
+import io.metaloom.cortex.api.option.action.AbstractActionOptions;
+
+public class FacedetectOptions extends AbstractActionOptions<FacedetectOptions> {
+
+	@Override
+	protected FacedetectOptions self() {
+		return this;
+	}
 
 	/**
 	 * Process only every nth video frame.

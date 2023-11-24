@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
@@ -24,8 +23,8 @@ public class ChunkHashAction extends AbstractFilesystemAction {
 	private static final String NAME = "chunk-hash";
 
 	@Inject
-	public ChunkHashAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
-		super(client, processorSettings, options);
+	public ChunkHashAction(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override

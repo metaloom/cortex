@@ -1,5 +1,11 @@
-package io.metaloom.cortex.api.option.action;
+package io.metaloom.loom.cortex.action.thumbnail;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import io.metaloom.cortex.api.option.action.AbstractActionOptions;
+
+@Singleton
 public class ThumbnailOptions extends AbstractActionOptions<ThumbnailOptions> {
 
 	private static final int DEFAULT_TILE_SIZE = 384;
@@ -15,6 +21,11 @@ public class ThumbnailOptions extends AbstractActionOptions<ThumbnailOptions> {
 	private int rows = DEFAULT_ROWS;
 
 	private int tileSize = DEFAULT_TILE_SIZE;
+
+	@Inject
+	public ThumbnailOptions() {
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	protected ThumbnailOptions self() {

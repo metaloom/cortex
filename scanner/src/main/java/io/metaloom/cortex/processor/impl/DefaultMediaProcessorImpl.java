@@ -28,13 +28,13 @@ import io.metaloom.loom.cortex.action.consistency.ConsistencyAction;
 public class DefaultMediaProcessorImpl implements MediaProcessor {
 
 	private final FilesystemProcessor processor;
-	private final CortexOptions options;
+	private final CortexOptions cortexOptions;
 
 	public static final Logger log = LoggerFactory.getLogger(DefaultMediaProcessorImpl.class);
 
 	@Inject
-	public DefaultMediaProcessorImpl(CortexOptions options) {
-		this.options = options;
+	public DefaultMediaProcessorImpl(CortexOptions cortexOptions) {
+		this.cortexOptions = cortexOptions;
 		this.processor = new FilesystemProcessorImpl();
 	}
 
@@ -44,8 +44,8 @@ public class DefaultMediaProcessorImpl implements MediaProcessor {
 			throw new FileNotFoundException("Startfolder not found " + folder.toString());
 		}
 
-		String hostname = options.getProcessorSettings().getHostname();
-		int port = options.getProcessorSettings().getPort();
+		String hostname = cortexOptions.getProcessorSettings().getHostname();
+		int port = cortexOptions.getProcessorSettings().getPort();
 
 		if (hostname == null) {
 			log.info("No hostname specified. Processing in offline mode.");
@@ -59,14 +59,14 @@ public class DefaultMediaProcessorImpl implements MediaProcessor {
 	}
 
 	private void process(LoomGRPCClient client, Path folder) throws IOException {
-		registerAction(new SHA512Action(client, options.getProcessorSettings(), options.getActions()));
-		registerAction(new ConsistencyAction(client, options.getProcessorSettings(), options.getActions()));
-		registerAction(new ChunkHashAction(client, options.getProcessorSettings(), options.getActions()));
-		registerAction(new SHA256Action(client, options.getProcessorSettings(), options.getActions()));
+		registerAction(new SHA512Action(client, cortexOptions, null));
+		registerAction(new ConsistencyAction(client, cortexOptions, null));
+		registerAction(new ChunkHashAction(client, cortexOptions, null));
+		registerAction(new SHA256Action(client, cortexOptions, null));
 		// registerAction(new MD5Action(client, settings.getProcessorSettings(), settings.getHashSettings()));
 		// registerAction(new ThumbnailAction(client, settings.getProcessorSettings(), settings.getThumbnailSettings()));
 		// registerAction(new FacedetectAction(client, settings.getProcessorSettings(), settings.getFacedetectActionSettings()));
-		registerAction(new FingerprintAction(client, options.getProcessorSettings(), options.getActions()));
+		registerAction(new FingerprintAction(client, cortexOptions, null));
 		processor.analyze(folder);
 	}
 

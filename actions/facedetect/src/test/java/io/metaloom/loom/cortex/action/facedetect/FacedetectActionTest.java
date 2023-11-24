@@ -13,9 +13,7 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
-import io.metaloom.cortex.api.option.action.FacedetectOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class FacedetectActionTest extends AbstractMediaTest {
@@ -48,8 +46,8 @@ public class FacedetectActionTest extends AbstractMediaTest {
 
 	public FacedetectAction mockAction() throws FileNotFoundException {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		ActionOptions options = new ActionOptions();
-		options.getFacedetection().setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
-		return new FacedetectAction(client, new ProcessorSettings(), options);
+		FacedetectOptions option = new FacedetectOptions();
+		option.setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
+		return new FacedetectAction(client, new CortexOptions(), option);
 	}
 }

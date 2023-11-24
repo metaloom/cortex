@@ -12,10 +12,10 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.cortex.action.tika.TikaAction;
+import io.metaloom.loom.cortex.action.tika.TikaOptions;
 
 public class TikaActionTest extends AbstractMediaTest {
 
@@ -30,6 +30,6 @@ public class TikaActionTest extends AbstractMediaTest {
 
 	public TikaAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new TikaAction(client, new ProcessorSettings(), new ActionOptions());
+		return new TikaAction(client, new CortexOptions(), new TikaOptions());
 	}
 }

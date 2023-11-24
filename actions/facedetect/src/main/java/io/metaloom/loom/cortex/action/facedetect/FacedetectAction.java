@@ -18,8 +18,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.action.media.flag.FaceDetectionFlags;
 import io.metaloom.cortex.api.action.media.param.FaceDetectionParameters;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.cortex.action.facedetect.video.VideoFaceScanner;
@@ -29,7 +28,7 @@ import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 
-public class FacedetectAction extends AbstractFilesystemAction {
+public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
 
@@ -45,16 +44,16 @@ public class FacedetectAction extends AbstractFilesystemAction {
 		Video4j.init();
 	}
 
-	public FacedetectAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options)
+	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectOptions options)
 		throws FileNotFoundException {
-		super(client, processorSettings, options);
+		super(client, cortexOption, options);
 		try {
 			DLibModelProvisioner.extractModelData(Paths.get("dlib"));
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to extract dlib models", e);
 		}
 		this.detector = DLibFacedetector.create();
-		this.detector.setMinFaceHeightFactor(options.getFacedetection().getMinFaceHeightFactor());
+		this.detector.setMinFaceHeightFactor(options.getMinFaceHeightFactor());
 	}
 
 	@Override

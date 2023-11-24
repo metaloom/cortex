@@ -29,6 +29,12 @@
             <groupId>io.metaloom.loom</groupId>
             <artifactId>loom-api</artifactId>
         </dependency>
+        <!-- DI -->
+        <dependency>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.metaloom.utils</groupId>
             <artifactId>hash-utils</artifactId>

@@ -1,16 +1,27 @@
 package io.metaloom.cortex.api.option;
 
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.metaloom.cortex.api.option.action.CortexActionOptions;
 
 public class CortexOptions {
 
 	private String loomHost;
 	private int loomPort;
 
-	private ActionOptions actions = new ActionOptions();
+	private Map<String, CortexActionOptions> actions = new HashMap<>();
 	private ProcessorSettings processorSettings = new ProcessorSettings();
 
 	public CortexOptions() {
+	}
+
+	public Map<String, CortexActionOptions> getActions() {
+		return actions;
+	}
+
+	public void setActions(Map<String, CortexActionOptions> actions) {
+		this.actions = actions;
 	}
 
 	public String getLoomHost() {
@@ -27,10 +38,6 @@ public class CortexOptions {
 
 	public void setLoomPort(int loomPort) {
 		this.loomPort = loomPort;
-	}
-
-	public ActionOptions getActions() {
-		return actions;
 	}
 
 	public ProcessorSettings getProcessorSettings() {

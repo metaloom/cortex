@@ -7,20 +7,19 @@ import java.security.NoSuchAlgorithmException;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.SHA512;
 import io.metaloom.utils.hash.partial.PartialFile;
 
-public class ConsistencyAction extends AbstractFilesystemAction {
+public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyOptions> {
 
 	private static final String NAME = "consistency";
 
-	public ConsistencyAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
-		super(client, processorSettings, options);
+	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override
@@ -69,7 +68,6 @@ public class ConsistencyAction extends AbstractFilesystemAction {
 		}
 
 	}
-
 
 	private void computeSum(LoomMedia media) throws NoSuchAlgorithmException, IOException {
 		PartialFile pf = new PartialFile(media.path());

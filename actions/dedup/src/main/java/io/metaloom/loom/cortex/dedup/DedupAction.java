@@ -1,7 +1,6 @@
 package io.metaloom.loom.cortex.dedup;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -13,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetRequest;
@@ -23,17 +21,15 @@ import io.metaloom.utils.fs.FileUtils;
 import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class DedupAction extends AbstractFilesystemAction {
+public class DedupAction extends AbstractFilesystemAction<DedupOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(DedupAction.class);
 
 	public static final String NAME = "deduplicate";
 
 	@Inject
-	public DedupAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options)
-		throws FileNotFoundException {
-		super(client, processorSettings, options);
-
+	public DedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupOptions options) {
+		super(client, cortexOptions, options);
 	}
 
 	@Override

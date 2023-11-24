@@ -1,6 +1,9 @@
-package io.metaloom.cortex.action;
+package io.metaloom.cortex.action.hash;
 
 import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +14,15 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
-public class OCRAction extends AbstractFilesystemAction<OCROptions> {
+@Singleton
+public class HashAction extends AbstractFilesystemAction<HashOptions> {
 
-	public static final Logger log = LoggerFactory.getLogger(OCRAction.class);
+	public static final Logger log = LoggerFactory.getLogger(HashAction.class);
 
-	private static final String NAME = "ocr";
+	private static final String NAME = "hash";
 
-	public OCRAction(LoomGRPCClient client, CortexOptions options, OCROptions actionOptions) {
+	@Inject
+	public HashAction(LoomGRPCClient client, CortexOptions options, HashOptions actionOptions) {
 		super(client, options, actionOptions);
 	}
 

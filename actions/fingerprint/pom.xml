@@ -1,34 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>loom-cortex-fingerprint-action</artifactId>
-	<packaging>jar</packaging>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>loom-cortex-fingerprint-action</artifactId>
+    <packaging>jar</packaging>
 
-	<parent>
-		<groupId>io.metaloom.loom.cortex</groupId>
-		<artifactId>loom-cortex-actions</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex-actions</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-	<name>Loom - Cortex :: Actions - Fingerprint</name>
+    <name>Loom - Cortex :: Actions - Fingerprint</name>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.metaloom.loom</groupId>
-				<artifactId>loom-bom</artifactId>
-				<version>${project.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.metaloom.loom</groupId>
+                <artifactId>loom-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>io.metaloom.video</groupId>
-			<artifactId>video4j-fingerprint</artifactId>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>io.metaloom.video</groupId>
+            <artifactId>video4j-fingerprint</artifactId>
+        </dependency>
+    </dependencies>
 </project>

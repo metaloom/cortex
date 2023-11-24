@@ -1,66 +1,86 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>loom-cortex-scanner</artifactId>
-  <packaging>jar</packaging>
+    <artifactId>loom-cortex-scanner</artifactId>
+    <packaging>jar</packaging>
 
-  <parent>
-    <groupId>io.metaloom.loom.cortex</groupId>
-    <artifactId>loom-cortex</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>io.metaloom.loom.cortex</groupId>
+        <artifactId>loom-cortex</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-  <name>Loom - Cortex :: Scanner</name>
+    <name>Loom - Cortex :: Scanner</name>
 
-  <dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.metaloom.loom</groupId>
+                <artifactId>loom-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-      <dependency>
-        <groupId>io.metaloom.loom</groupId>
-        <artifactId>loom-bom</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+        <dependency>
+            <groupId>io.metaloom.utils</groupId>
+            <artifactId>differential-filesystem-scanner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-common</artifactId>
+        </dependency>
+
+        <!-- Actions -->
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-hash-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-thumbnail-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-facedetect-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-scene-detection-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-tika-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-ocr-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-dedup-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-fingerprint-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-consistency-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
-  </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.metaloom.utils</groupId>
-      <artifactId>differential-filesystem-scanner</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-common</artifactId>
-    </dependency>
-
-    <!-- Actions -->
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-hash-action</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-thumbnail-action</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-facedetect-action</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-fingerprint-action</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.metaloom.loom.cortex</groupId>
-      <artifactId>loom-cortex-consistency-action</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
 </project>

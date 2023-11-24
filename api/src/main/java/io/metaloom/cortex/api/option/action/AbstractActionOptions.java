@@ -1,6 +1,6 @@
 package io.metaloom.cortex.api.option.action;
 
-public abstract class AbstractActionOptions<T extends AbstractActionOptions<T>> {
+public abstract class AbstractActionOptions<T extends AbstractActionOptions<T>> implements CortexActionOptions {
 
 	private boolean processIncomplete;
 

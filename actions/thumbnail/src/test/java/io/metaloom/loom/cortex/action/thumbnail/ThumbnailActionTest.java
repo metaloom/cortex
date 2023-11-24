@@ -17,9 +17,7 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
-import io.metaloom.cortex.api.option.action.ThumbnailOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class ThumbnailActionTest extends AbstractMediaTest {
@@ -47,8 +45,9 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 
 	public ThumbnailAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		ActionOptions options = new ActionOptions();
-		options.getThumbnail().setThumbnailPath(thumbnailDir.getAbsolutePath());
-		return new ThumbnailAction(client, new ProcessorSettings(), options);
+
+		ThumbnailOptions options = new ThumbnailOptions();
+		options.setThumbnailPath(thumbnailDir.getAbsolutePath());
+		return new ThumbnailAction(client, new CortexOptions(), options);
 	}
 }

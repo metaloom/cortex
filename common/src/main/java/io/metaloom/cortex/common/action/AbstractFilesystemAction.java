@@ -7,23 +7,23 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.option.ProcessorSettings;
-import io.metaloom.cortex.api.option.action.ActionOptions;
+import io.metaloom.cortex.api.option.CortexOptions;
+import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
-public abstract class AbstractFilesystemAction implements FilesystemAction {
+public abstract class AbstractFilesystemAction<T extends CortexActionOptions>  implements FilesystemAction{
 
 	private long current;
 	private long total;
 
 	private final LoomGRPCClient client;
-	private final ActionOptions options;
-	private final ProcessorSettings processorSettings;
+	private final CortexOptions cortexOption;
+	private final T option;
 
-	public AbstractFilesystemAction(LoomGRPCClient client, ProcessorSettings processorSettings, ActionOptions options) {
+	public AbstractFilesystemAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
 		this.client = client;
-		this.options = options;
-		this.processorSettings = processorSettings;
+		this.cortexOption = cortexOption;
+		this.option = option;
 	}
 
 	protected LoomGRPCClient client() {
@@ -34,12 +34,12 @@ public abstract class AbstractFilesystemAction implements FilesystemAction {
 		return client() == null;
 	}
 
-	public ActionOptions options() {
-		return options;
+	public T option() {
+		return option;
 	}
 
-	public ProcessorSettings processorSettings() {
-		return processorSettings;
+	public CortexOptions cortexOption() {
+		return cortexOption;
 	}
 
 	protected String shortHash(LoomMedia media) {
@@ -101,7 +101,7 @@ public abstract class AbstractFilesystemAction implements FilesystemAction {
 
 	@Override
 	public boolean isDryrun() {
-		return processorSettings.isDryrun();
+		return cortexOption().getProcessorSettings().isDryrun();
 	}
 
 }
