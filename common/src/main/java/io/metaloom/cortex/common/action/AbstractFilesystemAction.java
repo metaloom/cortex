@@ -68,6 +68,11 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 		return ActionResult.failed(true, startTime.get());
 	}
 
+	protected ActionResult notFound(String msg) {
+		print(null, "NOT_FOUND", "(" + msg + ")", startTime.get());
+		return ActionResult.failed(true, startTime.get());
+	}
+
 	protected ActionResult success(LoomMedia media, String msg) {
 		print(media, "DONE", "(" + msg + ")", startTime.get());
 		return ActionResult.processed(CONTINUE_NEXT, startTime.get());
@@ -84,12 +89,12 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 	}
 
 	@Override
-	public void print(LoomMedia file, String result, String msg, long start) {
+	public void print(LoomMedia media, String result, String msg, long start) {
 		if (result == null) {
 			result = "";
 		}
 		long dur = System.currentTimeMillis() - start;
-		String prefix = prefix(file);
+		String prefix = prefix(media);
 		result = rightPad(result, 12);
 		String time = rightPad(" [" + toHumanTime(dur) + "] ", 12);
 		System.out.println(prefix + result + time + msg);
@@ -97,7 +102,7 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 
 	private String prefix(LoomMedia media) {
 		String progress = rightPad("[" + current + "/" + total + "] ", 17);
-		if (media.getSHA512() == null) {
+		if (media == null || media.getSHA512() == null) {
 			return progress + rightPad("[" + name() + "]", 28);
 		} else {
 			return progress + rightPad(shortHash(media) + " [" + name() + "]", 28);

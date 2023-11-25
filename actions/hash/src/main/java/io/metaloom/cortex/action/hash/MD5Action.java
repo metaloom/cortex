@@ -3,6 +3,7 @@ package io.metaloom.cortex.action.hash;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
+import java.nio.file.Files;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -39,6 +40,8 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	protected Optional<ActionResult> check(LoomMedia media) {
 		if (!options().isMD5()) {
 			return Optional.of(skipped(media, "MD5 disabled"));
+		} else if (!media.exists()) {
+			return Optional.of(notFound("file " + media.path() + " not found"));
 		} else {
 			return Optional.empty();
 		}
