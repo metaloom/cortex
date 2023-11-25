@@ -23,19 +23,19 @@ public class FacedetectMediaTest extends AbstractMediaTest {
 
 	@Test
 	public void testFaceCount() throws IOException {
-		LoomMedia media = sampleVideoMedia2();
+		LoomMedia media = mediaVideo2();
 		assertNull(media.getFaceCount());
 		media.setFaceCount(42);
 		assertEquals(42, media.getFaceCount());
 		assertEquals(1, media.listXAttr().size());
 
-		LoomMedia media2 = sampleVideoMedia2();
+		LoomMedia media2 = mediaVideo2();
 		assertEquals(42, media2.getFaceCount());
 	}
 
 	@Test
 	public void testFaceDetectionParameters() throws IOException {
-		LoomMedia media = sampleVideoMedia2();
+		LoomMedia media = mediaVideo2();
 		assertNull(media.getFacedetectionParams());
 		assertNull(media.get(FACEDETECTION_PARAMS_KEY));
 		media.put(FACEDETECTION_PARAMS_KEY, new FaceDetectionParameters().setCount(10));

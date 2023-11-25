@@ -36,7 +36,7 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 	@Test
 	public void testAction() throws IOException {
 		ThumbnailAction action = mockAction();
-		LoomMedia media = sampleVideoMedia3();
+		LoomMedia media = mediaVideo3();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY).hasXAttr(THUMBNAIL_FLAGS_KEY);

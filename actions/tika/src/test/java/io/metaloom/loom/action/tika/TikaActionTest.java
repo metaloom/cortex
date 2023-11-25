@@ -22,7 +22,7 @@ public class TikaActionTest extends AbstractMediaTest {
 	@Test
 	public void testAction() throws IOException {
 		TikaAction action = mockAction();
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, TIKA_FLAGS_KEY);

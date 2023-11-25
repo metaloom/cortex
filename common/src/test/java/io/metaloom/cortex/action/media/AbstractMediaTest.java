@@ -8,22 +8,22 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
-import io.metaloom.cortex.action.media.source.AudioMediaSource;
-import io.metaloom.cortex.action.media.source.DocMediaSource;
-import io.metaloom.cortex.action.media.source.ImageMediaSource;
-import io.metaloom.cortex.action.media.source.OtherMediaSource;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.test.TestEnvHelper;
+import io.metaloom.loom.test.data.AudioData;
+import io.metaloom.loom.test.data.DocData;
+import io.metaloom.loom.test.data.ImageData;
+import io.metaloom.loom.test.data.OtherData;
 import io.metaloom.loom.test.data.TestDataCollection;
-import io.metaloom.utils.hash.ChunkHash;
-import io.metaloom.utils.hash.MD5;
-import io.metaloom.utils.hash.SHA256;
+import io.metaloom.loom.test.data.TestMedia;
+import io.metaloom.loom.test.data.TestMediaImpl.TestMediaBuilder;
+import io.metaloom.loom.test.data.VideoData;
 import io.metaloom.utils.hash.SHA512;
 
 /**
  * Abstract class for tests which utilize test data files.
  */
-public abstract class AbstractMediaTest implements VideoMediaSource, DocMediaSource, AudioMediaSource, ImageMediaSource, OtherMediaSource {
+public abstract class AbstractMediaTest implements DocData, ImageData, VideoData, AudioData, OtherData {
 
 	private final static Path BASE_DIR = Paths.get("target/base-storage");
 
@@ -39,13 +39,52 @@ public abstract class AbstractMediaTest implements VideoMediaSource, DocMediaSou
 
 	public LoomMedia createTestMediaFile() throws IOException {
 		File file = File.createTempFile("processable-media-test", "file");
-		return media(file.toPath());
+		return media(TestMediaBuilder.newBuilder(file.toPath()).build());
 	}
 
-	
+	protected LoomMedia media(TestMedia media) {
+		return media(media.path());
+	}
+
+	protected LoomMedia media(Path path) {
+		return new LoomMediaImpl(path);
+	}
+
 	@Override
-	public TestDataCollection data() {
-		return data;
+	public Path root() {
+		return data.root();
+	}
+
+	public LoomMedia mediaImage1() {
+		return media(image1());
+	}
+
+	public LoomMedia mediaVideo1() {
+		return media(video1());
+	}
+
+	public LoomMedia mediaVideo2() {
+		return media(video2());
+	}
+
+	public LoomMedia mediaVideo3() {
+		return media(video3());
+	}
+
+	public LoomMedia mediaAudio1() {
+		return media(audio1());
+	}
+
+	public LoomMedia mediaDocDOCX() {
+		return media(docDOCX());
+	}
+
+	public LoomMedia mediaMissingMP4() {
+		return media(missingMP4());
+	}
+
+	public LoomMedia mediaBogusBin() {
+		return media(bogusBin());
 	}
 
 }

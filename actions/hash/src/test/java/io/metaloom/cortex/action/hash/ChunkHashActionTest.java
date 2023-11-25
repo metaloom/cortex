@@ -16,7 +16,7 @@ public class ChunkHashActionTest extends AbstractActionTest<ChunkHashAction> {
 
 	@Test
 	public void testProcessing() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action().process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(CHUNK_HASH_KEY, sampleVideoChunkHash());

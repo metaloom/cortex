@@ -23,7 +23,7 @@ public class OpticalFlowSceneDetectorTest {
 	public void testDetection() throws IOException {
 		SceneDetector dectector = new OpticalFlowSceneDetector();
 		TestDataCollection data = TestEnvHelper.prepareTestdata("scene-detection-test");
-		Path videoPath = data.sampleVideo2Path();
+		Path videoPath = data.video2().path();
 		videoPath = Paths.get("/extra/vid/7.mkv");
 		try (VideoFile video = Videos.open(videoPath)) {
 			dectector.detect(video);

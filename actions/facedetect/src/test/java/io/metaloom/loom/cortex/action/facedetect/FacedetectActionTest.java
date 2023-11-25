@@ -29,7 +29,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 
 	@Test
 	public void testVideo() throws IOException {
-		LoomMedia media = sampleVideoMedia2();
+		LoomMedia media = mediaVideo2();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, FACEDETECT_COUNT_KEY);
@@ -39,7 +39,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 	@Test
 	public void testImage() throws IOException {
 		FacedetectAction action = mockAction();
-		LoomMedia media = sampleImageMedia1();
+		LoomMedia media = mediaImage1();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);

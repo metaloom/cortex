@@ -23,7 +23,7 @@ public class FingerprintActionTest extends AbstractMediaTest {
 	public void testAction() throws IOException {
 		FingerprintAction action = mockAction();
 		TestDataCollection data = TestEnvHelper.prepareTestdata("action-test");
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY).hasXAttr(FINGERPRINT_KEY, data.sampleVideoFingerprint());

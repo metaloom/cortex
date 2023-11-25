@@ -16,7 +16,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessing() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		T actionMock = action();
 		assertProcessed(actionMock, media);
 	}
@@ -26,7 +26,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessVideo() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		T actionMock = action();
 		assertProcessed(actionMock, media);
 
@@ -35,7 +35,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessDoc() throws IOException {
-		LoomMedia media = sampleDOCX();
+		LoomMedia media = mediaDocDOCX();
 		T actionMock = action();
 		assertProcessed(actionMock, media);
 	}
@@ -43,7 +43,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessImage() throws IOException {
-		LoomMedia media = sampleImageMedia1();
+		LoomMedia media = mediaImage1();
 		T actionMock = action();
 		assertProcessed(actionMock, media);
 	}
@@ -51,15 +51,15 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessAudio() throws IOException {
-		LoomMedia media = sampleAudioMedia();
+		LoomMedia testMedia = mediaAudio1();
 		T actionMock = action();
-		assertProcessed(actionMock, media);
+		assertProcessed(actionMock, testMedia);
 	}
 
 	@Test
 	@Override
 	public void testProcessMissing() throws IOException {
-		LoomMedia media = missingMP4();
+		LoomMedia media = mediaMissingMP4();
 		T actionMock = action();
 		ActionResult result = actionMock.process(media);
 		assertThat(result).isFailed();
@@ -68,7 +68,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testProcessOther() throws IOException {
-		LoomMedia media = sampleBogusBin();
+		LoomMedia media = mediaBogusBin();
 		T actionMock = action();
 		ActionResult result = actionMock.process(media);
 	}
@@ -76,7 +76,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testFailure() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		T actionMock = action();
 		ActionResult result = actionMock.process(media);
 	}
@@ -84,7 +84,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	@Test
 	@Override
 	public void testDisabled() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		T actionMock = action();
 		disableAction(actionMock);
 

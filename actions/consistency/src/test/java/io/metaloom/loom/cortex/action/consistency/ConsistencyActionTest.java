@@ -27,7 +27,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 	@Test
 	public void testProcessVideo() throws IOException {
 		ConsistencyAction action = mockAction();
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(SHA_512_KEY, data.sampleVideoSHA512());

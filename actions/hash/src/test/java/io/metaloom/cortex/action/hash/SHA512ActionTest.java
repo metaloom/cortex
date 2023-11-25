@@ -16,7 +16,7 @@ public class SHA512ActionTest extends AbstractActionTest<SHA512Action> {
 
 	@Test
 	public void testProcessing() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action().process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, sampleVideoSHA512());

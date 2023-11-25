@@ -23,7 +23,7 @@ public class FeatureSceneDetectorTest {
 	public void testDetection() throws IOException {
 		SceneDetector dectector = new FeatureSceneDetector();
 		TestDataCollection data = TestEnvHelper.prepareTestdata("scene-detection-test");
-		Path videoPath = data.sampleVideo2Path();
+		Path videoPath = data.video2().path();
 		videoPath = Paths.get("/extra/vid/3.avi");
 		try (VideoFile video = Videos.open(videoPath)) {
 			dectector.detect(video);

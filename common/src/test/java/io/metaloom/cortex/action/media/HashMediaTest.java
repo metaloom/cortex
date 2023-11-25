@@ -18,19 +18,19 @@ public class HashMediaTest extends AbstractMediaTest {
 
 	@Test
 	public void testSHA512() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		assertNotNull(media.getSHA512(), "The sha512sum should always be computed");
 		media.put(HashMedia.SHA_512_KEY, SHA512.fromString("abcd"));
 		assertEquals("abcd", media.get(HashMedia.SHA_512_KEY));
 		assertEquals(1, media.listXAttr().size());
 
-		LoomMedia media2 = sampleVideoMedia();
+		LoomMedia media2 = mediaVideo1();
 		assertEquals("abcd", media2.getSHA512());
 	}
 
 	@Test
 	public void testMD5() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		assertNull(media.getMD5());
 		media.put(MD5_KEY, MD5.fromString("abcd"));
 		assertEquals("abcd", media.get(MD5_KEY));
@@ -39,7 +39,7 @@ public class HashMediaTest extends AbstractMediaTest {
 		assertEquals(1, media.listXAttr().size());
 		assertEquals("dcba", media.getMD5());
 
-		LoomMedia media2 = sampleVideoMedia();
+		LoomMedia media2 = mediaVideo1();
 		assertEquals("dcba", media2.getMD5(), "We reload the media. The attribute should be read from xattr");
 	}
 

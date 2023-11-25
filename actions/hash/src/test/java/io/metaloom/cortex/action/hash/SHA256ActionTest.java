@@ -23,7 +23,7 @@ public class SHA256ActionTest extends AbstractActionTest<SHA256Action> {
 
 	@Test
 	public void testProcessing() throws IOException {
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = action().process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2)
@@ -40,7 +40,7 @@ public class SHA256ActionTest extends AbstractActionTest<SHA256Action> {
 		LoomGRPCClient clientMock = mockClient(response);
 
 		// Invoke the action
-		LoomMedia media = sampleVideoMedia();
+		LoomMedia media = mediaVideo1();
 		ActionResult result = mockAction(clientMock).process(media);
 
 		assertThat(result).isProcessed().isContinueNext();
