@@ -12,7 +12,15 @@ public interface HashActionModule {
 
 	@Binds
 	@IntoSet
-	abstract CortexAction bindAction(HashAction action);
+	abstract CortexAction bindSHA512Action(SHA512Action action);
+
+	@Binds
+	@IntoSet
+	abstract CortexAction bindSHA256Action(SHA256Action action);
+
+	@Binds
+	@IntoSet
+	abstract CortexAction bindMD5Action(MD5Action action);
 
 	@IntoSet
 	@Provides

@@ -5,6 +5,7 @@ import static io.metaloom.cortex.api.action.media.LoomMetaType.XATTR;
 
 import io.metaloom.cortex.api.action.media.LoomMetaKey;
 import io.metaloom.cortex.api.action.media.ProcessableMedia;
+import io.metaloom.utils.hash.ChunkHash;
 
 public interface ChunkMedia extends ProcessableMedia {
 
@@ -12,13 +13,13 @@ public interface ChunkMedia extends ProcessableMedia {
 
 	public static final LoomMetaKey<Long> ZERO_CHUNK_COUNT_KEY = metaKey("zero_chunk_count", 1, XATTR, Long.class);
 
-	public static final LoomMetaKey<String> CHUNK_HASH_KEY = metaKey("chunk_hash", 1, XATTR, String.class);
+	public static final LoomMetaKey<ChunkHash> CHUNK_HASH_KEY = metaKey("chunk_hash", 1, XATTR, ChunkHash.class);
 
-	default String getChunkHash() {
+	default ChunkHash getChunkHash() {
 		return get(CHUNK_HASH_KEY);
 	}
 
-	default ChunkMedia setChunkHash(String chunkHash) {
+	default ChunkMedia setChunkHash(ChunkHash chunkHash) {
 		put(CHUNK_HASH_KEY, chunkHash);
 		return this;
 	}

@@ -21,7 +21,7 @@ public class CortexClientModule {
 	@Singleton
 	public CortexOptions options(CortexOptionsLoader loader) {
 		//System.out.println("O: " + actionOptions.size());
-		CortexOptions options = loader.loadCortexOptions(loader.defaultConfigPath(), null);
+		CortexOptions options = loader.load();
 		return options;
 	}
 }

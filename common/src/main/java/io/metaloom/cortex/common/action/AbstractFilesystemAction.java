@@ -6,15 +6,18 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
+import io.metaloom.cortex.api.action.ResultOrigin;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
-public abstract class AbstractFilesystemAction<T extends CortexActionOptions>  implements FilesystemAction{
+public abstract class AbstractFilesystemAction<T extends CortexActionOptions> implements FilesystemAction {
 
-	private long current;
-	private long total;
+	private ThreadLocal<Long> startTime = new ThreadLocal<>();
+
+	private long current = 1L;
+	private long total = 1L;
 
 	private final LoomGRPCClient client;
 	private final CortexOptions cortexOption;
@@ -34,7 +37,7 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions>  i
 		return client() == null;
 	}
 
-	public T option() {
+	public T options() {
 		return option;
 	}
 
@@ -42,28 +45,36 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions>  i
 		return cortexOption;
 	}
 
+	public void markStart() {
+		startTime.set(System.currentTimeMillis());
+	}
+
 	protected String shortHash(LoomMedia media) {
 		return media.getSHA512().toString().substring(0, 8);
 	}
 
-	protected ActionResult completed(LoomMedia media, long start, String msg) {
-		print(media, "COMPLETED", "(" + msg + ")", start);
-		return ActionResult.processed(true, start);
+	protected ActionResult completed(LoomMedia media, String msg) {
+		print(media, "COMPLETED", "(" + msg + ")", startTime.get());
+		return ActionResult.processed(true, startTime.get());
 	}
 
-	protected ActionResult skipped(LoomMedia media, long start, String msg) {
-		print(media, "SKIPPED", "(" + msg + ")", start);
-		return ActionResult.skipped(true, start);
+	protected ActionResult skipped(LoomMedia media, String msg) {
+		print(media, "SKIPPED", "(" + msg + ")", startTime.get());
+		return ActionResult.skipped(true, startTime.get());
 	}
 
-	protected ActionResult failure(LoomMedia media, long start, String msg) {
-		print(media, "FAILURE", "(" + msg + ")", start);
-		return ActionResult.failed(true, start);
+	protected ActionResult failure(LoomMedia media, String msg) {
+		print(media, "FAILURE", "(" + msg + ")", startTime.get());
+		return ActionResult.failed(true, startTime.get());
 	}
 
-	protected ActionResult done(LoomMedia media, long start, String info) {
-		print(media, "DONE", "(" + info + ")", start);
-		return ActionResult.processed(CONTINUE_NEXT, start);
+	protected ActionResult success(LoomMedia media, String msg) {
+		print(media, "DONE", "(" + msg + ")", startTime.get());
+		return ActionResult.processed(CONTINUE_NEXT, startTime.get());
+	}
+
+	protected ActionResult success(LoomMedia media, ResultOrigin origin) {
+		return success(media, origin.name());
 	}
 
 	@Override

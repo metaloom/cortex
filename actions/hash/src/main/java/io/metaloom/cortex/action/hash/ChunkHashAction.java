@@ -1,5 +1,8 @@
 package io.metaloom.cortex.action.hash;
 
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -9,18 +12,17 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.utils.hash.ChunkHash;
 import io.metaloom.utils.hash.HashUtils;
-import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class ChunkHashAction extends AbstractFilesystemAction {
+public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(ChunkHashAction.class);
 
-	private static final String NAME = "chunk-hash";
 
 	@Inject
 	public ChunkHashAction(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
@@ -29,40 +31,31 @@ public class ChunkHashAction extends AbstractFilesystemAction {
 
 	@Override
 	public String name() {
-		return NAME;
+		return "chunk-hash";
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
-		String info = "";
-		String chunkHash = getChunkHash(media);
-		if (chunkHash == null) {
-			SHA512 sha512 = media.getSHA512();
-			AssetResponse entry = client().loadAsset(sha512).sync();
-			if (entry == null) {
-				info = "hashed";
-				getChunkHash(media);
-			} else {
-				String dbHash = entry.getChunkHash();
-				if (dbHash != null) {
-					media.setChunkHash(dbHash);
-					info = "from db";
-				}
-			}
-			return done(media, start, info);
-		} else {
-			return done(media, start, info);
-		}
+	protected boolean isProcessed(LoomMedia media) {
+		return media.getChunkHash() != null;
 	}
 
-	private String getChunkHash(LoomMedia media) {
-		String chunkHashSum = media.getChunkHash();
-		if (chunkHashSum == null) {
-			chunkHashSum = HashUtils.computeChunkHash(media.file());
-			media.setChunkHash(chunkHashSum);
+	@Override
+	protected ActionResult process(LoomMedia media, AssetResponse asset) {
+		ChunkHash hash = HashUtils.computeChunkHash(media.file());
+		media.setChunkHash(hash);
+		return success(media, COMPUTED);
+	}
+
+	@Override
+	protected ActionResult update(LoomMedia media, AssetResponse asset) {
+		ChunkHash hash = ChunkHash.fromString(asset.getChunkHash());
+		// Check whether the hash was in db
+		if (hash != null) {
+			media.setChunkHash(hash);
+			return success(media, REMOTE);
+		} else {
+			return process(media, asset);
 		}
-		return chunkHashSum;
 	}
 
 }

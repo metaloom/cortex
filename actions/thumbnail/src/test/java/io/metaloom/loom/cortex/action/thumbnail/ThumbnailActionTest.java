@@ -2,7 +2,7 @@ package io.metaloom.loom.cortex.action.thumbnail;
 
 import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
 import static io.metaloom.cortex.api.action.media.action.ThumbnailMedia.THUMBNAIL_FLAGS_KEY;
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
+import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

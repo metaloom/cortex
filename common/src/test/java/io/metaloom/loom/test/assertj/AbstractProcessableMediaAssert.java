@@ -11,66 +11,69 @@ import io.metaloom.cortex.api.action.media.LoomMetaKey;
 import io.metaloom.cortex.api.action.media.ProcessableMedia;
 import io.metaloom.cortex.api.action.media.action.ChunkMedia;
 
-public class ProcessableMediaAssert extends AbstractAssert<ProcessableMediaAssert, ProcessableMedia> {
+public abstract class AbstractProcessableMediaAssert<T extends AbstractProcessableMediaAssert<T, M>, M extends ProcessableMedia>
+	extends AbstractAssert<T, M> {
 
-	protected ProcessableMediaAssert(ProcessableMedia actual) {
-		super(actual, ProcessableMediaAssert.class);
+	public AbstractProcessableMediaAssert(M actual, Class<?> clazz) {
+		super(actual, clazz);
 	}
 
-	public ProcessableMediaAssert hasXAttr(LoomMetaKey<?> metaKey) {
+	protected abstract T self();
+
+	public T hasXAttr(LoomMetaKey<?> metaKey) {
 		String fullKey = metaKey.fullKey();
 		assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert hasXAttr(LoomMetaKey<?>... keys) {
+	public T hasXAttr(LoomMetaKey<?>... keys) {
 		for (LoomMetaKey<?> metaKey : keys) {
 			assertEquals(XATTR, metaKey.type(),
 				"The key is not enabled for persistance via xattr. It should thus not be present and must not be checked");
 			String fullKey = metaKey.fullKey();
 			assertTrue(actual.listXAttr().contains(fullKey), "The attr " + fullKey + " was not found in the media file.");
 		}
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert printXAttrKeys() {
+	public T printXAttrKeys() {
 		actual.listXAttr().forEach(System.out::println);
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert hasXAttr(int count) {
+	public T hasXAttr(int count) {
 		int actualCount = actual.listXAttr().size();
 		if (count != actualCount) {
 			String allKeys = String.join(" ,\n", actual.listXAttr());
 			assertEquals(count, actualCount, "The count of xattr did not match the expected count. Got:\n" + allKeys);
 		}
-		return this;
+		return self();
 	}
 
-	public <T> ProcessableMediaAssert hasXAttr(LoomMetaKey<T> meta, T value) {
-		T actualValue = actual.get(meta);
+	public <R> T hasXAttr(LoomMetaKey<R> meta, R value) {
+		R actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
 		assertEquals(value, actualValue, "The value for " + meta + " did not match up.");
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert hasXAttr(LoomMetaKey<String> meta, String value) {
+	public T hasXAttr(LoomMetaKey<String> meta, String value) {
 		String actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
 		assertEquals(value, actualValue, "The value for " + meta + " did not match up.");
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert hasXAttr(LoomMetaKey<Long> meta, long value) {
+	public T hasXAttr(LoomMetaKey<Long> meta, long value) {
 		Long actualValue = actual.get(meta);
 		assertNotNull(actualValue, "Did not find attribute value for " + meta);
 		assertEquals(value, actualValue.longValue(), "The value for " + meta + " did not match up.");
-		return this;
+		return self();
 	}
 
-	public ProcessableMediaAssert isConsistent() {
+	public T isConsistent() {
 		hasXAttr(ChunkMedia.ZERO_CHUNK_COUNT_KEY, 0L);
-		return this;
+		return self();
 	}
 
 }

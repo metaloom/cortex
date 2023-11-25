@@ -8,18 +8,26 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.action.media.source.AudioMediaSource;
+import io.metaloom.cortex.action.media.source.DocMediaSource;
+import io.metaloom.cortex.action.media.source.ImageMediaSource;
+import io.metaloom.cortex.action.media.source.OtherMediaSource;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.test.TestEnvHelper;
-import io.metaloom.loom.test.Testdata;
+import io.metaloom.loom.test.data.TestDataCollection;
+import io.metaloom.utils.hash.ChunkHash;
+import io.metaloom.utils.hash.MD5;
 import io.metaloom.utils.hash.SHA256;
 import io.metaloom.utils.hash.SHA512;
 
-public abstract class AbstractMediaTest {
+/**
+ * Abstract class for tests which utilize test data files.
+ */
+public abstract class AbstractMediaTest implements VideoMediaSource, DocMediaSource, AudioMediaSource, ImageMediaSource, OtherMediaSource {
 
-	
 	private final static Path BASE_DIR = Paths.get("target/base-storage");
-	
-	protected Testdata data;
+
+	protected TestDataCollection data;
 
 	public static final SHA512 HASH = SHA512.fromString(
 		"e7c22b994c59d9cf2b48e549b1e24666636045930d3da7c1acb299d1c3b7f931f94aae41edda2c2b207a36e10f8bcb8d45223e54878f5b316e7ce3b6bc019629");
@@ -34,39 +42,9 @@ public abstract class AbstractMediaTest {
 		return media(file.toPath());
 	}
 
-	public LoomMedia sampleVideoMedia() {
-		return media(data.sampleVideoPath());
-	}
-
-	public LoomMedia sampleImageMedia1() {
-		return media(data.sampleImage1Path());
-	}
-
-	public LoomMedia sampleVideoMedia2() {
-		return media(data.sampleVideo2Path());
-	}
-
-	public LoomMedia sampleVideoMedia3() {
-		return media(data.sampleVideo3Path());
-	}
-
-	public String sampleVideoChunkHash() {
-		return data.sampleVideoChunkHash();
-	}
-
-	public SHA512 sampleVideoSHA512() {
-		return data.sampleVideoSHA512();
-	}
-
-	public SHA256 sampleVideoSHA256() {
-		return data.sampleVideoSHA256();
-	}
-
-	public LoomMedia media(Path path) {
-		return new LoomMediaImpl(path);
-	}
-
-	public Testdata data() {
+	
+	@Override
+	public TestDataCollection data() {
 		return data;
 	}
 

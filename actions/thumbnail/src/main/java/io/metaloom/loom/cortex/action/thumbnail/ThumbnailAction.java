@@ -52,7 +52,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailOptions> 
 
 	@Override
 	public ActionResult process(LoomMedia media) {
-		if (option().getThumbnailPath() == null) {
+		if (options().getThumbnailPath() == null) {
 			throw new RuntimeException("No thumbnail output directory has been configured");
 		}
 		long start = System.currentTimeMillis();
@@ -60,12 +60,12 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailOptions> 
 			print(media, "SKIPPED", "(no video)", start);
 			return ActionResult.skipped(true, start);
 		}
-		if (!new File(option().getThumbnailPath()).exists()) {
+		if (!new File(options().getThumbnailPath()).exists()) {
 			print(media, "SKIPPED", "(thumbnail dir not found)", start);
 			return ActionResult.skipped(true, start);
 		}
 
-		if (!option().isProcessIncomplete()) {
+		if (!options().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
 				print(media, "SKIPPED", "(is incomplete)", start);
@@ -80,7 +80,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailOptions> 
 
 	private void processMedia(SHA512 sha512, LoomMedia media) {
 		long start = System.currentTimeMillis();
-		File outputFile = new File(option().getThumbnailPath(), media.getSHA512() + ".jpg");
+		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
 		String flags = media.getThumbnailFlags();
 		boolean isNull = flags != null && flags.equals(NULL_FLAG);
 		boolean isDone = flags != null && flags.equals(DONE_FLAG);
@@ -98,7 +98,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailOptions> 
 			return;
 		}
 
-		if (!option().isRetryFailed() && isNull) {
+		if (!options().isRetryFailed() && isNull) {
 			print(media, "FAILED", "(previously failed)", start);
 			return;
 		}
@@ -127,7 +127,7 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailOptions> 
 	 * @return
 	 */
 	private boolean hasThumbnail(LoomMedia media) {
-		File outputFile = new File(option().getThumbnailPath(), media.getSHA512() + ".jpg");
+		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
 		return outputFile.exists();
 	}
 

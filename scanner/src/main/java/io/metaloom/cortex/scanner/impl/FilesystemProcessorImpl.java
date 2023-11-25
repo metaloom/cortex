@@ -54,7 +54,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 					action.set(current, total);
 					try {
 						ActionResult result = action.process(media);
-						processed |= result.getState() == ResultState.PROCESSED;
+						processed |= result.getState() == ResultState.SUCCESS;
 						if (!result.isContinueNext()) {
 							action.error(media, "Aborting further processing");
 							// Abort further processing

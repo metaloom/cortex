@@ -2,6 +2,9 @@ package io.metaloom.loom.cortex.dedup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,7 +42,6 @@ public class DedupAction extends AbstractFilesystemAction<DedupOptions> {
 
 	@Override
 	public ActionResult process(LoomMedia media) throws IOException {
-		long start = System.currentTimeMillis();
 		SHA512 sha512 = media.getSHA512();
 
 		// Lets load the entry for the hash of the file
@@ -48,15 +50,15 @@ public class DedupAction extends AbstractFilesystemAction<DedupOptions> {
 		// We found an item. Lets check it.
 		if (asset != null) {
 			if (asset.getFilename() == null) {
-				return done(media, start, "Source from db has no current path");
+				return success(media,  "Source from db has no current path");
 			}
 			File dbFile = new File(asset.getFilename());
 			if (!dbFile.exists()) {
-				return done(media, start, "Source from db not found for currentpath");
+				return success(media, "Source from db not found for currentpath");
 			}
 			if (dbFile.equals(media.file())) {
 				// All okay - its the same file
-				return done(media, start, "same file");
+				return success(media, "same file");
 			} else {
 				AssetRequest newAsset = AssetRequest.newBuilder()
 					.setSha512Sum(sha512.toString())
@@ -65,7 +67,7 @@ public class DedupAction extends AbstractFilesystemAction<DedupOptions> {
 				// client().storeAsset(sha512)
 				LoomMedia foundMedia = new LoomMediaImpl(dbFile.toPath());
 				if (!foundMedia.exists() || !media.exists()) {
-					return done(media, start, "Source or dup not found");
+					return success(media, "Source or dup not found");
 				}
 
 				// The hash matches the local file
@@ -80,37 +82,42 @@ public class DedupAction extends AbstractFilesystemAction<DedupOptions> {
 						System.in.read();
 					}
 					if (pathA.equalsIgnoreCase(pathB)) {
-						return done(media, start, "same file");
+						return success(media, "same file");
 					} else {
 						if (log.isDebugEnabled()) {
 							log.debug("[A]: " + shortHash(media) + " E: " + media.exists() + " => " + pathA);
 							log.debug("[B]: " + shortHash(foundMedia) + " E: " + foundMedia.exists() + " => " + pathB);
 						}
 						// TODO configure target folder selection
-						File targetFolder = new File("dups");
-						if (!targetFolder.exists()) {
-							if (!targetFolder.mkdirs()) {
-								throw new RuntimeException("Could not create dups target dir {" + targetFolder.getAbsolutePath() + "}");
+						Path targetFolder = options().getDupFolder();
+						if (!Files.exists(targetFolder)) {
+							try {
+								Files.createDirectories(targetFolder);
+							} catch (FileAlreadyExistsException e1) {
+								// ignored
+							} catch(Exception e2) {
+								throw new RuntimeException("Could not create dups target dir {" + targetFolder.toAbsolutePath() + "}");
 							}
 						}
-						moveMedia(media, targetFolder, start, "Dup Of: " + pathB);
+						moveMedia(media, targetFolder, "Dup Of: " + pathB);
 						// We don't want to store the updated path for this media or alter the original file path.
-						return ActionResult.processed(false, start);
+						return success(media, "???");
 					}
 				} else {
-					return done(media, start, "hash does not match");
+					return success(media, "hash does not match");
 				}
 			}
 		} else {
-			return skipped(media, start, "no dup found");
+			return skipped(media, "no dup found");
 		}
 
 	}
 
-	protected ActionResult moveMedia(LoomMedia media, File targetFolder, long start, String msg) {
+	protected ActionResult moveMedia(LoomMedia media, Path targetFolder,  String msg) {
+		long start = 42L;
 		try {
-			File targetFile = FileUtils.autoRotate(media.file(), targetFolder);
-			print(media, "MOVING", "[" + media.path() + "] to [" + targetFolder.getAbsolutePath() + "] " + msg, start);
+			File targetFile = FileUtils.autoRotate(media.file(), targetFolder.toFile());
+			print(media, "MOVING", "[" + media.path() + "] to [" + targetFolder.toAbsolutePath()  + "] " + msg, start);
 			if (!isDryrun()) {
 				FileUtils.moveFile(media.file(), targetFile);
 			}

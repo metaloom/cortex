@@ -20,6 +20,7 @@ public class ActionResult {
 	}
 
 	/**
+	 * Check whether further processing should stop or continue with next actions.
 	 * 
 	 * @return false indicates that the action want's to skip further processing
 	 */
@@ -33,7 +34,7 @@ public class ActionResult {
 
 	public static ActionResult processed(boolean continueNext, long start) {
 		long duration = System.currentTimeMillis() - start;
-		return new ActionResult(continueNext, duration, ResultState.PROCESSED);
+		return new ActionResult(continueNext, duration, ResultState.SUCCESS);
 	}
 
 	public static ActionResult failed(boolean continueNext, long start) {

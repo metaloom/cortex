@@ -2,7 +2,7 @@ package io.metaloom.cortex.action.fp;
 
 import static io.metaloom.cortex.api.action.media.action.FingerprintMedia.FINGERPRINT_KEY;
 import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
+import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;
 
@@ -15,14 +15,14 @@ import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.test.TestEnvHelper;
-import io.metaloom.loom.test.Testdata;
+import io.metaloom.loom.test.data.TestDataCollection;
 
 public class FingerprintActionTest extends AbstractMediaTest {
 
 	@Test
 	public void testAction() throws IOException {
 		FingerprintAction action = mockAction();
-		Testdata data = TestEnvHelper.prepareTestdata("action-test");
+		TestDataCollection data = TestEnvHelper.prepareTestdata("action-test");
 		LoomMedia media = sampleVideoMedia();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();

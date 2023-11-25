@@ -1,5 +1,8 @@
 package io.metaloom.cortex.action.hash;
 
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -9,19 +12,16 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA256;
-import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class SHA256Action extends AbstractFilesystemAction {
+public class SHA256Action extends AbstractMediaAction<HashOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
-
-	private static final String NAME = "sha256-hash";
 
 	@Inject
 	public SHA256Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
@@ -30,44 +30,31 @@ public class SHA256Action extends AbstractFilesystemAction {
 
 	@Override
 	public String name() {
-		return NAME;
+		return "SHA256";
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
-		SHA256 sha256 = media.getSHA256();
-		String info = "";
-		if (sha256 == null) {
-			SHA512 sha512 = media.getSHA512();
-			AssetResponse asset = client().loadAsset(sha512).sync();
-			if (asset == null) {
-				info = "hashed";
-				getHash256(media);
-			} else {
-				SHA256 dbHash256 = SHA256.fromString(asset.getSha256Sum());
-				if (dbHash256 != null) {
-					writeHash256(media, dbHash256);
-					info = "from db";
-				}
-			}
-			return done(media, start, info);
+	protected boolean isProcessed(LoomMedia media) {
+		return media.getSHA256() != null;
+	}
+
+	@Override
+	protected ActionResult process(LoomMedia media, AssetResponse asset) {
+		SHA256 hash = HashUtils.computeSHA256(media.file());
+		media.setSHA256(hash);
+		return success(media, COMPUTED);
+	}
+
+	@Override
+	protected ActionResult update(LoomMedia media, AssetResponse asset) {
+		SHA256 hash = SHA256.fromString(asset.getSha256Sum());
+		// Check whether the hash was in db
+		if (hash != null) {
+			media.setSHA256(hash);
+			return success(media, REMOTE);
 		} else {
-			return done(media, start, info);
+			return process(media, asset);
 		}
-	}
-
-	private void writeHash256(LoomMedia media, SHA256 hashSum) {
-		media.setSHA256(hashSum);
-	}
-
-	private SHA256 getHash256(LoomMedia media) {
-		SHA256 hashSum256 = media.getSHA256();
-		if (hashSum256 == null) {
-			hashSum256 = SHA256.fromString(HashUtils.computeSHA256(media.file()));
-			media.setSHA256(hashSum256);
-		}
-		return hashSum256;
 	}
 
 }

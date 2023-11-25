@@ -2,7 +2,7 @@ package io.metaloom.loom.action.tika;
 
 import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
 import static io.metaloom.cortex.api.action.media.action.TikaMedia.TIKA_FLAGS_KEY;
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
+import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;
 

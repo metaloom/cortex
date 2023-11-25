@@ -1,6 +1,7 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
 import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -9,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,7 @@ import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 
+@Singleton
 public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
@@ -44,16 +48,21 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions
 		Video4j.init();
 	}
 
-	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectOptions options)
-		throws FileNotFoundException {
+	@Inject
+	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectOptions options) {
 		super(client, cortexOption, options);
 		try {
 			DLibModelProvisioner.extractModelData(Paths.get("dlib"));
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to extract dlib models", e);
 		}
-		this.detector = DLibFacedetector.create();
-		this.detector.setMinFaceHeightFactor(options.getMinFaceHeightFactor());
+		try {
+			this.detector = DLibFacedetector.create();
+			this.detector.setMinFaceHeightFactor(options.getMinFaceHeightFactor());
+		} catch (FileNotFoundException e) {
+			log.error("Failed to load dlib", e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -70,7 +79,7 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions
 			} else if (media.isImage()) {
 				return processImage(media);
 			} else {
-				return skipped(media, start, "is unprocessable media type");
+				return skipped(media, "is unprocessable media type");
 			}
 		} catch (Exception e) {
 			log.error("Failed to process media", e);
@@ -89,11 +98,11 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions
 			media.setFacedetectionFlags(FaceDetectionFlags.SUCCESS);
 			FaceDetectionParameters params = new FaceDetectionParameters();
 			params.setCount(result.size());
-			//TODO add face data
+			// TODO add face data
 			media.setFacedetectionParams(params);
 		}
 		// TODO handle faces / get embeddings
-		return done(media, start, "image processed");
+		return success(media, COMPUTED);
 	}
 
 	private ActionResult processVideo(LoomMedia media) {
@@ -101,13 +110,13 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectOptions
 		try (VideoFile video = Videos.open(media.absolutePath())) {
 			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
 			media.setFaceCount(faces.size());
-			//TODO add params, flags
+			// TODO add params, flags
 		} catch (InterruptedException e) {
 			log.error("Failed to process video", e);
 			return ActionResult.failed(CONTINUE_NEXT, start);
 		}
 
-		return done(media, start, "facedetection completed");
+		return success(media, COMPUTED);
 	}
 
 }

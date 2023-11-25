@@ -134,7 +134,7 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	public SHA512 getSHA512() {
 		SHA512 hashSum512 = get(SHA_512_KEY);
 		if (hashSum512 == null) {
-			hashSum512 = SHA512.fromString(HashUtils.computeSHA512(file()));
+			hashSum512 = HashUtils.computeSHA512(file());
 			put(SHA_512_KEY, hashSum512);
 		}
 		return hashSum512;

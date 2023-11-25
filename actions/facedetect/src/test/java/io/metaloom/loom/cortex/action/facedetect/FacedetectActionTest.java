@@ -1,7 +1,9 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
+import static io.metaloom.cortex.api.action.media.action.FacedetectionMedia.FACEDETECT_COUNT_KEY;
 import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
-import static io.metaloom.loom.test.assertj.LoomWorkerAssertions.assertThat;
+import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,8 +32,8 @@ public class FacedetectActionTest extends AbstractMediaTest {
 		LoomMedia media = sampleVideoMedia2();
 		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
-		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);
-		System.out.println("Faces: " + media.getFaceCount());
+		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, FACEDETECT_COUNT_KEY);
+		assertTrue(media.getFaceCount() > 10, "There should be at least 10 detections.");
 	}
 
 	@Test

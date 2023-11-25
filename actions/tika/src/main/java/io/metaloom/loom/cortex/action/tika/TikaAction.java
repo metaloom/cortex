@@ -1,5 +1,7 @@
 package io.metaloom.loom.cortex.action.tika;
 
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -40,7 +42,7 @@ public class TikaAction extends AbstractFilesystemAction {
 		long start = System.currentTimeMillis();
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
-			return skipped(media, start, "(previously failed)");
+			return skipped(media, "(previously failed)");
 		} else if (flags == null) {
 			String info = "";
 			SHA512 sha512 = media.getSHA512();
@@ -56,7 +58,7 @@ public class TikaAction extends AbstractFilesystemAction {
 				// writeFlags(media, DONE_FLAG);
 			}
 		} else {
-			return done(media, start, "already processed");
+			return success(media,  "already processed");
 		}
 	}
 
@@ -66,11 +68,11 @@ public class TikaAction extends AbstractFilesystemAction {
 			// TODO store result
 			media.setTikaFlags(DONE_FLAG);
 
-			return done(media, start, "processed");
+			return success(media, COMPUTED);
 		} catch (Exception e) {
 			log.error("Error while processing media " + media.path(), e);
 			media.setTikaFlags(DONE_FLAG);
-			return failure(media, start, "failed processing");
+			return failure(media, "failed processing");
 		}
 	}
 

@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -32,6 +30,7 @@ import io.metaloom.cortex.api.option.action.CortexActionOptions;
 public class CortexOptionsLoader {
 
 	private static final Logger log = LoggerFactory.getLogger(CortexOptionsLoader.class);
+
 	private final CortexActionOptionDeserializer actionOptionsDeserializer;
 
 	@Inject
@@ -44,7 +43,7 @@ public class CortexOptionsLoader {
 	 * 
 	 * @return
 	 */
-	public ObjectMapper getYAMLMapper() {
+	public ObjectMapper getMapper() {
 		YAMLFactory factory = new YAMLFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -80,10 +79,10 @@ public class CortexOptionsLoader {
 	 * 
 	 * @return
 	 */
-	private CortexOptions loadCortexOptions() {
+	public CortexOptions load() {
 
 		// 1. Try to use config file
-		CortexOptions options = loadCortexOptions(defaultConfigPath(), null);
+		CortexOptions options = load(defaultConfigPath());
 
 		// 2. No luck - use default config
 		if (options == null) {
@@ -94,12 +93,12 @@ public class CortexOptionsLoader {
 
 	}
 
-	public CortexOptions loadCortexOptions(Path configFile, Set<CortexActionOptions> actionOptions) {
+	public CortexOptions load(Path configFile) {
 		if (Files.exists(configFile)) {
 			try {
 				log.info("Loading configuration file {" + configFile + "}.");
 				try (FileInputStream fis = new FileInputStream(configFile.toFile())) {
-					return loadConfiguration(fis);
+					return load(fis);
 				}
 			} catch (IOException e) {
 				log.error("Could not load configuration file {" + configFile.toAbsolutePath() + "}.", e);
@@ -115,13 +114,13 @@ public class CortexOptionsLoader {
 	 * @param ins
 	 * @return
 	 */
-	private CortexOptions loadConfiguration(InputStream ins) {
+	private CortexOptions load(InputStream ins) {
 		if (ins == null) {
 			log.info("Config file {" + CORTEX_CONF_FILENAME + "} not found. Using default configuration.");
 			return generateDefaultConfig();
 		}
 
-		ObjectMapper mapper = getYAMLMapper();
+		ObjectMapper mapper = getMapper();
 		try {
 			return mapper.readValue(ins, CortexOptions.class);
 		} catch (Exception e) {
@@ -130,13 +129,16 @@ public class CortexOptionsLoader {
 		}
 	}
 
-	private void saveCortexOptions(CortexOptions options, Path configFile) {
+	public void save(CortexOptions options) {
+		save(defaultConfigPath(), options);
+	}
+
+	public void save(Path configFile, CortexOptions options) {
 		log.info("Configuration file {" + configFile.toAbsolutePath().toString() + "} was not found within the filesystem.");
 
-		ObjectMapper mapper = getYAMLMapper();
+		ObjectMapper mapper = getMapper();
 		try {
 			// Generate default config
-
 			FileUtils.writeStringToFile(configFile.toFile(), mapper.writeValueAsString(options), StandardCharsets.UTF_8, false);
 			log.info("Saved default configuration to file {" + configFile.toAbsolutePath() + "}.");
 		} catch (IOException e) {

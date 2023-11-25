@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.scene.impl.OpticalFlowSceneDetector;
 import io.metaloom.loom.test.TestEnvHelper;
-import io.metaloom.loom.test.Testdata;
+import io.metaloom.loom.test.data.TestDataCollection;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -22,7 +22,7 @@ public class OpticalFlowSceneDetectorTest {
 	@Test
 	public void testDetection() throws IOException {
 		SceneDetector dectector = new OpticalFlowSceneDetector();
-		Testdata data = TestEnvHelper.prepareTestdata("scene-detection-test");
+		TestDataCollection data = TestEnvHelper.prepareTestdata("scene-detection-test");
 		Path videoPath = data.sampleVideo2Path();
 		videoPath = Paths.get("/extra/vid/7.mkv");
 		try (VideoFile video = Videos.open(videoPath)) {

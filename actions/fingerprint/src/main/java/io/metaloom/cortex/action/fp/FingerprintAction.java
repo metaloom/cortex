@@ -21,7 +21,7 @@ import io.metaloom.video4j.fingerprint.v2.MultiSectorVideoFingerprinter;
 import io.metaloom.video4j.fingerprint.v2.impl.MultiSectorVideoFingerprinterImpl;
 
 @Singleton
-public class FingerprintAction extends AbstractFilesystemAction {
+public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FingerprintAction.class);
 
@@ -78,7 +78,7 @@ public class FingerprintAction extends AbstractFilesystemAction {
 				return ActionResult.failed(true, start);
 			}
 		} else {
-			return done(media, start, info);
+			return success(media, info);
 		}
 
 	}
