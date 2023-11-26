@@ -1,4 +1,4 @@
-package io.metaloom.loom.cortex.cli.cmd;
+package io.metaloom.cortex.cli.cmd;
 
 import java.util.concurrent.Callable;
 

@@ -1,7 +1,7 @@
-package io.metaloom.loom.cortex.cli.cmd;
+package io.metaloom.cortex.cli.cmd;
 
-import static io.metaloom.loom.cortex.cli.ExitCode.ERROR;
-import static io.metaloom.loom.cortex.cli.ExitCode.OK;
+import static io.metaloom.cortex.cli.ExitCode.ERROR;
+import static io.metaloom.cortex.cli.ExitCode.OK;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

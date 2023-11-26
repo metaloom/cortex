@@ -1,4 +1,4 @@
-package io.metaloom.loom.cortex.impl;
+package io.metaloom.cortex.impl;
 
 import java.util.Set;
 

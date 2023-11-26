@@ -1,4 +1,4 @@
-package io.metaloom.loom.cortex.cli.dagger;
+package io.metaloom.cortex.cli.dagger;
 
 import dagger.Module;
 import io.metaloom.cortex.action.captioning.CaptioningActionModule;

@@ -1,12 +1,12 @@
-package io.metaloom.loom.cortex.cli.dagger;
+package io.metaloom.cortex.cli.dagger;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 import io.metaloom.cortex.Cortex;
 import io.metaloom.cortex.api.option.CortexOptions;
+import io.metaloom.cortex.cli.CortexCLI;
 import io.metaloom.cortex.common.option.CortexOptionsLoader;
-import io.metaloom.loom.cortex.cli.CortexCLI;
 
 @Singleton
 @Component(modules = { CortexBindModule.class, LocalStorageModule.class, ActionCollectionModule.class, CortexClientModule.class })

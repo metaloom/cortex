@@ -1,4 +1,4 @@
-package io.metaloom.loom.cortex.cli;
+package io.metaloom.cortex.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.cli.CortexCLIMain;
 import io.metaloom.loom.test.LocalTestData;
 
 public class ProcessCommandTest {

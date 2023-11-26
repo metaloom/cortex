@@ -1,8 +1,8 @@
-package io.metaloom.loom.cortex.cli.cmd;
+package io.metaloom.cortex.cli.cmd;
 
-import static io.metaloom.loom.cortex.cli.ExitCode.OK;
+import static io.metaloom.cortex.cli.ExitCode.OK;
 
-import io.metaloom.loom.cortex.cli.CortexCLI;
+import io.metaloom.cortex.cli.CortexCLI;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.ParentCommand;

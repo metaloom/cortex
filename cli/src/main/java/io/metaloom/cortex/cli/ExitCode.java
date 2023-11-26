@@ -1,4 +1,4 @@
-package io.metaloom.loom.cortex.cli;
+package io.metaloom.cortex.cli;
 
 public enum ExitCode {
 

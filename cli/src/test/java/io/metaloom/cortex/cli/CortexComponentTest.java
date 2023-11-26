@@ -1,10 +1,10 @@
-package io.metaloom.loom.cortex.cli;
+package io.metaloom.cortex.cli;
 
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.Cortex;
-import io.metaloom.loom.cortex.cli.dagger.CortexComponent;
-import io.metaloom.loom.cortex.cli.dagger.DaggerCortexComponent;
+import io.metaloom.cortex.cli.dagger.CortexComponent;
+import io.metaloom.cortex.cli.dagger.DaggerCortexComponent;
 
 public class CortexComponentTest {
 

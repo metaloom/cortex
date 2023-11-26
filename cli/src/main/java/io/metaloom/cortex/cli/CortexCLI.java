@@ -1,10 +1,10 @@
-package io.metaloom.loom.cortex.cli;
+package io.metaloom.cortex.cli;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ch.qos.logback.classic.Level;
-import io.metaloom.loom.cortex.cli.cmd.ProcessCommand;
+import io.metaloom.cortex.cli.cmd.ProcessCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;

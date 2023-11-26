@@ -1,5 +1,5 @@
 
-package io.metaloom.loom.cortex.cli.dagger;
+package io.metaloom.cortex.cli.dagger;
 
 import dagger.Module;
 
