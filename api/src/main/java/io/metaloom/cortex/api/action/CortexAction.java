@@ -1,5 +1,7 @@
 package io.metaloom.cortex.api.action;
 
+import io.metaloom.cortex.api.option.action.CortexActionOptions;
+
 public interface CortexAction {
 
 	/**
@@ -10,4 +12,6 @@ public interface CortexAction {
 	String name();
 
 	boolean isDryrun();
+
+	CortexActionOptions options();
 }

@@ -69,6 +69,16 @@
         </dependency>
         <dependency>
             <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-loom-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
+            <artifactId>loom-cortex-captioning-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.loom.cortex</groupId>
             <artifactId>loom-cortex-dedup-action</artifactId>
             <version>${project.version}</version>
         </dependency>

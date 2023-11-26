@@ -9,7 +9,7 @@ import io.metaloom.cortex.common.option.CortexOptionsLoader;
 import io.metaloom.loom.cortex.cli.CortexCLI;
 
 @Singleton
-@Component(modules = { CortexBindModule.class, LocalStorageModule.class, ActionModule.class, CortexClientModule.class })
+@Component(modules = { CortexBindModule.class, LocalStorageModule.class, ActionCollectionModule.class, CortexClientModule.class })
 public interface CortexComponent {
 
 	Cortex cortex();

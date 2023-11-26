@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.thumbnail.ThumbnailActionOptions;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
-import io.metaloom.loom.cortex.action.thumbnail.ThumbnailOptions;
 import io.metaloom.loom.test.LocalTestData;
 
 public class DefaultProcessorTest {
@@ -22,7 +22,7 @@ public class DefaultProcessorTest {
 	@Test
 	public void testProcessor() throws IOException {
 		CortexOptions options = new CortexOptions();
-		ThumbnailOptions thumbnailOptions = new ThumbnailOptions();
+		ThumbnailActionOptions thumbnailOptions = new ThumbnailActionOptions();
 		thumbnailOptions.setThumbnailPath(LocalTestData.thumbnailDir().toString());
 		MediaProcessor processor = new DefaultMediaProcessorImpl(options);
 		processor.process(LocalTestData.localDir());

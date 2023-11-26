@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.facedetect.file.FaceFileUtil;
+import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.loom.cortex.action.facedetect.assertj.FaceAssert;
-import io.metaloom.loom.cortex.action.facedetect.file.FaceFileUtil;
-import io.metaloom.loom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.FaceBox;
 

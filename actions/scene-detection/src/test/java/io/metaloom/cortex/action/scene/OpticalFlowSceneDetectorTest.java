@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.scene.detector.SceneDetector;
 import io.metaloom.cortex.action.scene.impl.OpticalFlowSceneDetector;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.data.TestDataCollection;

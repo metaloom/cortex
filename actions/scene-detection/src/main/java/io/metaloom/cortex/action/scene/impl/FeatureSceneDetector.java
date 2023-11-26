@@ -13,7 +13,7 @@ import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import io.metaloom.cortex.action.scene.AbstractSceneDetector;
-import io.metaloom.cortex.action.scene.DetectionResult;
+import io.metaloom.cortex.action.scene.detector.DetectionResult;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.impl.MatProvider;
 import io.metaloom.video4j.opencv.CVUtils;

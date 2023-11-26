@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.consistency.ConsistencyAction;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;

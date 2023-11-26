@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import io.metaloom.cortex.action.scene.detector.DetectionResult;
+import io.metaloom.cortex.action.scene.detector.Detector;
+import io.metaloom.cortex.action.scene.detector.SceneDetector;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
 import io.metaloom.video4j.utils.SimpleImageViewer;

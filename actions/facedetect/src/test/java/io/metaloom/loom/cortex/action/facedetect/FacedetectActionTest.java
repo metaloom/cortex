@@ -11,6 +11,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.facedetect.FacedetectAction;
+import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
@@ -48,7 +50,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 
 	public FacedetectAction mockAction() throws FileNotFoundException {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		FacedetectOptions option = new FacedetectOptions();
+		FacedetectActionOptions option = new FacedetectActionOptions();
 		option.setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
 		return new FacedetectAction(client, new CortexOptions(), option);
 	}

@@ -12,6 +12,7 @@ public class CortexComponentTest {
 	public void testDaggerSetup() {
 		CortexComponent component = DaggerCortexComponent.builder().build();
 		Cortex cortex = component.cortex();
+		cortex.checkActions();
 	}
 
 }

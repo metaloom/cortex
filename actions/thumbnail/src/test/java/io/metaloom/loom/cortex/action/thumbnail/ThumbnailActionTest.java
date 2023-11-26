@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
+import io.metaloom.cortex.action.thumbnail.ThumbnailAction;
+import io.metaloom.cortex.action.thumbnail.ThumbnailActionOptions;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -46,7 +48,7 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 	public ThumbnailAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
 
-		ThumbnailOptions options = new ThumbnailOptions();
+		ThumbnailActionOptions options = new ThumbnailActionOptions();
 		options.setThumbnailPath(thumbnailDir.getAbsolutePath());
 		return new ThumbnailAction(client, new CortexOptions(), options);
 	}

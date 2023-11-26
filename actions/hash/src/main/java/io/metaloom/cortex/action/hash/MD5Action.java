@@ -3,7 +3,6 @@ package io.metaloom.cortex.action.hash;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
-import java.nio.file.Files;
 import java.util.Optional;
 
 import javax.inject.Inject;
