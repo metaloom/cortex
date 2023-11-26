@@ -13,7 +13,7 @@
     <name>MetaLoom // Cortex :: CLI</name>
 
     <properties>
-        <mainClass>io.metaloom.cortex.cli.CortexCLI</mainClass>
+        <mainClass>io.metaloom.cortex.cli.CortexCLIMain</mainClass>
     </properties>
 
     <dependencyManagement>

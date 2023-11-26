@@ -11,7 +11,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.ScopeType;
 import picocli.CommandLine.Spec;
 
-@Command(name = "loom-cortex", mixinStandardHelpOptions = false, version = "loom-cortex 0.0.1", description = "CLI tool for the Loom DAM", showDefaultValues = true, subcommands = {
+@Command(name = "cortex", mixinStandardHelpOptions = false, version = "cortex 0.0.1", description = "MetaLoom // Cortex is a media processing tool", showDefaultValues = true, subcommands = {
 	ProcessCommand.class
 })
 @Singleton
