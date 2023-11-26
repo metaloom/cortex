@@ -9,7 +9,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
@@ -22,7 +23,6 @@ import io.metaloom.utils.hash.HashUtils;
 public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(ChunkHashAction.class);
-
 
 	@Inject
 	public ChunkHashAction(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
@@ -40,21 +40,23 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 	}
 
 	@Override
-	protected ActionResult process(LoomMedia media, AssetResponse asset) {
+	protected ActionResult2 process(ActionContext ctx, AssetResponse asset) {
+		LoomMedia media = ctx.media();
 		ChunkHash hash = HashUtils.computeChunkHash(media.file());
 		media.setChunkHash(hash);
-		return success(media, COMPUTED);
+		return ctx.origin(COMPUTED).next();
 	}
 
 	@Override
-	protected ActionResult update(LoomMedia media, AssetResponse asset) {
+	protected ActionResult2 update(ActionContext ctx, AssetResponse asset) {
+		LoomMedia media = ctx.media();
 		ChunkHash hash = ChunkHash.fromString(asset.getChunkHash());
 		// Check whether the hash was in db
 		if (hash != null) {
 			media.setChunkHash(hash);
-			return success(media, REMOTE);
+			return ctx.origin(REMOTE).next();
 		} else {
-			return process(media, asset);
+			return process(ctx, asset);
 		}
 	}
 

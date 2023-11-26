@@ -7,11 +7,9 @@ import io.metaloom.cortex.api.option.action.CortexActionOptions;
 
 public class CortexOptions {
 
-	private String loomHost;
-	private int loomPort;
-
 	private Map<String, CortexActionOptions> actions = new HashMap<>();
-	private ProcessorSettings processorSettings = new ProcessorSettings();
+	private LoomOptions loom = new LoomOptions();
+	private boolean dryrun;
 
 	public CortexOptions() {
 	}
@@ -20,27 +18,27 @@ public class CortexOptions {
 		return actions;
 	}
 
-	public void setActions(Map<String, CortexActionOptions> actions) {
+	public CortexOptions setActions(Map<String, CortexActionOptions> actions) {
 		this.actions = actions;
+		return this;
 	}
 
-	public String getLoomHost() {
-		return loomHost;
+	public LoomOptions getLoom() {
+		return loom;
 	}
 
-	public void setLoomHost(String loomHost) {
-		this.loomHost = loomHost;
+	public CortexOptions setLoom(LoomOptions loom) {
+		this.loom = loom;
+		return this;
 	}
 
-	public int getLoomPort() {
-		return loomPort;
+	public boolean isDryrun() {
+		return dryrun;
 	}
 
-	public void setLoomPort(int loomPort) {
-		this.loomPort = loomPort;
+	public CortexOptions setDryrun(boolean dryrun) {
+		this.dryrun = dryrun;
+		return this;
 	}
 
-	public ProcessorSettings getProcessorSettings() {
-		return processorSettings;
-	}
 }

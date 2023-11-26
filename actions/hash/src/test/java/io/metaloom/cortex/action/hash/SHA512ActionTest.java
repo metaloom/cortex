@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.AbstractActionTest;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
@@ -17,7 +17,7 @@ public class SHA512ActionTest extends AbstractActionTest<SHA512Action> {
 	@Test
 	public void testProcessing() throws IOException {
 		LoomMedia media = mediaVideo1();
-		ActionResult result = action().process(media);
+		ActionResult2 result = action().process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, sampleVideoSHA512());
 	}

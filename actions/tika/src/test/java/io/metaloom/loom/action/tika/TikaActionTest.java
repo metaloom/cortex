@@ -12,7 +12,7 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.action.tika.TikaAction;
 import io.metaloom.cortex.action.tika.TikaActionOptions;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -23,7 +23,7 @@ public class TikaActionTest extends AbstractMediaTest {
 	public void testAction() throws IOException {
 		TikaAction action = mockAction();
 		LoomMedia media = mediaVideo1();
-		ActionResult result = action.process(media);
+		ActionResult2 result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, TIKA_FLAGS_KEY);
 	}

@@ -6,10 +6,11 @@ import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import io.metaloom.cortex.api.action.CortexAction;
 import io.metaloom.cortex.api.option.CortexOptions;
+import io.metaloom.cortex.common.action.AbstractActionModule;
 import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
 
 @Module
-public interface FacedetectActionModule {
+public abstract class FacedetectActionModule extends AbstractActionModule {
 
 	@Binds
 	@IntoSet
@@ -23,6 +24,6 @@ public interface FacedetectActionModule {
 
 	@Provides
 	public static FacedetectActionOptions options(CortexOptions options) {
-		return (FacedetectActionOptions) options.getActions().get("facedetection");
+		return actionOptions(options, "facedetection", new FacedetectActionOptions());
 	}
 }

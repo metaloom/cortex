@@ -8,12 +8,12 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -49,63 +49,62 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionOpt
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
+	public ActionResult2 process(ActionContext ctx) {
 		if (options().getThumbnailPath() == null) {
-			throw new RuntimeException("No thumbnail output directory has been configured");
+			// throw new RuntimeException("No thumbnail output directory has been configured");
+			return ctx.skipped().next();
 		}
-		long start = System.currentTimeMillis();
+		LoomMedia media = ctx.media();
 		if (!media.isVideo()) {
-			print(media, "SKIPPED", "(no video)", start);
-			return ActionResult.skipped(true, start);
+			ctx.print( "SKIPPED", "(no video)");
+			return ctx.skipped().next();
 		}
 		if (!new File(options().getThumbnailPath()).exists()) {
-			print(media, "SKIPPED", "(thumbnail dir not found)", start);
-			return ActionResult.skipped(true, start);
+			ctx.print( "SKIPPED", "(thumbnail dir not found)");
+			return ctx.skipped().next();
 		}
 
 		if (!options().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
-				print(media, "SKIPPED", "(is incomplete)", start);
-				return ActionResult.skipped(true, start);
+				ctx.print( "SKIPPED", "(is incomplete)");
+				return ctx.skipped().next();
 			}
 		}
 
-		SHA512 sha512 = media.getSHA512();
-		processMedia(sha512, media);
-		return ActionResult.processed(true, start);
+		return processMedia(ctx);
 	}
 
-	private void processMedia(SHA512 sha512, LoomMedia media) {
-		long start = System.currentTimeMillis();
+	private ActionResult2 processMedia(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
 		String flags = media.getThumbnailFlags();
 		boolean isNull = flags != null && flags.equals(NULL_FLAG);
 		boolean isDone = flags != null && flags.equals(DONE_FLAG);
 
 		if (isDone) {
-			print(media, "DONE", "", start);
-			return;
+			ctx.print( "DONE", "");
+			return ctx.next();
 		}
 
 		if (hasThumbnail(media)) {
 			if (!isDone) {
 				media.setThumbnailFlags("DONE");
 			}
-			print(media, "DONE", "", start);
-			return;
+			ctx.print("DONE", "");
+			return ctx.next();
 		}
 
 		if (!options().isRetryFailed() && isNull) {
-			print(media, "FAILED", "(previously failed)", start);
-			return;
+			ctx.print("FAILED", "(previously failed)");
+			return ctx.failure("").next();
 		}
 
 		try {
 			String path = media.absolutePath();
 			try (VideoFile video = Videos.open(path)) {
 				gen.save(video, outputFile);
-				print(media, "DONE", "", start);
+				ctx.print("DONE", "");
 				media.setThumbnailFlags(DONE_FLAG);
 			}
 		} catch (Exception e) {
@@ -115,6 +114,8 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionOpt
 			// touchFailed(media);
 			error(media, "NULL");
 		}
+		
+		return ctx.next();
 
 	}
 

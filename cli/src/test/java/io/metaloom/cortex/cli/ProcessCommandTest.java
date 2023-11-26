@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.cli.CortexCLIMain;
 import io.metaloom.loom.test.LocalTestData;
 
 public class ProcessCommandTest {

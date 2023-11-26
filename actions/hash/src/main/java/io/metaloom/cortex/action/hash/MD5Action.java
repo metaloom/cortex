@@ -11,7 +11,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
@@ -36,11 +37,12 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	}
 
 	@Override
-	protected Optional<ActionResult> check(LoomMedia media) {
+	protected Optional<ActionResult2> check(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		if (!options().isMD5()) {
-			return Optional.of(skipped(media, "MD5 disabled"));
+			return Optional.of(ctx.failure("MD5 disabled").next());
 		} else if (!media.exists()) {
-			return Optional.of(notFound("file " + media.path() + " not found"));
+			return Optional.of(ctx.failure("file " + media.path() + " not found").abort());
 		} else {
 			return Optional.empty();
 		}
@@ -52,21 +54,23 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	}
 
 	@Override
-	protected ActionResult process(LoomMedia media, AssetResponse asset) {
+	protected ActionResult2 process(ActionContext ctx, AssetResponse asset) {
+		LoomMedia media = ctx.media();
 		MD5 hash = HashUtils.computeMD5(media.file());
 		media.setMD5(hash);
-		return success(media, COMPUTED);
+		return ctx.origin(COMPUTED).next();
 	}
 
 	@Override
-	protected ActionResult update(LoomMedia media, AssetResponse asset) {
+	protected ActionResult2 update(ActionContext ctx, AssetResponse asset) {
+		LoomMedia media = ctx.media();
 		MD5 hash = MD5.fromString(asset.getMd5Sum());
 		// Check whether the hash was in db
 		if (hash != null) {
 			media.setMD5(hash);
-			return success(media, REMOTE);
+			return ctx.origin(REMOTE).next();
 		} else {
-			return process(media, asset);
+			return process(ctx, asset);
 		}
 	}
 

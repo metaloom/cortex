@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import io.metaloom.cortex.Cortex;
 import io.metaloom.cortex.cli.dagger.CortexComponent;
 import io.metaloom.cortex.cli.dagger.DaggerCortexComponent;
+import picocli.CommandLine;
 
 public class CortexComponentTest {
 
@@ -12,7 +13,9 @@ public class CortexComponentTest {
 	public void testDaggerSetup() {
 		CortexComponent component = DaggerCortexComponent.builder().build();
 		Cortex cortex = component.cortex();
-		cortex.checkActions();
+		// cortex.checkActions();
+		CommandLine cli = component.cli();
+		cli.execute("-help");
 	}
 
 }

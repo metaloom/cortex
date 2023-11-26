@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -23,16 +23,15 @@ public class FingerprintDedupAction extends AbstractFilesystemAction<DedupAction
 	public FingerprintDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
 		super(client, cortexOptions, options);
 	}
-	
+
 	@Override
 	public String name() {
 		return "fingerprint-dedup";
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public ActionResult2 process(ActionContext ctx) throws IOException {
+		return ctx.skipped().next();
 	}
 
 }

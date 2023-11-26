@@ -6,7 +6,11 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -29,8 +33,6 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 
 	private MultiSectorVideoFingerprinter hasher = new MultiSectorVideoFingerprinterImpl();
 
-	private FingerprintOptions foption;
-
 	static {
 		Video4j.init();
 	}
@@ -46,17 +48,17 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
+	public ActionResult2 process(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		if (!media.isVideo()) {
-			print(media, "SKIPPED", "(no video)", start);
-			return ActionResult.skipped(true, start);
+			print(ctx, "SKIPPED", "(no video)");
+			return ctx.skipped().next();
 		}
-		if (!foption.isProcessIncomplete()) {
+		if (!options().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
-				print(media, "SKIPPED", "(is incomplete)", start);
-				return ActionResult.skipped(true, start);
+				print(ctx, "SKIPPED", "(is incomplete)");
+				return ctx.skipped().next();
 			}
 		}
 		String fingerprint = media.getFingerprint();
@@ -64,9 +66,8 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 		if (fingerprint == null) {
 			SHA512 sha512 = media.getSHA512();
 			try {
-				info = "computed";
-				processMedia(sha512, media);
-				return ActionResult.processed(true, start);
+				processMedia(sha512, ctx);
+				return ctx.origin(COMPUTED).next();
 			} catch (Exception e) {
 				error(media, "Failure for " + media.path());
 				if (log.isErrorEnabled()) {
@@ -75,21 +76,21 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 				if (media.getFingerprint() == null) {
 					media.setFingerprint("NULL");
 				}
-				return ActionResult.failed(true, start);
+				return ctx.failure("").next();
 			}
 		} else {
-			return success(media, info);
+			return ctx.next();
 		}
 
 	}
 
-	private void processMedia(SHA512 sha512, LoomMedia media) throws InterruptedException {
-		long start = System.currentTimeMillis();
+	private void processMedia(SHA512 sha512, ActionContext ctx) throws InterruptedException {
+		LoomMedia media = ctx.media();
 		String fp = media.getFingerprint();
 		boolean isNull = fp != null && fp.equals("NULL");
 		boolean isCorrect = fp != null && fp.length() == 66;
-		if (!foption.isRetryFailed() && (isNull || isCorrect)) {
-			print(media, "DONE", "", start);
+		if (!options().isRetryFailed() && (isNull || isCorrect)) {
+			print(ctx, "DONE", "");
 		} else {
 			AssetResponse asset = null;
 			if (!isOfflineMode()) {
@@ -100,7 +101,7 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 				String dbFP = asset.getFingerprint();
 				if (dbFP != null) {
 					media.setFingerprint(dbFP);
-					print(media, "DONE", "(from db)", start);
+					print(ctx, "DONE", "(from db)");
 					return;
 				}
 			}
@@ -108,11 +109,11 @@ public class FingerprintAction extends AbstractFilesystemAction<FingerprintOptio
 			try (VideoFile video = Videos.open(path)) {
 				Fingerprint fingerprint = hasher.hash(video);
 				if (fingerprint == null) {
-					print(media, "NULL", "(no result)", start);
+					print(ctx, "NULL", "(no result)");
 					media.setFingerprint("NULL");
 				} else {
 					String hash = fingerprint.hex();
-					print(media, "DONE", "", start);
+					print(ctx, "DONE", "");
 					media.setFingerprint(hash);
 				}
 			}

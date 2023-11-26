@@ -5,11 +5,11 @@ import javax.inject.Singleton;
 import dagger.Component;
 import io.metaloom.cortex.Cortex;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.cli.CortexCLI;
 import io.metaloom.cortex.common.option.CortexOptionsLoader;
+import picocli.CommandLine;
 
 @Singleton
-@Component(modules = { CortexBindModule.class, LocalStorageModule.class, ActionCollectionModule.class, CortexClientModule.class })
+@Component(modules = { CortexBindModule.class, PicoModule.class, LocalStorageModule.class, ActionCollectionModule.class, CortexClientModule.class })
 public interface CortexComponent {
 
 	Cortex cortex();
@@ -18,7 +18,7 @@ public interface CortexComponent {
 
 	CortexOptionsLoader optionsLoader();
 
-	CortexCLI cli();
+	CommandLine cli();
 
 	@Component.Builder
 	interface Builder {

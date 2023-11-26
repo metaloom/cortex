@@ -1,20 +1,16 @@
 package io.metaloom.cortex.common.action;
 
-import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 import static io.metaloom.utils.ConvertUtils.toHumanTime;
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
-import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
-import io.metaloom.cortex.api.action.ResultOrigin;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public abstract class AbstractFilesystemAction<T extends CortexActionOptions> implements FilesystemAction {
-
-	private ThreadLocal<Long> startTime = new ThreadLocal<>();
 
 	private long current = 1L;
 	private long total = 1L;
@@ -45,43 +41,43 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 		return cortexOption;
 	}
 
-	public void markStart() {
-		startTime.set(System.currentTimeMillis());
-	}
-
 	protected String shortHash(LoomMedia media) {
 		return media.getSHA512().toString().substring(0, 8);
 	}
 
-	protected ActionResult completed(LoomMedia media, String msg) {
-		print(media, "COMPLETED", "(" + msg + ")", startTime.get());
-		return ActionResult.processed(true, startTime.get());
-	}
-
-	protected ActionResult skipped(LoomMedia media, String msg) {
-		print(media, "SKIPPED", "(" + msg + ")", startTime.get());
-		return ActionResult.skipped(true, startTime.get());
-	}
-
-	protected ActionResult failure(LoomMedia media, String msg) {
-		print(media, "FAILURE", "(" + msg + ")", startTime.get());
-		return ActionResult.failed(true, startTime.get());
-	}
-
-	protected ActionResult notFound(String msg) {
-		print(null, "NOT_FOUND", "(" + msg + ")", startTime.get());
-		return ActionResult.failed(true, startTime.get());
-	}
-
-	protected ActionResult success(LoomMedia media, String msg) {
-		print(media, "DONE", "(" + msg + ")", startTime.get());
-		return ActionResult.processed(CONTINUE_NEXT, startTime.get());
-	}
-
-	protected ActionResult success(LoomMedia media, ResultOrigin origin) {
-		return success(media, origin.name());
-	}
-
+	// protected ActionResult2 completed(LoomMedia media, String msg) {
+	// print(media, "COMPLETED", "(" + msg + ")");
+	// return ActionResult2.processed(true, start());
+	// }
+	//
+	// protected ActionResult2 skipped(LoomMedia media, String msg) {
+	// print(media, "SKIPPED", "(" + msg + ")");
+	// return ActionResult2.skipped(true, start());
+	// }
+	//
+	// protected ActionResult2 failure(LoomMedia media, String msg) {
+	// print(media, "FAILURE", "(" + msg + ")");
+	// return ActionResult2.failed(true, start());
+	// }
+	//
+	// protected ActionResult2 notFound(String msg) {
+	// print(null, "NOT_FOUND", "(" + msg + ")");
+	// return ActionResult2.failed(true, start());
+	// }
+	//
+	// protected ActionResult2 success(LoomMedia media, String msg) {
+	// print(media, "DONE", "(" + msg + ")");
+	// return ActionResult2.processed(CONTINUE_NEXT, start());
+	// }
+	//
+	// protected ActionResult2 success(LoomMedia media, ResultOrigin origin) {
+	// return success(media, origin.name());
+	// }
+	//
+	// public ActionResult2 skipped(boolean continueNext) {
+	// return ActionResult2.skipped(continueNext, start());
+	// }
+	//
 	@Override
 	public void error(LoomMedia media, String msg) {
 		String prefix = prefix(media);
@@ -89,11 +85,12 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 	}
 
 	@Override
-	public void print(LoomMedia media, String result, String msg, long start) {
+	public void print(ActionContext ctx, String result, String msg) {
 		if (result == null) {
 			result = "";
 		}
-		long dur = System.currentTimeMillis() - start;
+		LoomMedia media = ctx.media();
+		long dur = ctx.duration();
 		String prefix = prefix(media);
 		result = rightPad(result, 12);
 		String time = rightPad(" [" + toHumanTime(dur) + "] ", 12);
@@ -117,7 +114,8 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 
 	@Override
 	public boolean isDryrun() {
-		return cortexOption().getProcessorSettings().isDryrun();
+		return cortexOption().isDryrun();
 	}
+
 
 }

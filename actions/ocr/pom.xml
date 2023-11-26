@@ -12,7 +12,6 @@
 
     <name>MetaLoom // Cortex :: Actions - OCR</name>
 
-
     <dependencies>
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>

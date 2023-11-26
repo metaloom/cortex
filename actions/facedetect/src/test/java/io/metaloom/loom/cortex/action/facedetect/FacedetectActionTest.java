@@ -15,7 +15,7 @@ import io.metaloom.cortex.action.facedetect.FacedetectAction;
 import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -32,7 +32,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 	@Test
 	public void testVideo() throws IOException {
 		LoomMedia media = mediaVideo2();
-		ActionResult result = action.process(media);
+		ActionResult2 result = action.process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, FACEDETECT_COUNT_KEY);
 		assertTrue(media.getFaceCount() > 10, "There should be at least 10 detections.");
@@ -42,7 +42,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 	public void testImage() throws IOException {
 		FacedetectAction action = mockAction();
 		LoomMedia media = mediaImage1();
-		ActionResult result = action.process(media);
+		ActionResult2 result = action.process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);
 		System.out.println("Faces: " + media.getFaceCount());

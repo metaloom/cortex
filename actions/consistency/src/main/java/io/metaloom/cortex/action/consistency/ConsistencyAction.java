@@ -1,6 +1,7 @@
 package io.metaloom.cortex.action.consistency;
 
-import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -8,7 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -31,11 +33,11 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
+	public ActionResult2 process(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		if (!media.isVideo() && !media.isAudio()) {
-			print(media, "SKIPPED", "(no video or audio)", start);
-			return ActionResult.skipped(true, start);
+			ctx.print("SKIPPED", "(no video or audio)");
+			return ctx.skipped().next();
 		}
 
 		try {
@@ -63,11 +65,11 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 			} else {
 				info = "(from file)";
 			}
-			print(media, "DONE", info, start);
-			return ActionResult.processed(CONTINUE_NEXT, start);
+			ctx.print("DONE", info);
+			return ctx.origin(COMPUTED).next();
 		} catch (NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
-			return ActionResult.failed(CONTINUE_NEXT, start);
+			return ctx.failure("").next();
 		}
 
 	}
@@ -77,4 +79,6 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 		long count = pf.computeZeroChunkCount();
 		media.setZeroChunkCount(count);
 	}
+
+	
 }

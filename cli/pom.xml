@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>io.metaloom.cortex</groupId>
-            <artifactId>cortex-scanner</artifactId>
+            <artifactId>cortex-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>info.picocli</groupId>

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.data.AudioData;
@@ -85,6 +86,10 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 
 	public LoomMedia mediaBogusBin() {
 		return media(bogusBin());
+	}
+
+	public ActionContext ctx(LoomMedia media) {
+		return ActionContext.create(media);
 	}
 
 }

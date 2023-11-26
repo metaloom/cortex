@@ -4,7 +4,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
-import io.metaloom.cortex.api.action.CortexAction;
+import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractActionModule;
 import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
@@ -14,7 +14,7 @@ public abstract class FingerprintActionModule extends AbstractActionModule {
 
 	@Binds
 	@IntoSet
-	abstract CortexAction bindAction(FingerprintAction action);
+	abstract FilesystemAction bindAction(FingerprintAction action);
 
 	@IntoSet
 	@Provides

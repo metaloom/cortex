@@ -2,8 +2,8 @@ package io.metaloom.cortex.action.dummy;
 
 import java.io.IOException;
 
-import io.metaloom.cortex.api.action.ActionResult;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -17,9 +17,9 @@ public class DummyAction extends AbstractFilesystemAction<DummyOptions> {
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) throws IOException {
+	public ActionResult2 process(ActionContext ctx) throws IOException {
 		invoked = true;
-		return ActionResult.skipped(true, 0L);
+		return ctx.skipped().next();
 	}
 
 	@Override

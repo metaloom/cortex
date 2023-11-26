@@ -1,5 +1,7 @@
 package io.metaloom.cortex.action.dedup;
 
+import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -13,7 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -39,7 +42,8 @@ public class HashDedupAction extends AbstractFilesystemAction<DedupActionOptions
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) throws IOException {
+	public ActionResult2 process(ActionContext ctx) throws IOException {
+		LoomMedia media = ctx.media();
 		SHA512 sha512 = media.getSHA512();
 
 		// Lets load the entry for the hash of the file
@@ -48,15 +52,15 @@ public class HashDedupAction extends AbstractFilesystemAction<DedupActionOptions
 		// We found an item. Lets check it.
 		if (asset != null) {
 			if (asset.getFilename() == null) {
-				return success(media, "Source from db has no current path");
+				return ctx.info("Source from db has no current path").next();
 			}
 			File dbFile = new File(asset.getFilename());
 			if (!dbFile.exists()) {
-				return success(media, "Source from db not found for currentpath");
+				return ctx.info("Source from db not found for currentpath").next();
 			}
 			if (dbFile.equals(media.file())) {
 				// All okay - its the same file
-				return success(media, "same file");
+				return ctx.info("same file").next();
 			} else {
 				AssetRequest newAsset = AssetRequest.newBuilder()
 					.setSha512Sum(sha512.toString())
@@ -65,7 +69,7 @@ public class HashDedupAction extends AbstractFilesystemAction<DedupActionOptions
 				// client().storeAsset(sha512)
 				LoomMedia foundMedia = new LoomMediaImpl(dbFile.toPath());
 				if (!foundMedia.exists() || !media.exists()) {
-					return success(media, "Source or dup not found");
+					return ctx.info("Source or dup not found").next();
 				}
 
 				// The hash matches the local file
@@ -80,7 +84,7 @@ public class HashDedupAction extends AbstractFilesystemAction<DedupActionOptions
 						System.in.read();
 					}
 					if (pathA.equalsIgnoreCase(pathB)) {
-						return success(media, "same file");
+						return ctx.info("same file").next();
 					} else {
 						if (log.isDebugEnabled()) {
 							log.debug("[A]: " + shortHash(media) + " E: " + media.exists() + " => " + pathA);
@@ -97,33 +101,33 @@ public class HashDedupAction extends AbstractFilesystemAction<DedupActionOptions
 								throw new RuntimeException("Could not create dups target dir {" + targetFolder.toAbsolutePath() + "}");
 							}
 						}
-						moveMedia(media, targetFolder, "Dup Of: " + pathB);
+						moveMedia(ctx, targetFolder, "Dup Of: " + pathB);
 						// We don't want to store the updated path for this media or alter the original file path.
-						return success(media, "???");
+						return ctx.next();
 					}
 				} else {
-					return success(media, "hash does not match");
+					return ctx.next();
 				}
 			}
 		} else {
-			return skipped(media, "no dup found");
+			return ctx.skipped().next();
 		}
 
 	}
 
-	protected ActionResult moveMedia(LoomMedia media, Path targetFolder, String msg) {
-		long start = 42L;
+	protected ActionResult2 moveMedia(ActionContext ctx, Path targetFolder, String msg) {
+		LoomMedia media = ctx.media();
 		try {
 			File targetFile = FileUtils.autoRotate(media.file(), targetFolder.toFile());
-			print(media, "MOVING", "[" + media.path() + "] to [" + targetFolder.toAbsolutePath() + "] " + msg, start);
+			print(ctx, "MOVING", "[" + media.path() + "] to [" + targetFolder.toAbsolutePath() + "] " + msg);
 			if (!isDryrun()) {
 				FileUtils.moveFile(media.file(), targetFile);
 			}
-			return ActionResult.processed(true, start);
+			return ctx.next();
 		} catch (IOException e) {
 			e.printStackTrace();
-			print(media, "FAILED", "(Error while moving, " + msg + ")", start);
-			return ActionResult.failed(true, start);
+			print(ctx, "FAILED", "(Error while moving, " + msg + ")");
+			return ctx.failure("error while moving").next();
 		}
 	}
 

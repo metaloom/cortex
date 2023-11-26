@@ -24,7 +24,8 @@ public class DefaultProcessorTest {
 		CortexOptions options = new CortexOptions();
 		ThumbnailActionOptions thumbnailOptions = new ThumbnailActionOptions();
 		thumbnailOptions.setThumbnailPath(LocalTestData.thumbnailDir().toString());
-		MediaProcessor processor = new DefaultMediaProcessorImpl(options);
+	//	Set<CortexAction> actions = Sets.newHashSet(new DummyAction(null, options, null));
+		MediaProcessor processor = new DefaultMediaProcessorImpl(options, null);
 		processor.process(LocalTestData.localDir());
 	}
 }

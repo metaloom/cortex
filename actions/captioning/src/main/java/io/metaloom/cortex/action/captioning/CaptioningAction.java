@@ -5,8 +5,8 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.metaloom.cortex.api.action.ActionResult;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -25,9 +25,8 @@ public class CaptioningAction extends AbstractFilesystemAction<CaptioningActionO
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public ActionResult2 process(ActionContext ctx) throws IOException {
+		return ctx.skipped().next();
 	}
 
 }

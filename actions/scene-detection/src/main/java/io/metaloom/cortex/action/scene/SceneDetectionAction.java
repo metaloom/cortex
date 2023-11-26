@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.scene;
 
-import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
-import static io.metaloom.cortex.api.action.ActionResult.SKIP_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult2.SKIP_NEXT;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -9,7 +9,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -32,14 +33,13 @@ public class SceneDetectionAction extends AbstractFilesystemAction<SceneDetectio
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
+	public ActionResult2 process(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		SHA512 hash = media.getSHA512();
 		if (media.isVideo()) {
-			print(media, "DONE", "", start);
-			return ActionResult.processed(CONTINUE_NEXT, start);
+			return ctx.next();
 		} else {
-			return ActionResult.processed(SKIP_NEXT, start);
+			return ctx.skipped().next();
 		}
 	}
 

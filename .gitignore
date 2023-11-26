@@ -18,5 +18,5 @@ dependency-reduced-pom.xml
 .vscode
 
 #dlib models
-scanner/dlib/
+processor/dlib/
 cli/dlib

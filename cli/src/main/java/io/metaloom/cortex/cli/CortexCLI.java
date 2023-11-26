@@ -4,20 +4,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ch.qos.logback.classic.Level;
-import io.metaloom.cortex.cli.cmd.ProcessCommand;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ScopeType;
 import picocli.CommandLine.Spec;
 
-@Command(name = "cortex", mixinStandardHelpOptions = false, version = "cortex 0.0.1", description = "MetaLoom // Cortex is a media processing tool", showDefaultValues = true, subcommands = {
-	ProcessCommand.class
-})
 @Singleton
+@Command(name = "cortex", mixinStandardHelpOptions = false, version = "Cortex 1.0.0-SNAPSHOT", description = "Cortex is a media processing tool", showDefaultValues = true)
 public class CortexCLI implements Runnable {
-
-	private static CortexCLI instance = new CortexCLI();
 
 	public static final int DEFAULT_PORT = 7733;
 	public static final String DEFAULT_PORT_STR = "7733";

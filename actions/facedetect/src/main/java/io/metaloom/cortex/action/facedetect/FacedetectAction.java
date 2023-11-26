@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.awt.image.BufferedImage;
@@ -18,7 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.action.media.flag.FaceDetectionFlags;
 import io.metaloom.cortex.api.action.media.param.FaceDetectionParameters;
@@ -70,24 +71,27 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionO
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		long start = System.currentTimeMillis();
+	public ActionResult2 process(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		try {
 			if (media.isVideo()) {
-				return processVideo(media);
+				return processVideo(ctx);
 			} else if (media.isImage()) {
-				return processImage(media);
+				return processImage(ctx);
 			} else {
-				return skipped(media, "is unprocessable media type");
+				// is unprocessable media type
+				return ctx.skipped().next();
 			}
 		} catch (Exception e) {
 			log.error("Failed to process media", e);
-			return ActionResult.failed(CONTINUE_NEXT, start);
+			return ctx.failure("").next();
 		}
 	}
 
-	private ActionResult processImage(LoomMedia media) throws IOException {
-		long start = System.currentTimeMillis();
+	private ActionResult2 processImage(ActionContext ctx) throws IOException {
+
+		LoomMedia media = ctx.media();
+
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
 		List<? extends Face> result = detector.detectFaces(image);
@@ -101,21 +105,21 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionO
 			media.setFacedetectionParams(params);
 		}
 		// TODO handle faces / get embeddings
-		return success(media, COMPUTED);
+		return ctx.origin(COMPUTED).next();
 	}
 
-	private ActionResult processVideo(LoomMedia media) {
-		long start = System.currentTimeMillis();
+	private ActionResult2 processVideo(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		try (VideoFile video = Videos.open(media.absolutePath())) {
 			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
 			media.setFaceCount(faces.size());
 			// TODO add params, flags
 		} catch (InterruptedException e) {
 			log.error("Failed to process video", e);
-			return ActionResult.failed(CONTINUE_NEXT, start);
+			return ctx.failure("").next();
 		}
 
-		return success(media, COMPUTED);
+		return ctx.origin(COMPUTED).next();
 	}
 
 }

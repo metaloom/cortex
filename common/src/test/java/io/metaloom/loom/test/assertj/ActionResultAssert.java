@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
 import io.metaloom.cortex.api.action.ResultState;
 
-public class ActionResultAssert extends AbstractAssert<ActionResultAssert, ActionResult> {
+public class ActionResultAssert extends AbstractAssert<ActionResultAssert, ActionResult2> {
 
-	protected ActionResultAssert(ActionResult actual) {
+	protected ActionResultAssert(ActionResult2 actual) {
 		super(actual, ActionResultAssert.class);
 	}
 

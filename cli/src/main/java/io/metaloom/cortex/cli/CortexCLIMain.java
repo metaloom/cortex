@@ -12,8 +12,7 @@ public class CortexCLIMain {
 
 	public static int execute(String... args) {
 		CortexComponent cortexComponent = DaggerCortexComponent.builder().build();
-		CortexCLI cli = cortexComponent.cli();
-		CommandLine cmd = new CommandLine(cli);
-		return cmd.execute(args);
+		CommandLine cli = cortexComponent.cli();
+		return cli.execute(args);
 	}
 }

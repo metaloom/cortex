@@ -8,7 +8,8 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -36,48 +37,49 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 	}
 
 	@Override
-	public ActionResult process(LoomMedia media) {
-		markStart();
+	public ActionResult2 process(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
-			return skipped(media, "(previously failed)");
+			//.skipped("(previously failed)");
+			return ctx.skipped().next();
 		} else if (flags == null) {
 			String info = "";
 			SHA512 sha512 = media.getSHA512();
 			AssetResponse entry = client().loadAsset(sha512).sync();
 			if (entry == null) {
-				return parseMedia(media);
+				return parseMedia(ctx);
 				// TODO utilize and store result
 			} else {
 				// TODO check whether db needs tika update
-				return parseMedia(media);
+				return parseMedia(ctx);
 				// TODO check response and assert whether processing is needed
 				// return done(media, start, "from db");
 				// writeFlags(media, DONE_FLAG);
 			}
 		} else {
-			return success(media, "already processed");
+			return ctx.info("already processed").next();
 		}
 	}
 
-	private ActionResult parseMedia(LoomMedia media) {
+	private ActionResult2 parseMedia(ActionContext ctx) {
+		LoomMedia media = ctx.media();
 		try {
 			String result = MediaTikaParser.parse(media);
 			// TODO store result
 			media.setTikaFlags(DONE_FLAG);
-
-			return success(media, COMPUTED);
+			return ctx.origin(COMPUTED).next();
 		} catch (Exception e) {
 			log.error("Error while processing media " + media.path(), e);
 			media.setTikaFlags(DONE_FLAG);
-			return failure(media, "failed processing");
+			return ctx.failure("failed processing").next();
 		}
 	}
 
 	private String getFlags(LoomMedia media) {
 		String tikaFlags = media.getTikaFlags();
 		if (tikaFlags == null) {
-			media.setTikaFlags(tikaFlags);
+			//media.setTikaFlags(tikaFlags);
 		}
 		return tikaFlags;
 	}

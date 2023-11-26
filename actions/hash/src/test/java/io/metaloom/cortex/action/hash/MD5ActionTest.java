@@ -5,13 +5,9 @@ import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
-
 import io.metaloom.cortex.action.AbstractBasicActionTest;
 import io.metaloom.cortex.action.ActionTestcases;
-import io.metaloom.cortex.api.action.ActionResult;
+import io.metaloom.cortex.api.action.ActionResult2;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -20,7 +16,7 @@ import io.metaloom.loom.test.data.TestMedia;
 public class MD5ActionTest extends AbstractBasicActionTest<MD5Action> implements ActionTestcases {
 
 	@Override
-	protected void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult result, MD5Action actionMock) {
+	protected void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult2 result, MD5Action actionMock) {
 		assertThat(media).hasXAttr(2).hasXAttr(MD5_KEY, testMedia.md5());
 	}
 

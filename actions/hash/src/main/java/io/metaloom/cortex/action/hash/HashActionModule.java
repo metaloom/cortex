@@ -4,24 +4,25 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
-import io.metaloom.cortex.api.action.CortexAction;
+import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.option.CortexOptions;
+import io.metaloom.cortex.common.action.AbstractActionModule;
 import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
 
 @Module
-public interface HashActionModule {
+public abstract class HashActionModule extends AbstractActionModule {
 
 	@Binds
 	@IntoSet
-	abstract CortexAction bindSHA512Action(SHA512Action action);
+	abstract FilesystemAction bindSHA512Action(SHA512Action action);
 
 	@Binds
 	@IntoSet
-	abstract CortexAction bindSHA256Action(SHA256Action action);
+	abstract FilesystemAction bindSHA256Action(SHA256Action action);
 
 	@Binds
 	@IntoSet
-	abstract CortexAction bindMD5Action(MD5Action action);
+	abstract FilesystemAction bindMD5Action(MD5Action action);
 
 	@IntoSet
 	@Provides
@@ -31,6 +32,6 @@ public interface HashActionModule {
 
 	@Provides
 	public static HashOptions options(CortexOptions options) {
-		return (HashOptions) options.getActions().get("hash");
+		return actionOptions(options, "hash", new HashOptions());
 	}
 }
