@@ -2,15 +2,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>loom-cortex-fs</artifactId>
+    <artifactId>cortex-fs</artifactId>
     <packaging>jar</packaging>
     <parent>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>Loom - Cortex :: Filesystem</name>
+    <name>MetaLoom // Cortex :: Filesystem</name>
 
     <dependencyManagement>
         <dependencies>
@@ -26,8 +26,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.metaloom.loom.cortex</groupId>
-            <artifactId>loom-cortex-api</artifactId>
+            <groupId>io.metaloom.cortex</groupId>
+            <artifactId>cortex-api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.metaloom.utils</groupId>

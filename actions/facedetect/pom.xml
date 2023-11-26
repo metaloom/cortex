@@ -2,16 +2,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>loom-cortex-facedetect-action</artifactId>
+    <artifactId>cortex-facedetect-action</artifactId>
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-actions</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-actions</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <name>Loom - Cortex :: Actions - Facedetect</name>
+    <name>MetaLoom // Cortex :: Actions - Facedetect</name>
 
     <properties>
         <grpc.version>1.50.2</grpc.version>

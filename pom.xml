@@ -47,28 +47,28 @@
 
       <!-- Cortex -->
       <dependency>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-common</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-scanner</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-scanner</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-fs</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-fs</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-api</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.metaloom.loom.cortex</groupId>
-        <artifactId>loom-cortex-common</artifactId>
+        <groupId>io.metaloom.cortex</groupId>
+        <artifactId>cortex-common</artifactId>
         <version>${project.version}</version>
         <type>test-jar</type>
       </dependency>
