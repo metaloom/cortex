@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -30,7 +30,7 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) throws IOException {
+	public ActionResult process(ActionContext ctx) throws IOException {
 		return ctx.next();
 	}
 

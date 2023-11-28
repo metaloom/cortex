@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -24,7 +24,7 @@ public class FingerprintActionTest extends AbstractMediaTest {
 		FingerprintAction action = mockAction();
 		TestDataCollection data = TestEnvHelper.prepareTestdata("action-test");
 		LoomMedia media = mediaVideo1();
-		ActionResult2 result = action.process(ctx(media));
+		ActionResult result = action.process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY).hasXAttr(FINGERPRINT_KEY, data.sampleVideoFingerprint());
 	}

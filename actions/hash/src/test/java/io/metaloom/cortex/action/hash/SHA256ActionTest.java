@@ -13,7 +13,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.AbstractActionTest;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -24,7 +24,7 @@ public class SHA256ActionTest extends AbstractActionTest<SHA256Action> {
 	@Test
 	public void testProcessing() throws IOException {
 		LoomMedia media = mediaVideo1();
-		ActionResult2 result = action().process(ctx(media));
+		ActionResult result = action().process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2)
 			.hasXAttr(SHA_512_KEY)
@@ -41,7 +41,7 @@ public class SHA256ActionTest extends AbstractActionTest<SHA256Action> {
 
 		// Invoke the action
 		LoomMedia media = mediaVideo1();
-		ActionResult2 result = mockAction(clientMock).process(ctx(media));
+		ActionResult result = mockAction(clientMock).process(ctx(media));
 
 		assertThat(result).isProcessed().isContinueNext();
 		assertThat(media).hasXAttr(2)

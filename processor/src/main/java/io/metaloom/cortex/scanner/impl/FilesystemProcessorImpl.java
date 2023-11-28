@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.ResultState;
 import io.metaloom.cortex.api.action.context.impl.ActionContextImpl;
@@ -63,7 +63,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				for (FilesystemAction action : actions) {
 					action.set(current, total);
 					try {
-						ActionResult2 result = action.process( new ActionContextImpl(media));
+						ActionResult result = action.process( new ActionContextImpl(media));
 						processed |= result.getState() == ResultState.SUCCESS;
 						if (!result.isContinueNext()) {
 							action.error(media, "Aborting further processing");

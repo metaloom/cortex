@@ -17,9 +17,9 @@ public interface FilesystemAction extends CortexAction {
 	 * @return
 	 * @throws IOException
 	 */
-	ActionResult2 process(ActionContext ctx) throws IOException;
+	ActionResult process(ActionContext ctx) throws IOException;
 
-	default ActionResult2 process(LoomMedia media) throws IOException {
+	default ActionResult process(LoomMedia media) throws IOException {
 		return process(ActionContext.create(media));
 	}
 

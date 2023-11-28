@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.consistency;
 
-import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
+import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -33,11 +33,10 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	public ActionResult process(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		if (!media.isVideo() && !media.isAudio()) {
-			ctx.print("SKIPPED", "(no video or audio)");
-			return ctx.skipped().next();
+			return ctx.skipped("no video or audio media").next();
 		}
 
 		try {

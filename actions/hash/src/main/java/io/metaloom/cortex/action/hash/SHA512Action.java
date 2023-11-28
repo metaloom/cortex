@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -33,7 +33,7 @@ public class SHA512Action extends AbstractFilesystemAction<HashOptions> {
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	public ActionResult process(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		SHA512 hash = HashUtils.computeSHA512(media.file());
 		media.setSHA512(hash);

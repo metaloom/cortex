@@ -3,15 +3,13 @@ package io.metaloom.cortex.action.hash;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
-import java.util.Optional;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -37,40 +35,30 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	}
 
 	@Override
-	protected Optional<ActionResult2> check(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+	protected boolean isProcessed(ActionContext ctx) {
+		return ctx.media().getMD5() != null;
+	}
+
+	@Override
+	protected boolean isProcessable(ActionContext ctx) {
 		if (!options().isMD5()) {
-			return Optional.of(ctx.failure("MD5 disabled").next());
-		} else if (!media.exists()) {
-			return Optional.of(ctx.failure("file " + media.path() + " not found").abort());
+			// TODO return or log reason
+			return false;
 		} else {
-			return Optional.empty();
+			return true;
 		}
 	}
 
 	@Override
-	protected boolean isProcessed(LoomMedia media) {
-		return media.getMD5() != null;
-	}
-
-	@Override
-	protected ActionResult2 process(ActionContext ctx, AssetResponse asset) {
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		LoomMedia media = ctx.media();
-		MD5 hash = HashUtils.computeMD5(media.file());
-		media.setMD5(hash);
-		return ctx.origin(COMPUTED).next();
-	}
-
-	@Override
-	protected ActionResult2 update(ActionContext ctx, AssetResponse asset) {
-		LoomMedia media = ctx.media();
-		MD5 hash = MD5.fromString(asset.getMd5Sum());
-		// Check whether the hash was in db
-		if (hash != null) {
-			media.setMD5(hash);
+		if (asset != null && asset.getMd5Sum() != null) {
+			media.setMD5(MD5.fromString(asset.getMd5Sum()));
 			return ctx.origin(REMOTE).next();
 		} else {
-			return process(ctx, asset);
+			MD5 hash = HashUtils.computeMD5(media.file());
+			media.setMD5(hash);
+			return ctx.origin(COMPUTED).next();
 		}
 	}
 

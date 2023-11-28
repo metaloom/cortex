@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -35,28 +35,30 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 	}
 
 	@Override
-	protected boolean isProcessed(LoomMedia media) {
-		return media.getSHA256() != null;
+	protected boolean isProcessed(ActionContext ctx) {
+		return ctx.media().getSHA256() != null;
 	}
 
 	@Override
-	protected ActionResult2 process(ActionContext ctx, AssetResponse asset) {
-		LoomMedia media = ctx.media();
-		SHA256 hash = HashUtils.computeSHA256(media.file());
-		media.setSHA256(hash);
-		return ctx.origin(COMPUTED).next();
+	protected boolean isProcessable(ActionContext ctx) {
+		if (options().isSHA256()) {
+			return true;
+		} else {
+			// TODO log or return reason
+			return false;
+		}
 	}
 
 	@Override
-	protected ActionResult2 update(ActionContext ctx, AssetResponse asset) {
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		LoomMedia media = ctx.media();
-		SHA256 hash = SHA256.fromString(asset.getSha256Sum());
-		// Check whether the hash was in db
-		if (hash != null) {
-			media.setSHA256(hash);
+		if (asset != null && asset.getSha256Sum() != null) {
+			media.setSHA256(SHA256.fromString(asset.getSha256Sum()));
 			return ctx.origin(REMOTE).next();
 		} else {
-			return process(ctx, asset);
+			SHA256 hash = HashUtils.computeSHA256(media.file());
+			media.setSHA256(hash);
+			return ctx.origin(COMPUTED).next();
 		}
 	}
 

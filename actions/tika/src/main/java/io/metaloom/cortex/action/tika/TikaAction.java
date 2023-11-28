@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -37,12 +37,11 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	public ActionResult process(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
-			//.skipped("(previously failed)");
-			return ctx.skipped().next();
+			return ctx.skipped("previously failed").next();
 		} else if (flags == null) {
 			String info = "";
 			SHA512 sha512 = media.getSHA512();
@@ -62,7 +61,7 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 		}
 	}
 
-	private ActionResult2 parseMedia(ActionContext ctx) {
+	private ActionResult parseMedia(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		try {
 			String result = MediaTikaParser.parse(media);

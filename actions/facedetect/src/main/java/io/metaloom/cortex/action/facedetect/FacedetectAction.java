@@ -1,6 +1,5 @@
 package io.metaloom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.api.action.ActionResult2.CONTINUE_NEXT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.awt.image.BufferedImage;
@@ -18,14 +17,15 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.action.media.flag.FaceDetectionFlags;
 import io.metaloom.cortex.api.action.media.param.FaceDetectionParameters;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
@@ -33,7 +33,7 @@ import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 
 @Singleton
-public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionOptions> {
+public class FacedetectAction extends AbstractMediaAction<FacedetectActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
 
@@ -71,24 +71,31 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionO
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	protected boolean isProcessable(ActionContext ctx) {
 		LoomMedia media = ctx.media();
-		try {
-			if (media.isVideo()) {
-				return processVideo(ctx);
-			} else if (media.isImage()) {
-				return processImage(ctx);
-			} else {
-				// is unprocessable media type
-				return ctx.skipped().next();
-			}
-		} catch (Exception e) {
-			log.error("Failed to process media", e);
-			return ctx.failure("").next();
+		return media.isVideo() || media.isImage();
+	}
+
+	@Override
+	protected boolean isProcessed(ActionContext ctx) {
+		LoomMedia media = ctx.media();
+		// TODO check the flags with the options to figure out whether we need to rerun the detection
+		return media.getFacedetectionFlags() != null;
+	}
+
+	@Override
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException {
+		LoomMedia media = ctx.media();
+		if (media.isVideo()) {
+			return processVideo(ctx);
+		} else if (media.isImage()) {
+			return processImage(ctx);
+		} else {
+			return ctx.skipped("No visual media").next();
 		}
 	}
 
-	private ActionResult2 processImage(ActionContext ctx) throws IOException {
+	private ActionResult processImage(ActionContext ctx) throws IOException {
 
 		LoomMedia media = ctx.media();
 
@@ -108,7 +115,7 @@ public class FacedetectAction extends AbstractFilesystemAction<FacedetectActionO
 		return ctx.origin(COMPUTED).next();
 	}
 
-	private ActionResult2 processVideo(ActionContext ctx) {
+	private ActionResult processVideo(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		try (VideoFile video = Videos.open(media.absolutePath())) {
 			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);

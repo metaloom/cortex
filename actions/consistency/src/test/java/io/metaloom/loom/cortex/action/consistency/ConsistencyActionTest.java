@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import io.metaloom.cortex.action.consistency.ConsistencyAction;
 import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
@@ -20,7 +20,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 	public void testSkipAction() throws IOException {
 		ConsistencyAction action = mockAction();
 		LoomMedia media = createTestMediaFile();
-		ActionResult2 result = action.process(media);
+		ActionResult result = action.process(media);
 		assertThat(result).isSkipped();
 		assertThat(media).hasXAttr(SHA_512_KEY);
 	}
@@ -29,7 +29,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 	public void testProcessVideo() throws IOException {
 		ConsistencyAction action = mockAction();
 		LoomMedia media = mediaVideo1();
-		ActionResult2 result = action.process(media);
+		ActionResult result = action.process(media);
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(SHA_512_KEY, data.sampleVideoSHA512());
 		assertThat(media).isConsistent();

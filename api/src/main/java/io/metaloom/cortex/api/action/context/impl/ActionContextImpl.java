@@ -1,6 +1,6 @@
 package io.metaloom.cortex.api.action.context.impl;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.ResultOrigin;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
@@ -9,8 +9,10 @@ public class ActionContextImpl implements ActionContext {
 
 	private final long start;
 	private final LoomMedia media;
+
 	private String info;
 	private ResultOrigin origin;
+	private String skipReason;
 
 	public ActionContextImpl(LoomMedia media) {
 		this.media = media;
@@ -34,13 +36,13 @@ public class ActionContextImpl implements ActionContext {
 	}
 
 	@Override
-	public ActionResult2 next() {
-		return ActionResult2.processed(true);
+	public ActionResult next() {
+		return ActionResult.processed(true);
 	}
 
 	@Override
-	public ActionResult2 abort() {
-		return ActionResult2.failed(false);
+	public ActionResult abort() {
+		return ActionResult.failed(false);
 	}
 
 	@Override
@@ -60,7 +62,8 @@ public class ActionContextImpl implements ActionContext {
 	}
 
 	@Override
-	public ActionContext skipped() {
+	public ActionContext skipped(String reason) {
+		this.skipReason = reason;
 		return this;
 	}
 

@@ -1,6 +1,6 @@
 package io.metaloom.cortex.api.action;
 
-public class ActionResult2 {
+public class ActionResult {
 
 	public static final boolean CONTINUE_NEXT = true;
 	public static final boolean SKIP_NEXT = false;
@@ -9,7 +9,7 @@ public class ActionResult2 {
 	private final ResultState state;
 	private long duration = 0;
 
-	public ActionResult2(boolean continueNext, ResultState state) {
+	public ActionResult(boolean continueNext, ResultState state) {
 		this.continueNext = continueNext;
 		this.state = state;
 	}
@@ -35,15 +35,15 @@ public class ActionResult2 {
 		return duration;
 	}
 
-	public static ActionResult2 processed(boolean continueNext) {
-		return new ActionResult2(continueNext, ResultState.SUCCESS);
+	public static ActionResult processed(boolean continueNext) {
+		return new ActionResult(continueNext, ResultState.SUCCESS);
 	}
 
-	public static ActionResult2 failed(boolean continueNext) {
-		return new ActionResult2(continueNext, ResultState.FAILED);
+	public static ActionResult failed(boolean continueNext) {
+		return new ActionResult(continueNext, ResultState.FAILED);
 	}
 
-	public static ActionResult2 skipped(boolean continueNext) {
-		return new ActionResult2(continueNext, ResultState.SKIPPED);
+	public static ActionResult skipped(boolean continueNext) {
+		return new ActionResult(continueNext, ResultState.SKIPPED);
 	}
 }

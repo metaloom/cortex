@@ -2,12 +2,12 @@ package io.metaloom.cortex.common.action;
 
 import static io.metaloom.cortex.api.action.ResultOrigin.LOCAL;
 
-import java.util.Optional;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -25,47 +25,59 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	public ActionResult process(ActionContext ctx) {
 		LoomMedia media = ctx.media();
-		Optional<ActionResult2> checkResult = check(ctx);
-		if (checkResult != null && checkResult.isPresent()) {
-			return checkResult.get();
+		if (!media.exists()) {
+			return ctx.failure("file " + media.path() + " not found").abort();
 		}
-		if (isProcessed(media)) {
-			return ctx.origin(LOCAL).next();
-		} else {
-			SHA512 sha512 = media.getSHA512();
-			AssetResponse asset = client().loadAsset(sha512).sync();
-			if (asset == null) {
-				return process(ctx, asset);
+		if (isProcessable(ctx)) {
+			if (isProcessed(ctx)) {
+				return ctx.origin(LOCAL).next();
 			} else {
-				return update(ctx, asset);
+				try {
+					if (isOfflineMode()) {
+						// Invoke the actual computation of the needed data by the action implementation
+						return compute(ctx, null);
+					} else {
+						SHA512 sha512 = media.getSHA512();
+						AssetResponse asset = client().loadAsset(sha512).sync();
+						return compute(ctx, asset);
+					}
+				} catch (Exception e) {
+					// TODO encode msg
+					return ctx.failure(e.getMessage()).next();
+				}
 			}
+		} else {
+			return ctx.skipped("unprocessable").next();
 		}
+
 	}
 
 	/**
-	 * Run initial preflight checks on the media. The returned result will be passed along. Returning no result will instruct the processor to keep processing
-	 * the current media.
+	 * Check whether the media in the context is processable by the action implementation.
 	 * 
 	 * @param ctx
 	 * @return
 	 */
-	protected Optional<ActionResult2> check(ActionContext ctx) {
-		return Optional.empty();
-	}
+	protected abstract boolean isProcessable(ActionContext ctx);
 
-	protected abstract ActionResult2 process(ActionContext ctx, AssetResponse asset);
+	/**
+	 * Check whether the media in the context has already been processed and the needed value is present.
+	 * 
+	 * @param ctx
+	 * @return
+	 */
+	protected abstract boolean isProcessed(ActionContext ctx);
 
 	/**
 	 * Update the media by use of the information which the response provides.
 	 * 
 	 * @param ctx
 	 * @param asset
+	 *            The provided response may be utilized to skip the actual computation and just use the loaded data instead
 	 * @return
 	 */
-	protected abstract ActionResult2 update(ActionContext ctx, AssetResponse asset);
-
-	protected abstract boolean isProcessed(LoomMedia media);
+	protected abstract ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException;
 
 }

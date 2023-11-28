@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
@@ -25,7 +25,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		assertProcessed(actionMock, media, video1);
 	}
 
-	protected abstract void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult2 result, T actionMock);
+	protected abstract void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult result, T actionMock);
 
 	@Test
 	@Override
@@ -69,7 +69,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	public void testProcessMissing() throws IOException {
 		LoomMedia media = mediaMissingMP4();
 		T actionMock = action();
-		ActionResult2 result = actionMock.process(ctx(media));
+		ActionResult result = actionMock.process(ctx(media));
 		assertThat(result).isFailed();
 	}
 
@@ -78,7 +78,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	public void testProcessOther() throws IOException {
 		LoomMedia media = mediaBogusBin();
 		T actionMock = action();
-		ActionResult2 result = actionMock.process(ctx(media));
+		ActionResult result = actionMock.process(ctx(media));
 	}
 
 
@@ -87,7 +87,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	public void testFailure() throws IOException {
 		LoomMedia media = mediaVideo1();
 		T actionMock = action();
-		ActionResult2 result = actionMock.process(ctx(media));
+		ActionResult result = actionMock.process(ctx(media));
 	}
 
 	@Test
@@ -97,18 +97,18 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		T actionMock = action();
 		disableAction(actionMock);
 
-		ActionResult2 result = actionMock.process(ctx(media));
+		ActionResult result = actionMock.process(ctx(media));
 		assertThat(result).isSkipped();
 		assertThat(media).hasXAttr(1).hasXAttr(HashMedia.SHA_512_KEY);
 	}
 
 	private void assertProcessed(T actionMock, LoomMedia media, TestMedia testMedia) throws IOException {
-		ActionResult2 result = actionMock.process(ctx(media));
+		ActionResult result = actionMock.process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasSHA512();
 		assertProcessed(testMedia, media, result, actionMock);
 
-		ActionResult2 result2 = actionMock.process(ctx(media));
+		ActionResult result2 = actionMock.process(ctx(media));
 		assertThat(result2).isSkipped();
 	}
 

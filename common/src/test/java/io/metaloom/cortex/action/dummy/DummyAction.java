@@ -2,7 +2,7 @@ package io.metaloom.cortex.action.dummy;
 
 import java.io.IOException;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
@@ -17,9 +17,9 @@ public class DummyAction extends AbstractFilesystemAction<DummyOptions> {
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) throws IOException {
+	public ActionResult process(ActionContext ctx) throws IOException {
 		invoked = true;
-		return ctx.skipped().next();
+		return ctx.skipped("not implemented").next();
 	}
 
 	@Override

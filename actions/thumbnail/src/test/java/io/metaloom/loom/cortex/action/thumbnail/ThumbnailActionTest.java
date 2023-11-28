@@ -17,7 +17,7 @@ import io.metaloom.cortex.action.media.AbstractMediaTest;
 import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.action.thumbnail.ThumbnailAction;
 import io.metaloom.cortex.action.thumbnail.ThumbnailActionOptions;
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -39,7 +39,7 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 	public void testAction() throws IOException {
 		ThumbnailAction action = mockAction();
 		LoomMedia media = mediaVideo3();
-		ActionResult2 result = action.process(ctx(media));
+		ActionResult result = action.process(ctx(media));
 		assertThat(result).isProcessed();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY).hasXAttr(THUMBNAIL_FLAGS_KEY);
 		assertThat(new File(thumbnailDir, media.getSHA512() + ".jpg")).exists();

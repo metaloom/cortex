@@ -1,6 +1,9 @@
 package io.metaloom.cortex.action.thumbnail;
 
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -8,19 +11,20 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.api.action.ActionResult2;
+import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 import io.metaloom.video4j.preview.PreviewGenerator;
 
 @Singleton
-public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionOptions> {
+public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(ThumbnailAction.class);
 
@@ -49,56 +53,67 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionOpt
 	}
 
 	@Override
-	public ActionResult2 process(ActionContext ctx) {
+	protected boolean isProcessable(ActionContext ctx) {
 		if (options().getThumbnailPath() == null) {
-			// throw new RuntimeException("No thumbnail output directory has been configured");
-			return ctx.skipped().next();
-		}
-		LoomMedia media = ctx.media();
-		if (!media.isVideo()) {
-			ctx.print( "SKIPPED", "(no video)");
-			return ctx.skipped().next();
-		}
-		if (!new File(options().getThumbnailPath()).exists()) {
-			ctx.print( "SKIPPED", "(thumbnail dir not found)");
-			return ctx.skipped().next();
+			// return ctx.skipped("thumbnail dir not configured").next();
+			return false;
 		}
 
+		if (!new File(options().getThumbnailPath()).exists()) {
+			// return ctx.skipped("thumbnail dir not found").next();
+			return false;
+		}
+
+		LoomMedia media = ctx.media();
 		if (!options().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {
-				ctx.print( "SKIPPED", "(is incomplete)");
-				return ctx.skipped().next();
+				// return ctx.skipped("incomplete media").next();
+				return false;
 			}
 		}
 
-		return processMedia(ctx);
+		return ctx.media().isVideo();
 	}
 
-	private ActionResult2 processMedia(ActionContext ctx) {
+	@Override
+	protected boolean isProcessed(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
+		if (outputFile.exists()) {
+			return true;
+		}
+
 		String flags = media.getThumbnailFlags();
-		boolean isNull = flags != null && flags.equals(NULL_FLAG);
+
 		boolean isDone = flags != null && flags.equals(DONE_FLAG);
 
 		if (isDone) {
-			ctx.print( "DONE", "");
-			return ctx.next();
-		}
-
-		if (hasThumbnail(media)) {
-			if (!isDone) {
-				media.setThumbnailFlags("DONE");
-			}
 			ctx.print("DONE", "");
-			return ctx.next();
+			return true;
 		}
 
-		if (!options().isRetryFailed() && isNull) {
-			ctx.print("FAILED", "(previously failed)");
-			return ctx.failure("").next();
+		boolean isNull = flags != null && flags.equals(NULL_FLAG);
+		if (hasThumbnail(media)) {
+			// if (!isDone) {
+			media.setThumbnailFlags("DONE");
+			// }
+			// ctx.print("DONE", "");
+			return true;
 		}
+
+		if (options().isRetryFailed() && isNull) {
+			// ctx.print("FAILED", "(previously failed)");
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException {
+		LoomMedia media = ctx.media();
+		File outputFile = new File(options().getThumbnailPath(), media.getSHA512() + ".jpg");
 
 		try {
 			String path = media.absolutePath();
@@ -107,15 +122,15 @@ public class ThumbnailAction extends AbstractFilesystemAction<ThumbnailActionOpt
 				ctx.print("DONE", "");
 				media.setThumbnailFlags(DONE_FLAG);
 			}
+			return ctx.origin(COMPUTED).next();
 		} catch (Exception e) {
 			e.printStackTrace();
 			media.setThumbnailFlags(NULL_FLAG);
 			// TODO update failed status
 			// touchFailed(media);
 			error(media, "NULL");
+			return ctx.failure(e.getMessage()).next();
 		}
-		
-		return ctx.next();
 
 	}
 
