@@ -11,7 +11,7 @@ public interface MediaSource {
 	TestDataCollection data();
 
 	default LoomMedia media(Path path) {
-		return new LoomMediaImpl(path);
+		return new LoomMediaImpl(path, null);
 	}
 
 }

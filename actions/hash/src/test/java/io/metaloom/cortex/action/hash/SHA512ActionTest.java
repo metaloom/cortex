@@ -25,6 +25,6 @@ public class SHA512ActionTest extends AbstractActionTest<SHA512Action> {
 	
 	@Override
 	public SHA512Action mockAction(LoomGRPCClient client) {
-		return new SHA512Action(client, null, null, null);
+		return new SHA512Action(client, null, null);
 	}
 }

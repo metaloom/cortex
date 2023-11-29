@@ -3,6 +3,8 @@ package io.metaloom.cortex.api.media;
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
+import java.io.OutputStream;
+
 import io.metaloom.cortex.api.media.param.ThumbnailFlag;
 
 public interface ThumbnailMedia extends ProcessableMedia {
@@ -18,4 +20,11 @@ public interface ThumbnailMedia extends ProcessableMedia {
 		return this;
 	}
 
+	default boolean hasThumbnail() {
+		return false;
+	}
+	
+	default OutputStream thumbnailOutputStream() {
+		return null;
+	}
 }

@@ -52,6 +52,6 @@ public class FacedetectActionTest extends AbstractMediaTest {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
 		FacedetectActionOptions option = new FacedetectActionOptions();
 		option.setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
-		return new FacedetectAction(client, new CortexOptions(), option, null);
+		return new FacedetectAction(client, new CortexOptions(), option);
 	}
 }

@@ -15,7 +15,7 @@ public class DummyActionTest extends AbstractMediaTest {
 
 	@Test
 	public void testDummyAction() throws IOException {
-		DummyAction action = new DummyAction(null, new CortexOptions(), new DummyOptions(), null);
+		DummyAction action = new DummyAction(null, new CortexOptions(), new DummyOptions());
 
 		LoomMedia media = mock(LoomMedia.class);
 		action.process(ctx(media));

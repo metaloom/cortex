@@ -2,6 +2,8 @@ package io.metaloom.cortex.common.media;
 
 import java.nio.file.Path;
 
+import javax.inject.Named;
+
 import dagger.BindsInstance;
 import dagger.Subcomponent;
 import io.metaloom.cortex.api.media.LoomMedia;
@@ -13,9 +15,9 @@ public interface LoomMediaComponent {
 
 	@Subcomponent.Builder
 	interface Builder {
-		
+
 		@BindsInstance
-		Builder loomMediaPath(Path path);
+		Builder loomMediaPath(@Named("mediaPath") Path path);
 
 		LoomMediaComponent build();
 	}

@@ -22,8 +22,8 @@ public class OCRAction extends AbstractMediaAction<OCROptions> {
 	public static final Logger log = LoggerFactory.getLogger(OCRAction.class);
 
 	@Inject
-	public OCRAction(LoomGRPCClient client, CortexOptions options, OCROptions actionOptions, MetaStorage storage) {
-		super(client, options, actionOptions, storage);
+	public OCRAction(LoomGRPCClient client, CortexOptions options, OCROptions actionOptions) {
+		super(client, options, actionOptions);
 	}
 
 	@Override

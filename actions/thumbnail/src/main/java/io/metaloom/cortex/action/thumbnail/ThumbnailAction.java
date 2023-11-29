@@ -17,7 +17,6 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.param.ThumbnailFlag;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.meta.MetaStorageKey;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
@@ -36,8 +35,8 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 	private final PreviewGenerator gen;
 
 	@Inject
-	public ThumbnailAction(LoomGRPCClient client, CortexOptions options, ThumbnailActionOptions actionOptions, MetaStorage storage) {
-		super(client, options, actionOptions, storage);
+	public ThumbnailAction(LoomGRPCClient client, CortexOptions options, ThumbnailActionOptions actionOptions) {
+		super(client, options, actionOptions);
 		int tileSize = actionOptions.getTileSize();
 		int cols = actionOptions.getCols();
 		int rows = actionOptions.getRows();
@@ -71,7 +70,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
 		LoomMedia media = ctx.media();
-		if (storage().has(media, storageKey())) {
+		if (media.hasThumbnail()) {
 			return true;
 		}
 
@@ -83,7 +82,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 		}
 
 		boolean isNull = flag != null && flag == FAILED;
-		if (storage().has(media, storageKey())) {
+		if (media.hasThumbnail()) {
 			// if (!isDone) {
 			media.setThumbnailFlag(DONE);
 			// }
@@ -107,7 +106,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 			String path = media.absolutePath();
 			try (VideoFile video = Videos.open(path)) {
 				// File outputFile = storage().
-				try (OutputStream os = storage().outputStream(media, storageKey())) {
+				try (OutputStream os = media.thumbnailOutputStream()) {
 					gen.save(video, os);
 					ctx.print("DONE", "");
 					media.setThumbnailFlag(DONE);
@@ -122,16 +121,5 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 			error(media, "NULL");
 			return ctx.failure(e.getMessage()).next();
 		}
-
-	}
-
-	private MetaStorageKey storageKey() {
-		return new MetaStorageKey() {
-
-			@Override
-			public String name() {
-				return "thumbnail";
-			}
-		};
 	}
 }

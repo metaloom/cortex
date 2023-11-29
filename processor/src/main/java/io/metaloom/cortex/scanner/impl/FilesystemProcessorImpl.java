@@ -17,7 +17,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.ResultState;
 import io.metaloom.cortex.api.action.context.impl.ActionContextImpl;
-import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.common.media.LoomMediaLoader;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
 import io.metaloom.fs.FileInfo;
 import io.metaloom.fs.FileState;
@@ -32,12 +32,15 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 
 	private final LinuxFilesystemScanner scanner;
 
+	private final LoomMediaLoader loader;
+
 	public static final Logger log = LoggerFactory.getLogger(FilesystemProcessorImpl.class);
 
 	@Inject
-	public FilesystemProcessorImpl(LinuxFilesystemScanner scanner, Set<FilesystemAction> actions) {
+	public FilesystemProcessorImpl(LinuxFilesystemScanner scanner, Set<FilesystemAction> actions, LoomMediaLoader loader) {
 		this.scanner = scanner;
 		this.actions = actions;
+		this.loader = loader;
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 
 		long total = newMediaFiles.size();
 
-		newMediaFiles.stream().map(info -> new LoomMediaImpl(info.path()))
+		newMediaFiles.stream().map(info -> loader.load(info.path()))
 			.forEach(media -> {
 				long current = count.incrementAndGet();
 				boolean processed = false;

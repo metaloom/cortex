@@ -30,6 +30,6 @@ public class TikaActionTest extends AbstractMediaTest {
 
 	public TikaAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new TikaAction(client, new CortexOptions(), new TikaActionOptions(), null);
+		return new TikaAction(client, new CortexOptions(), new TikaActionOptions());
 	}
 }

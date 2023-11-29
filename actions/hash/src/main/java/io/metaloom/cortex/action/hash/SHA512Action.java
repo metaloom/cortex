@@ -24,8 +24,8 @@ public class SHA512Action extends AbstractFilesystemAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
 	@Inject
-	public SHA512Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options, MetaStorage storage) {
-		super(client, cortexOption, options, storage);
+	public SHA512Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override

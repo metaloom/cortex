@@ -13,8 +13,8 @@ public class DummyAction extends AbstractFilesystemAction<DummyOptions> {
 
 	boolean invoked = false;
 
-	public DummyAction(LoomGRPCClient client, CortexOptions cortexOption, DummyOptions option, MetaStorage storage) {
-		super(client, cortexOption, option, storage);
+	public DummyAction(LoomGRPCClient client, CortexOptions cortexOption, DummyOptions option) {
+		super(client, cortexOption, option);
 	}
 
 	@Override

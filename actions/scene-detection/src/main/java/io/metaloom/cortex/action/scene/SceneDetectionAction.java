@@ -31,8 +31,8 @@ public class SceneDetectionAction extends AbstractMediaAction<SceneDetectionOpti
 	private OpticalFlowSceneDetector detector = new OpticalFlowSceneDetector();
 	
 	@Inject
-	public SceneDetectionAction(LoomGRPCClient client, CortexOptions cortexOptions, SceneDetectionOptions options, MetaStorage storage) {
-		super(client, cortexOptions, options, storage);
+	public SceneDetectionAction(LoomGRPCClient client, CortexOptions cortexOptions, SceneDetectionOptions options) {
+		super(client, cortexOptions, options);
 	}
 
 	@Override

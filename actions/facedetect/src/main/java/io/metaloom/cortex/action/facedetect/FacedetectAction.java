@@ -21,7 +21,6 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.api.media.param.FaceDetectionParameter;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.meta.MetaStorageKey;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
@@ -47,8 +46,8 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	protected DLibFacedetector detector;
 
 	@Inject
-	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options, MetaStorage storage) {
-		super(client, cortexOption, options, storage);
+	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override
@@ -108,15 +107,12 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
-//			media.setFaceCount(result.size());
-//			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
-			storage().set(media, storageKey(), result.size());
-			storage().set(media, storageKey(), FaceDetectionFlag.SUCCESS);
+			media.setFaceCount(result.size());
+			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
 			FaceDetectionParameter params = new FaceDetectionParameter();
 			params.setCount(result.size());
 			// TODO add face data
 			media.setFacedetectionParams(params);
-			storage().write(media, storageKey(), params);
 		}
 		// TODO handle faces / get embeddings
 		return ctx.origin(COMPUTED).next();

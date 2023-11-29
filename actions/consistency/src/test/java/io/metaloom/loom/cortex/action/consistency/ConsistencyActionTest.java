@@ -38,7 +38,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 
 	private ConsistencyAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		ConsistencyAction action = new ConsistencyAction(client, null, null, null);
+		ConsistencyAction action = new ConsistencyAction(client, null, null);
 		return action;
 	}
 }

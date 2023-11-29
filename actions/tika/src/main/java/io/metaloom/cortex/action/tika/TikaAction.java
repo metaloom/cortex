@@ -27,8 +27,8 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 	public static String NULL_FLAG = "NULL";
 
 	@Inject
-	public TikaAction(LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options, MetaStorage storage) {
-		super(client, cortexOption, options, storage);
+	public TikaAction(LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override

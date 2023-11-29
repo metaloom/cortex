@@ -49,6 +49,6 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
 
 		ThumbnailActionOptions options = new ThumbnailActionOptions();
-		return new ThumbnailAction(client, new CortexOptions(), options, null);
+		return new ThumbnailAction(client, new CortexOptions(), options);
 	}
 }

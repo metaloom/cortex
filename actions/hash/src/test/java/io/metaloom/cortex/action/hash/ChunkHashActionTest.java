@@ -28,7 +28,7 @@ public class ChunkHashActionTest extends AbstractActionTest<ChunkHashAction> {
 
 	@Override
 	public ChunkHashAction mockAction(LoomGRPCClient client) {
-		return new ChunkHashAction(client, null, null, null);
+		return new ChunkHashAction(client, null, null);
 	}
 
 }

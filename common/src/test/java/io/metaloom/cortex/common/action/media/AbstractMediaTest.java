@@ -48,7 +48,7 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(Path path) {
-		return new LoomMediaImpl(path);
+		return new LoomMediaImpl(path, null);
 	}
 
 	@Override

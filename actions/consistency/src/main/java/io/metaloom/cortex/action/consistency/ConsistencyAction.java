@@ -12,7 +12,6 @@ import javax.inject.Singleton;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -23,8 +22,8 @@ import io.metaloom.utils.hash.partial.PartialFile;
 public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOptions> {
 
 	@Inject
-	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options, MetaStorage storage) {
-		super(client, cortexOption, options, storage);
+	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
+		super(client, cortexOption, options);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class FilesystemProcessorTest {
 
 	@Test
 	public void testProcessor() throws IOException {
-		FilesystemProcessor processor = new FilesystemProcessorImpl(null, null);
+		FilesystemProcessor processor = new FilesystemProcessorImpl(null, null, null);
 		processor.analyze(LocalTestData.localDir());
 	}
 }

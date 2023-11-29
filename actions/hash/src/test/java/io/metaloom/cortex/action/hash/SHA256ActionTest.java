@@ -58,7 +58,7 @@ public class SHA256ActionTest extends AbstractActionTest<SHA256Action> {
 
 	@Override
 	public SHA256Action mockAction(LoomGRPCClient client) {
-		return new SHA256Action(client, new CortexOptions(), new HashOptions(), null);
+		return new SHA256Action(client, new CortexOptions(), new HashOptions());
 	}
 
 }

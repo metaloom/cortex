@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -19,23 +18,16 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 	private final LoomGRPCClient client;
 	private final CortexOptions cortexOption;
 	private final T option;
-	private final MetaStorage storage;
 
-	public AbstractFilesystemAction(LoomGRPCClient client, CortexOptions cortexOption, T option, MetaStorage storage) {
+	public AbstractFilesystemAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
 		this.client = client;
 		this.cortexOption = cortexOption;
 		this.option = option;
-		this.storage = storage;
 	}
 
 	@Override
 	public void initialize() {
 		// NOOP
-	}
-
-	@Override
-	public MetaStorage storage() {
-		return storage;
 	}
 
 	protected LoomGRPCClient client() {

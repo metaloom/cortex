@@ -31,6 +31,6 @@ public class FingerprintActionTest extends AbstractMediaTest {
 
 	public FingerprintAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new FingerprintAction(client, new CortexOptions(), new FingerprintOptions(), null);
+		return new FingerprintAction(client, new CortexOptions(), new FingerprintOptions());
 	}
 }

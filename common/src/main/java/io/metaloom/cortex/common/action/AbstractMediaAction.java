@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -19,8 +18,8 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 
 	public static final Logger log = LoggerFactory.getLogger(AbstractMediaAction.class);
 
-	public AbstractMediaAction(LoomGRPCClient client, CortexOptions cortexOption, T option, MetaStorage storage) {
-		super(client, cortexOption, option, storage);
+	public AbstractMediaAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
+		super(client, cortexOption, option);
 	}
 
 	@Override

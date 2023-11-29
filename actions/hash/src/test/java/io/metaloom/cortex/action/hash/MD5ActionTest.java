@@ -24,7 +24,7 @@ public class MD5ActionTest extends AbstractBasicActionTest<MD5Action> implements
 	public MD5Action mockAction(LoomGRPCClient client) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isMD5()).thenReturn(true);
-		return new MD5Action(client, mock(CortexOptions.class), options, null);
+		return new MD5Action(client, mock(CortexOptions.class), options);
 	}
 
 	@Override

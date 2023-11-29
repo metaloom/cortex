@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 
 /**
@@ -34,7 +33,5 @@ public interface FilesystemAction<T extends CortexActionOptions> extends CortexA
 	}
 
 	void set(long current, long total);
-
-	MetaStorage storage();
 
 }
