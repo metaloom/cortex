@@ -8,7 +8,8 @@ public interface SceneDetector {
 	 * Run the scene detection for the provided video.
 	 * 
 	 * @param video
+	 * @return detections
 	 */
-	void detect(VideoFile video);
+	SceneDetectionResult detect(VideoFile video);
 
 }

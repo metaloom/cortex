@@ -14,7 +14,7 @@ public abstract class ThumbnailActionModule extends AbstractActionModule {
 
 	@Binds
 	@IntoSet
-	abstract FilesystemAction bindAction(ThumbnailAction action);
+	abstract FilesystemAction<?> bindAction(ThumbnailAction action);
 
 	@IntoSet
 	@Provides

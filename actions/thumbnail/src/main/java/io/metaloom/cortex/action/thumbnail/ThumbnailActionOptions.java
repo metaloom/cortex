@@ -14,8 +14,6 @@ public class ThumbnailActionOptions extends AbstractActionOptions<ThumbnailActio
 
 	private static final int DEFAULT_ROWS = 1;
 
-	private String thumbnailPath;
-
 	private int cols = DEFAULT_COLS;
 
 	private int rows = DEFAULT_ROWS;
@@ -29,15 +27,6 @@ public class ThumbnailActionOptions extends AbstractActionOptions<ThumbnailActio
 
 	@Override
 	protected ThumbnailActionOptions self() {
-		return this;
-	}
-
-	public String getThumbnailPath() {
-		return thumbnailPath;
-	}
-
-	public ThumbnailActionOptions setThumbnailPath(String thumbnailPath) {
-		this.thumbnailPath = thumbnailPath;
 		return this;
 	}
 

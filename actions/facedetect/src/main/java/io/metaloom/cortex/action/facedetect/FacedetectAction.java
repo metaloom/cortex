@@ -15,15 +15,17 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
-import io.metaloom.cortex.api.action.media.flag.FaceDetectionFlags;
-import io.metaloom.cortex.api.action.media.param.FaceDetectionParameters;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
+import io.metaloom.cortex.api.media.param.FaceDetectionParameter;
+import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.api.meta.MetaStorageKey;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
@@ -37,20 +39,22 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
 
-	protected final DLibFacedetector detector;
-	protected final VideoFaceScanner videoDetector = new VideoFaceScanner();
-
 	private static final int WINDOW_COUNT = 10;
 	private static final int WINDOW_SIZE = 10;
 	private static final int WINDOW_STEPS = 5;
 
-	static {
-		Video4j.init();
-	}
+	protected VideoFaceScanner videoDetector;
+	protected DLibFacedetector detector;
 
 	@Inject
-	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
-		super(client, cortexOption, options);
+	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
+	}
+
+	@Override
+	public void initialize() {
+		Video4j.init();
+		videoDetector = new VideoFaceScanner();
 		try {
 			DLibModelProvisioner.extractModelData(Paths.get("dlib"));
 		} catch (IOException e) {
@@ -58,7 +62,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		}
 		try {
 			this.detector = DLibFacedetector.create();
-			this.detector.setMinFaceHeightFactor(options.getMinFaceHeightFactor());
+			this.detector.setMinFaceHeightFactor(options().getMinFaceHeightFactor());
 		} catch (FileNotFoundException e) {
 			log.error("Failed to load dlib", e);
 			throw new RuntimeException(e);
@@ -80,7 +84,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	protected boolean isProcessed(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		// TODO check the flags with the options to figure out whether we need to rerun the detection
-		return media.getFacedetectionFlags() != null;
+		return media.getFacedetectionFlag() != null;
 	}
 
 	@Override
@@ -104,12 +108,15 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
-			media.setFaceCount(result.size());
-			media.setFacedetectionFlags(FaceDetectionFlags.SUCCESS);
-			FaceDetectionParameters params = new FaceDetectionParameters();
+//			media.setFaceCount(result.size());
+//			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
+			storage().set(media, storageKey(), result.size());
+			storage().set(media, storageKey(), FaceDetectionFlag.SUCCESS);
+			FaceDetectionParameter params = new FaceDetectionParameter();
 			params.setCount(result.size());
 			// TODO add face data
 			media.setFacedetectionParams(params);
+			storage().write(media, storageKey(), params);
 		}
 		// TODO handle faces / get embeddings
 		return ctx.origin(COMPUTED).next();
@@ -121,12 +128,22 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
 			media.setFaceCount(faces.size());
 			// TODO add params, flags
+			return ctx.origin(COMPUTED).next();
 		} catch (InterruptedException e) {
 			log.error("Failed to process video", e);
-			return ctx.failure("").next();
+			return ctx.failure(e.getMessage()).next();
 		}
 
-		return ctx.origin(COMPUTED).next();
+	}
+
+	private MetaStorageKey storageKey() {
+		return new MetaStorageKey() {
+
+			@Override
+			public String name() {
+				return "facedetect";
+			}
+		};
 	}
 
 }

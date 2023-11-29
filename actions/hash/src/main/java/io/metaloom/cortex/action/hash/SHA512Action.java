@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -23,8 +24,8 @@ public class SHA512Action extends AbstractFilesystemAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
 	@Inject
-	public SHA512Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
-		super(client, cortexOption, options);
+	public SHA512Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package io.metaloom.cortex.api.action.context.impl;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.ResultOrigin;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
 
 public class ActionContextImpl implements ActionContext {
 
@@ -37,7 +37,11 @@ public class ActionContextImpl implements ActionContext {
 
 	@Override
 	public ActionResult next() {
-		return ActionResult.processed(true);
+		if (skipReason != null) {
+			return ActionResult.skipped(true);
+		} else {
+			return ActionResult.processed(true);
+		}
 	}
 
 	@Override

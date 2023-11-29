@@ -6,7 +6,7 @@ import java.util.function.Function;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.ResultOrigin;
 import io.metaloom.cortex.api.action.context.impl.ActionContextImpl;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
 
 public interface ActionContext {
 

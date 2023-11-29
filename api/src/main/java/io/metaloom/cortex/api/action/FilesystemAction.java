@@ -3,12 +3,14 @@ package io.metaloom.cortex.api.action;
 import java.io.IOException;
 
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.api.option.action.CortexActionOptions;
 
 /**
  * A Cortex action which is capable of processing {@link LoomMedia}.
  */
-public interface FilesystemAction extends CortexAction {
+public interface FilesystemAction<T extends CortexActionOptions> extends CortexAction<T> {
 
 	/**
 	 * Process the media.
@@ -32,5 +34,7 @@ public interface FilesystemAction extends CortexAction {
 	}
 
 	void set(long current, long total);
+
+	MetaStorage storage();
 
 }

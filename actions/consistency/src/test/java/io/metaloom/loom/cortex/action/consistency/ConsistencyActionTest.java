@@ -1,17 +1,17 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.cortex.api.action.media.action.HashMedia.SHA_512_KEY;
-import static io.metaloom.loom.test.assertj.CortexAssertions.assertThat;
+import static io.metaloom.cortex.api.media.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.consistency.ConsistencyAction;
-import io.metaloom.cortex.action.media.AbstractMediaTest;
-import io.metaloom.cortex.action.media.LoomClientMock;
 import io.metaloom.cortex.api.action.ActionResult;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.common.action.media.AbstractMediaTest;
+import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
 public class ConsistencyActionTest extends AbstractMediaTest {
@@ -30,7 +30,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 		ConsistencyAction action = mockAction();
 		LoomMedia media = mediaVideo1();
 		ActionResult result = action.process(media);
-		assertThat(result).isProcessed();
+		assertThat(result).isSuccess();
 		assertThat(media).hasXAttr(SHA_512_KEY, data.sampleVideoSHA512());
 		assertThat(media).isConsistent();
 		assertThat(media).hasXAttr(2);
@@ -38,7 +38,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 
 	private ConsistencyAction mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		ConsistencyAction action = new ConsistencyAction(client, null, null);
+		ConsistencyAction action = new ConsistencyAction(client, null, null, null);
 		return action;
 	}
 }

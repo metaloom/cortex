@@ -14,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 
 import io.metaloom.cortex.action.scene.AbstractSceneDetector;
 import io.metaloom.cortex.action.scene.detector.DetectionResult;
+import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.impl.MatProvider;
 import io.metaloom.video4j.opencv.CVUtils;
@@ -28,10 +29,10 @@ public class FeatureSceneDetector extends AbstractSceneDetector {
 	}
 
 	@Override
-	public void detect(VideoFile video) {
+	public SceneDetectionResult detect(VideoFile video) {
 
 		AtomicReference<DetectionVector> prevVector = new AtomicReference<>();
-		detect(video, (img, frame) -> {
+		return detect(video, (img, frame) -> {
 
 			MatOfPoint corners = new MatOfPoint();
 			double qualityLevel = 0.30f;

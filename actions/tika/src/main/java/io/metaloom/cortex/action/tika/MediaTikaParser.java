@@ -16,7 +16,7 @@ import org.apache.tika.parser.microsoft.ooxml.OOXMLParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
-import io.metaloom.cortex.api.action.media.ProcessableMedia;
+import io.metaloom.cortex.api.media.ProcessableMedia;
 
 public class MediaTikaParser {
 

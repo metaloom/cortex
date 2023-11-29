@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -19,8 +20,8 @@ public class FingerprintDedupAction extends AbstractMediaAction<DedupActionOptio
 	public static final Logger log = LoggerFactory.getLogger(FingerprintDedupAction.class);
 
 	@Inject
-	public FingerprintDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
-		super(client, cortexOptions, options);
+	public FingerprintDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options, MetaStorage storage) {
+		super(client, cortexOptions, options, storage);
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import io.metaloom.cortex.Cortex;
+import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.common.meta.impl.BSONFileMetaStorage;
 import io.metaloom.cortex.impl.CortexImpl;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;
@@ -29,8 +31,13 @@ public abstract class CortexBindModule {
 	@Singleton
 	abstract FilesystemProcessor bindFilesystemProcessor(FilesystemProcessorImpl e);
 
+	@Binds
+	@Singleton
+	abstract MetaStorage bindMetaStorage(BSONFileMetaStorage e);
+
 	@Provides
 	public static LinuxFilesystemScanner bindFilesystemScanner() {
 		return new LinuxFilesystemScannerImpl();
 	}
+
 }

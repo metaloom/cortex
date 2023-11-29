@@ -15,15 +15,15 @@ public class DefaultProcessorTest {
 
 	@BeforeAll
 	public static void setupDir() throws IOException {
-		LocalTestData.thumbnailDir().toFile().mkdirs();
+		LocalTestData.metaStorageDir().toFile().mkdirs();
 		LocalTestData.resetXattr();
 	}
 
 	@Test
 	public void testProcessor() throws IOException {
 		CortexOptions options = new CortexOptions();
-		ThumbnailActionOptions thumbnailOptions = new ThumbnailActionOptions();
-		thumbnailOptions.setThumbnailPath(LocalTestData.thumbnailDir().toString());
+		options.setMetaPath(LocalTestData.metaStorageDir());
+		//ThumbnailActionOptions thumbnailOptions = new ThumbnailActionOptions();
 	//	Set<CortexAction> actions = Sets.newHashSet(new DummyAction(null, options, null));
 		MediaProcessor processor = new DefaultMediaProcessorImpl(options, null);
 		processor.process(LocalTestData.localDir());

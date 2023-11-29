@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -25,8 +26,8 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
 
 	@Inject
-	public MD5Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
-		super(client, cortexOption, options);
+	public MD5Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
 	}
 
 	@Override
@@ -41,11 +42,11 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessable(ActionContext ctx) {
-		if (!options().isMD5()) {
+		if (options().isMD5()) {
 			// TODO return or log reason
-			return false;
-		} else {
 			return true;
+		} else {
+			return false;
 		}
 	}
 

@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.consistency;
 
-import static io.metaloom.cortex.api.action.ActionResult.CONTINUE_NEXT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -11,20 +11,20 @@ import javax.inject.Singleton;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
-import io.metaloom.utils.hash.SHA512;
 import io.metaloom.utils.hash.partial.PartialFile;
 
 @Singleton
-public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActionOptions> {
+public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOptions> {
 
 	@Inject
-	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
-		super(client, cortexOption, options);
+	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
 	}
 
 	@Override
@@ -33,42 +33,37 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 	}
 
 	@Override
-	public ActionResult process(ActionContext ctx) {
+	protected boolean isProcessable(ActionContext ctx) {
 		LoomMedia media = ctx.media();
-		if (!media.isVideo() && !media.isAudio()) {
-			return ctx.skipped("no video or audio media").next();
-		}
+		// ctx.skipped("no video or audio media").next();
+		return media.isVideo() && media.isAudio();
+	}
 
-		try {
-			String info = "";
-			Long count = media.getZeroChunkCount();
-			if (count == null) {
-				SHA512 sha512 = media.getSHA512();
-				AssetResponse entry = null;
-				if (!isOfflineMode()) {
-					entry = client().loadAsset(sha512).sync();
-				}
-				if (entry == null) {
-					computeSum(media);
-					info = "(computed)";
-				} else {
-					Long dbCount = entry.getZeroChunkCount();
-					if (dbCount != null) {
-						media.setZeroChunkCount(dbCount);
-						info = "(from db)";
-					} else {
-						computeSum(media);
-						info = "(computed)";
-					}
-				}
-			} else {
-				info = "(from file)";
-			}
-			ctx.print("DONE", info);
+	@Override
+	protected boolean isProcessed(ActionContext ctx) {
+		LoomMedia media = ctx.media();
+		Long count = media.getZeroChunkCount();
+		return count != null;
+	}
+
+	@Override
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
+		LoomMedia media = ctx.media();
+
+		if (asset == null) {
+			// if (!isOfflineMode()) {
+			computeSum(media);
 			return ctx.origin(COMPUTED).next();
-		} catch (NoSuchAlgorithmException | IOException e) {
-			e.printStackTrace();
-			return ctx.failure("").next();
+
+		} else {
+			Long dbCount = asset.getZeroChunkCount();
+			if (dbCount != null) {
+				media.setZeroChunkCount(dbCount);
+				return ctx.origin(REMOTE).next();
+			} else {
+				computeSum(media);
+				return ctx.origin(COMPUTED).next();
+			}
 		}
 
 	}
@@ -79,5 +74,4 @@ public class ConsistencyAction extends AbstractFilesystemAction<ConsistencyActio
 		media.setZeroChunkCount(count);
 	}
 
-	
 }

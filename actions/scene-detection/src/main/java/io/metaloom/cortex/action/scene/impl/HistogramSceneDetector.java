@@ -12,6 +12,7 @@ import org.opencv.imgproc.Imgproc;
 
 import io.metaloom.cortex.action.scene.AbstractSceneDetector;
 import io.metaloom.cortex.action.scene.detector.DetectionResult;
+import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
 import io.metaloom.video4j.impl.MatProvider;
@@ -20,11 +21,11 @@ import io.metaloom.video4j.opencv.CVUtils;
 public class HistogramSceneDetector extends AbstractSceneDetector {
 
 	@Override
-	public void detect(VideoFile video) {
+	public SceneDetectionResult detect(VideoFile video) {
 
 		final double HIST_THRESHOLD = 0.2f;
 		AtomicReference<VideoFrame> prevFrame = new AtomicReference<>();
-		detect(video, (img, frame) -> {
+		return detect(video, (img, frame) -> {
 			Mat cannyFrame = CVUtils.canny(frame.mat(), 30f, 30f);
 			cannyFrame = CVUtils.toBGR(cannyFrame);
 			Mat colorFrame = frame.mat();

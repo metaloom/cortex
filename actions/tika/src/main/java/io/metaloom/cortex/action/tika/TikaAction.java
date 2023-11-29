@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
-import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
+public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(TikaAction.class);
 
@@ -27,8 +27,8 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 	public static String NULL_FLAG = "NULL";
 
 	@Inject
-	public TikaAction(LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options) {
-		super(client, cortexOption, options);
+	public TikaAction(LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
 	}
 
 	@Override
@@ -37,16 +37,25 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 	}
 
 	@Override
-	public ActionResult process(ActionContext ctx) {
+	protected boolean isProcessable(ActionContext ctx) {
+		LoomMedia media = ctx.media();
+		return media.isImage() || media.isAudio() || media.isVideo() || media.isDocument();
+	}
+
+	@Override
+	protected boolean isProcessed(ActionContext ctx) {
+		LoomMedia media = ctx.media();
+		return media.getTikaFlags() != null;
+	}
+
+	@Override
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
 		LoomMedia media = ctx.media();
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
 			return ctx.skipped("previously failed").next();
 		} else if (flags == null) {
-			String info = "";
-			SHA512 sha512 = media.getSHA512();
-			AssetResponse entry = client().loadAsset(sha512).sync();
-			if (entry == null) {
+			if (asset == null) {
 				return parseMedia(ctx);
 				// TODO utilize and store result
 			} else {
@@ -78,7 +87,7 @@ public class TikaAction extends AbstractFilesystemAction<TikaActionOptions> {
 	private String getFlags(LoomMedia media) {
 		String tikaFlags = media.getTikaFlags();
 		if (tikaFlags == null) {
-			//media.setTikaFlags(tikaFlags);
+			// media.setTikaFlags(tikaFlags);
 		}
 		return tikaFlags;
 	}

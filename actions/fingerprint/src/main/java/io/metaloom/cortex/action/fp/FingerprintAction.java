@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -35,8 +36,8 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	}
 
 	@Inject
-	public FingerprintAction(LoomGRPCClient client, CortexOptions cortexOption, FingerprintOptions options) {
-		super(client, cortexOption, options);
+	public FingerprintAction(LoomGRPCClient client, CortexOptions cortexOption, FingerprintOptions options, MetaStorage storage) {
+		super(client, cortexOption, options, storage);
 	}
 
 	@Override
@@ -49,7 +50,13 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 		// return ctx.skipped("no video media").next();
 		LoomMedia media = ctx.media();
 		// return ctx.skipped("incomplete media").next();
-		return media.isVideo() && options().isProcessIncomplete() || media.isComplete() != null && media.isComplete();
+		boolean isComplete = media.isComplete() != null && media.isComplete();
+		boolean isVideo = media.isVideo();
+		if (isVideo && !isComplete && options().isProcessIncomplete()) {
+			return true;
+		} else {
+			return isVideo;
+		}
 	}
 
 	@Override
@@ -60,7 +67,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		LoomMedia media = ctx.media();
-		if (asset!=null && asset.getFingerprint() != null) {
+		if (asset != null && asset.getFingerprint() != null) {
 			media.setFingerprint(asset.getFingerprint());
 			return ctx.origin(REMOTE).next();
 		} else {

@@ -16,6 +16,7 @@ import org.opencv.video.SparsePyrLKOpticalFlow;
 
 import io.metaloom.cortex.action.scene.AbstractSceneDetector;
 import io.metaloom.cortex.action.scene.detector.DetectionResult;
+import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.impl.MatProvider;
 import io.metaloom.video4j.opencv.CVUtils;
@@ -34,13 +35,13 @@ public class OpticalFlowSceneDetector extends AbstractSceneDetector {
 	private final Mat mask = MatProvider.mat();
 
 	@Override
-	public void detect(VideoFile video) {
+	public SceneDetectionResult detect(VideoFile video) {
 		AtomicReference<Mat> previousGray = new AtomicReference<>();
 		// AtomicReference<Mat> p0 = new AtomicReference<>(MatProvider.mat());
 		// Mat p1 = MatProvider.mat();
 		// Mat status = MatProvider.mat();
 		Mat err = MatProvider.mat();
-		detect(video, (img, frame) -> {
+		return detect(video, (img, frame) -> {
 			Graphics g = img.getGraphics();
 			SparsePyrLKOpticalFlow flow = SparsePyrLKOpticalFlow.create();
 			Mat colorFrame = frame.mat();

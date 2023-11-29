@@ -2,14 +2,13 @@ package io.metaloom.cortex.common.action;
 
 import static io.metaloom.cortex.api.action.ResultOrigin.LOCAL;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -20,8 +19,8 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 
 	public static final Logger log = LoggerFactory.getLogger(AbstractMediaAction.class);
 
-	public AbstractMediaAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
-		super(client, cortexOption, option);
+	public AbstractMediaAction(LoomGRPCClient client, CortexOptions cortexOption, T option, MetaStorage storage) {
+		super(client, cortexOption, option, storage);
 	}
 
 	@Override
@@ -32,7 +31,7 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 		}
 		if (isProcessable(ctx)) {
 			if (isProcessed(ctx)) {
-				return ctx.origin(LOCAL).next();
+				return ctx.skipped("already computed").origin(LOCAL).next();
 			} else {
 				try {
 					if (isOfflineMode()) {
@@ -78,6 +77,6 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 	 *            The provided response may be utilized to skip the actual computation and just use the loaded data instead
 	 * @return
 	 */
-	protected abstract ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException;
+	protected abstract ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception;
 
 }

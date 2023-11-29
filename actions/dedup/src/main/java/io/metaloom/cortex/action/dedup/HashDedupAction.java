@@ -12,14 +12,14 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.common.media.impl.LoomMediaImpl;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.action.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetRequest;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.fs.FileUtils;
 import io.metaloom.utils.hash.SHA512;
@@ -30,8 +30,8 @@ public class HashDedupAction extends AbstractMediaAction<DedupActionOptions> {
 	public static final Logger log = LoggerFactory.getLogger(HashDedupAction.class);
 
 	@Inject
-	public HashDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
-		super(client, cortexOptions, options);
+	public HashDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options, MetaStorage storage) {
+		super(client, cortexOptions, options, storage);
 	}
 
 	@Override

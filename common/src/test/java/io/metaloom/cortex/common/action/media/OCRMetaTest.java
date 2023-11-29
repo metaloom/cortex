@@ -1,0 +1,5 @@
+package io.metaloom.cortex.common.action.media;
+
+public class OCRMetaTest extends AbstractMediaTest{
+
+}
