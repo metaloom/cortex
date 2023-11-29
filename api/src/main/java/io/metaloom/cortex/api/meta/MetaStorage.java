@@ -4,16 +4,48 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.media.param.BSONAttr;
+import io.metaloom.cortex.api.media.LoomMetaKey;
 
 public interface MetaStorage {
 
-	boolean has(LoomMedia media, MetaStorageKey key);
+	/**
+	 * Check whether there is a value for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @return
+	 */
+	<T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey);
 
-	OutputStream outputStream(LoomMedia media, MetaStorageKey key) throws IOException;
+	/**
+	 * Return an output stream to write to for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @return
+	 * @throws IOException
+	 */
+	<T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
 
-	<V extends BSONAttr> void write(LoomMedia media, MetaStorageKey key, V value);
+	/**
+	 * Return the meta property for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @return
+	 */
+	<T> T get(LoomMedia media, LoomMetaKey<T> metaKey);
 
-	<T> void set(LoomMedia media, MetaStorageKey storageKey, T value);
-
+	/**
+	 * Store the value for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @param value
+	 */
+	<T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value);
 }

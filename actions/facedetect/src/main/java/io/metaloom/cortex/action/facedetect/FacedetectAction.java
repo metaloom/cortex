@@ -21,7 +21,6 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.api.media.param.FaceDetectionParameter;
-import io.metaloom.cortex.api.meta.MetaStorageKey;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
@@ -130,16 +129,6 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 			return ctx.failure(e.getMessage()).next();
 		}
 
-	}
-
-	private MetaStorageKey storageKey() {
-		return new MetaStorageKey() {
-
-			@Override
-			public String name() {
-				return "facedetect";
-			}
-		};
 	}
 
 }

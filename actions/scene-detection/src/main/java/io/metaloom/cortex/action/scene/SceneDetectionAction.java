@@ -15,7 +15,6 @@ import io.metaloom.cortex.action.scene.impl.OpticalFlowSceneDetector;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;

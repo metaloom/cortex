@@ -20,9 +20,6 @@ import io.metaloom.cortex.CortexEnv;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.cortex.common.action.dummy.DummyOptions;
-import io.metaloom.cortex.common.option.CortexActionOptionDeserializer;
-import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
-import io.metaloom.cortex.common.option.CortexOptionsLoader;
 
 public class CortexOptionsLoaderTest {
 

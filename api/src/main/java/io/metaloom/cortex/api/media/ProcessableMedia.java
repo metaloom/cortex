@@ -7,10 +7,12 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
+import io.metaloom.cortex.api.meta.MetaStorageAccess;
+
 /**
  * Media which will be processable via cortex actions.
  */
-public interface ProcessableMedia {
+public interface ProcessableMedia extends MetaStorageAccess {
 
 	boolean isVideo();
 
@@ -70,16 +72,5 @@ public interface ProcessableMedia {
 	 * @return
 	 */
 	List<String> listXAttr();
-
-	/**
-	 * Return the meta property for the given key.
-	 * 
-	 * @param <T>
-	 * @param key
-	 * @return
-	 */
-	<T> T get(LoomMetaKey<T> key);
-
-	<T> ProcessableMedia put(LoomMetaKey<T> metaKey, T value);
 
 }

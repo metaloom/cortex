@@ -8,17 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.common.media.AbstractFilesystemMedia;
 import io.metaloom.utils.fs.FilterHelper;
@@ -32,8 +28,6 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 
 	private final Path path;
 	private final MetaStorage storage;
-
-	private Map<String, Object> attrCache = new HashMap<>();
 
 	@Inject
 	public LoomMediaImpl(@Named("mediaPath") Path path, MetaStorage storage) {
@@ -97,46 +91,7 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T get(LoomMetaKey<T> key) {
-		String fullKey = key.fullKey();
-		T cacheValue = (T) attrCache.get(fullKey);
-		if (cacheValue != null) {
-			return cacheValue;
-		} else {
-			switch (key.type()) {
-			case XATTR:
-				return readXAttr(key);
-			case FS:
-				return readLocalStorage(key);
-			case HEAP:
-				// We already tried the cache. Just return null
-				return null;
-			default:
-				throw new RuntimeException("Invalid persistance type");
-			}
-		}
-	}
-
-	@Override
-	public <T> LoomMedia put(LoomMetaKey<T> metaKey, T value) {
-		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-		String fullKey = metaKey.fullKey();
-		switch (metaKey.type()) {
-		case XATTR:
-			writeXAttr(metaKey, value);
-			attrCache.put(fullKey, value);
-			break;
-		case FS:
-			writeLocalStorage(metaKey, value);
-			attrCache.put(fullKey, value);
-			break;
-		case HEAP:
-			attrCache.put(fullKey, value);
-			break;
-		default:
-			throw new RuntimeException("Invalid persistance type");
-		}
+	public LoomMedia self() {
 		return this;
 	}
 
@@ -148,6 +103,11 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 			put(SHA_512_KEY, hashSum512);
 		}
 		return hashSum512;
+	}
+
+	@Override
+	public MetaStorage storage() {
+		return storage;
 	}
 
 }

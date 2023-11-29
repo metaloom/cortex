@@ -12,6 +12,11 @@ public interface LoomMetaKey<T> {
 
 	String key();
 
+	/**
+	 * Return the fully prefixed key which also contains the loom version and loom prefix.
+	 * 
+	 * @return
+	 */
 	String fullKey();
 
 	LoomMetaType type();

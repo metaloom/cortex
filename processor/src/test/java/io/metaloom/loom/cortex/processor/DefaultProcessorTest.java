@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.thumbnail.ThumbnailActionOptions;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.processor.impl.DefaultMediaProcessorImpl;

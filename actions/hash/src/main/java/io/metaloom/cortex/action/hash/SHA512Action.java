@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;

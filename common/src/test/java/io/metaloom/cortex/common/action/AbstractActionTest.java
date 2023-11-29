@@ -9,8 +9,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.api.action.FilesystemAction;
-import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;

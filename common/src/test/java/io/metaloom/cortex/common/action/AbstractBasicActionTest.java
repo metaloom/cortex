@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
-import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.HashMedia;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.loom.test.data.TestMedia;
 
