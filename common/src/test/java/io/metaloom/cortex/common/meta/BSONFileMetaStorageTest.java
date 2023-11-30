@@ -17,7 +17,7 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
-import io.metaloom.cortex.common.meta.impl.BSONFileMetaStorage;
+import io.metaloom.cortex.common.meta.impl.MetaStorageImpl;
 
 public class BSONFileMetaStorageTest extends AbstractMediaTest {
 
@@ -27,7 +27,7 @@ public class BSONFileMetaStorageTest extends AbstractMediaTest {
 	public void setupMetaStorage() throws IOException {
 		CortexOptions options = new CortexOptions();
 		options.setMetaPath(Files.createTempDirectory("meta"));
-		storage = new BSONFileMetaStorage(options);
+		storage = new MetaStorageImpl(options);
 	}
 
 	@Test
