@@ -9,7 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
+import io.metaloom.cortex.common.meta.impl.MetaStorageImpl;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.data.AudioData;
 import io.metaloom.loom.test.data.DocData;
@@ -38,7 +41,17 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 		data = TestEnvHelper.prepareTestdata("action-test");
 	}
 
-	public LoomMedia createTestMediaFile() throws IOException {
+	public MetaStorage storage() {
+		return new MetaStorageImpl(options());
+	}
+
+	protected CortexOptions options() {
+		CortexOptions options = new CortexOptions();
+		options.setMetaPath(BASE_DIR);
+		return options;
+	}
+
+	public LoomMedia createEmptyLoomMedia() throws IOException {
 		File file = File.createTempFile("processable-media-test", "file");
 		return media(TestMediaBuilder.newBuilder(file.toPath()).build());
 	}
@@ -48,7 +61,7 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(Path path) {
-		return new LoomMediaImpl(path, null);
+		return new LoomMediaImpl(path, storage());
 	}
 
 	@Override

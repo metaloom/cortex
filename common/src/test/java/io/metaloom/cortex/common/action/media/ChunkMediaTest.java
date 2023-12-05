@@ -16,7 +16,7 @@ public class ChunkMediaTest extends AbstractMediaTest {
 
 	@Test
 	public void testGetSetUpdateLong() throws IOException {
-		LoomMedia media = createTestMediaFile();
+		LoomMedia media = createEmptyLoomMedia();
 		assertNull(media.getZeroChunkCount());
 		media.put(ChunkMedia.ZERO_CHUNK_COUNT_KEY, 42L);
 		Long value1 = media.get(ChunkMedia.ZERO_CHUNK_COUNT_KEY);

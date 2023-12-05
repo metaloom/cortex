@@ -10,46 +10,19 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 
-public abstract class AbstractFilesystemAction<T extends CortexActionOptions> implements FilesystemAction<T> {
+public abstract class AbstractFilesystemAction<T extends CortexActionOptions> extends AbstractCortexAction<T> implements FilesystemAction<T> {
 
 	private long current = 1L;
 	private long total = 1L;
 
-	private final LoomGRPCClient client;
-	private final CortexOptions cortexOption;
-	private final T option;
-
 	public AbstractFilesystemAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
-		this.client = client;
-		this.cortexOption = cortexOption;
-		this.option = option;
+		super(client, cortexOption, option);
+
 	}
 
 	@Override
 	public void initialize() {
 		// NOOP
-	}
-
-	protected LoomGRPCClient client() {
-		return client;
-	}
-
-	public boolean isOfflineMode() {
-		return client() == null;
-	}
-
-	@Override
-	public T options() {
-		return option;
-	}
-
-	@Override
-	public CortexOptions cortexOption() {
-		return cortexOption;
-	}
-
-	protected String shortHash(LoomMedia media) {
-		return media.getSHA512().toString().substring(0, 8);
 	}
 
 	// protected ActionResult2 completed(LoomMedia media, String msg) {
@@ -109,7 +82,7 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 		if (media == null || media.getSHA512() == null) {
 			return progress + rightPad("[" + name() + "]", 28);
 		} else {
-			return progress + rightPad(shortHash(media) + " [" + name() + "]", 28);
+			return progress + rightPad(media.shortHash() + " [" + name() + "]", 28);
 		}
 	}
 
@@ -117,11 +90,6 @@ public abstract class AbstractFilesystemAction<T extends CortexActionOptions> im
 	public void set(long current, long total) {
 		this.current = current;
 		this.total = total;
-	}
-
-	@Override
-	public boolean isDryrun() {
-		return cortexOption().isDryrun();
 	}
 
 }

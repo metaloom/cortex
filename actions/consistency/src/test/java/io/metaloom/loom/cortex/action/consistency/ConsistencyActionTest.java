@@ -19,7 +19,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 	@Test
 	public void testSkipAction() throws IOException {
 		ConsistencyAction action = mockAction();
-		LoomMedia media = createTestMediaFile();
+		LoomMedia media = createEmptyLoomMedia();
 		ActionResult result = action.process(media);
 		assertThat(result).isSkipped();
 		assertThat(media).hasXAttr(SHA_512_KEY);

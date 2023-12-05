@@ -7,12 +7,14 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
 import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
@@ -29,7 +31,11 @@ public class MetaStorageImpl implements MetaStorage {
 
 	private final CortexOptions options;
 
-	private Map<String, Object> attrCache = new HashMap<>();
+	// TODO inject cache and make it configurable
+	private Cache<String, Object> attrCache = Caffeine.newBuilder()
+		.maximumSize(10_000)
+		.expireAfterWrite(Duration.ofDays(30))
+		.build();
 
 	@Inject
 	public MetaStorageImpl(CortexOptions options) {
@@ -38,11 +44,21 @@ public class MetaStorageImpl implements MetaStorage {
 
 	@Override
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
+		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
+
+		// We check the cache and return a result if the value has been cached. 
+		// Otherwise we will query the type specific implementation
+		String fullKey = metaKey.fullKey();
+		T cacheValue = (T) attrCache.getIfPresent(fullKey);
+		if (cacheValue != null) {
+			return true;
+		}
+
 		switch (metaKey.type()) {
 		case FS:
 			return toMetaPath(media, metaKey).toFile().exists();
 		case HEAP:
-			return attrCache.containsKey(metaKey.key());
+			return attrCache.getIfPresent(metaKey.key()) != null;
 		case XATTR:
 			return XAttrUtils.hasXAttr(media.path(), metaKey.fullKey());
 		default:
@@ -52,17 +68,22 @@ public class MetaStorageImpl implements MetaStorage {
 
 	@Override
 	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
+		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 
-		// String fullKey = key.fullKey(); T cacheValue = (T) attrCache.get(fullKey);
-		// if (cacheValue != null) { return cacheValue; }
+		String fullKey = metaKey.fullKey();
+		T cacheValue = (T) attrCache.getIfPresent(fullKey);
+		if (cacheValue != null) {
+			return cacheValue;
+		}
 
 		switch (metaKey.type()) {
 		case FS:
-			readLocalStorage(media, metaKey);
+			return readLocalStorage(media, metaKey);
 		case HEAP:
-			return (T) attrCache.get(metaKey.key());
+			// We already checked the cache before
+			return null;
 		case XATTR:
-			readXAttr(media, metaKey);
+			return readXAttr(media, metaKey);
 		default:
 			throw new RuntimeException("Unknown type " + metaKey.type());
 		}
@@ -75,22 +96,21 @@ public class MetaStorageImpl implements MetaStorage {
 		switch (metaKey.type()) {
 		case XATTR:
 			writeXAttr(media, metaKey, value);
-			attrCache.put(fullKey, value);
 			break;
 		case FS:
 			try {
 				writeLocalStorage(media, metaKey, value);
-				attrCache.put(fullKey, value);
 			} catch (IOException e) {
 				throw new RuntimeException("Error while writing meta attribute to file", e);
 			}
 			break;
 		case HEAP:
-			attrCache.put(fullKey, value);
+			// NOOP
 			break;
 		default:
 			throw new RuntimeException("Invalid persistance type");
 		}
+		attrCache.put(fullKey, value);
 	}
 
 	@Override
@@ -102,6 +122,7 @@ public class MetaStorageImpl implements MetaStorage {
 	}
 
 	protected <T> T readLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey) {
+		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		try {
 			Path filePath = toMetaPath(media, metaKey);
 			if (Files.exists(filePath)) {

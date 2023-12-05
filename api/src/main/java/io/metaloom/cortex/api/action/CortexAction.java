@@ -13,6 +13,15 @@ public interface CortexAction<T extends CortexActionOptions> {
 	String name();
 
 	/**
+	 * Return the configured order for the action.
+	 * 
+	 * @return
+	 */
+	default ActionOrder order() {
+		return ActionOrder.UNDEFINED;
+	}
+
+	/**
 	 * Check whether the action is configured to dryrun
 	 * 
 	 * @return

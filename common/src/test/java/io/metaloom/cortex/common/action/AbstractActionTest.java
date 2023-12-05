@@ -21,7 +21,6 @@ public abstract class AbstractActionTest<T extends FilesystemAction> extends Abs
 
 	@BeforeEach
 	public void setup() throws IOException {
-		System.out.println("----");
 		action = mockAction();
 	}
 

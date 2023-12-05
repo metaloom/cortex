@@ -19,6 +19,10 @@ public interface HashMedia extends ProcessableMedia {
 
 	SHA512 getSHA512();
 
+	default String shortHash() {
+		return getSHA512().toString().substring(0, 8);
+	}
+
 	default HashMedia setSHA512(SHA512 hash) {
 		put(SHA_512_KEY, hash);
 		return this;

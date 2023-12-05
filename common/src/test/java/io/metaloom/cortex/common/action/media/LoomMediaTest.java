@@ -12,7 +12,7 @@ public class LoomMediaTest extends AbstractMediaTest {
 
 	@Test
 	public void testBasics() throws IOException {
-		LoomMedia media = createTestMediaFile();
+		LoomMedia media = createEmptyLoomMedia();
 		assertTrue(media.exists());
 	}
 

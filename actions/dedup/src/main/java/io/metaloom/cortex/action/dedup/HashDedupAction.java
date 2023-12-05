@@ -88,17 +88,17 @@ public class HashDedupAction extends AbstractMediaAction<DedupActionOptions> {
 
 						if (foundMedia.size() != dbFile.length()) {
 							log.error("Inconsistent file found. The file sizes do not match. Please verify files manually! Halting processing now!");
-							log.info("[A]: " + shortHash(media) + " E: " + media.exists() + " (" + dbFile.length() + " bytes) " + " => " + pathA);
+							log.info("[A]: " + media.shortHash() + " E: " + media.exists() + " (" + dbFile.length() + " bytes) " + " => " + pathA);
 							log.info(
-								"[B]: " + shortHash(foundMedia) + " E: " + foundMedia.exists() + " (" + foundMedia.size() + ") " + "  => " + pathB);
+								"[B]: " + foundMedia.shortHash() + " E: " + foundMedia.exists() + " (" + foundMedia.size() + ") " + "  => " + pathB);
 							System.in.read();
 						}
 						if (pathA.equalsIgnoreCase(pathB)) {
 							return ctx.info("same file").next();
 						} else {
 							if (log.isDebugEnabled()) {
-								log.debug("[A]: " + shortHash(media) + " E: " + media.exists() + " => " + pathA);
-								log.debug("[B]: " + shortHash(foundMedia) + " E: " + foundMedia.exists() + " => " + pathB);
+								log.debug("[A]: " + media.shortHash() + " E: " + media.exists() + " => " + pathA);
+								log.debug("[B]: " + media.shortHash() + " E: " + foundMedia.exists() + " => " + pathB);
 							}
 							// TODO configure target folder selection
 							Path targetFolder = options().getDupFolder();
