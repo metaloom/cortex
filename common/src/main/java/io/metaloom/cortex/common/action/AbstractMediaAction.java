@@ -26,11 +26,11 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 	public ActionResult process(ActionContext ctx) {
 		LoomMedia media = ctx.media();
 		if (!media.exists()) {
-			return ctx.failure("file " + media.path() + " not found").abort();
+			return ctx.failure("File " + media.path() + " not found").abort();
 		}
 		if (isProcessable(ctx)) {
 			if (isProcessed(ctx)) {
-				return ctx.skipped("already computed").origin(LOCAL).next();
+				return ctx.skipped("Already computed").origin(LOCAL).next();
 			} else {
 				try {
 					if (isOfflineMode()) {

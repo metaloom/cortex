@@ -12,13 +12,14 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class SHA512Action extends AbstractFilesystemAction<HashOptions> {
+public class SHA512Action extends AbstractMediaAction<HashOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
@@ -33,7 +34,22 @@ public class SHA512Action extends AbstractFilesystemAction<HashOptions> {
 	}
 
 	@Override
-	public ActionResult process(ActionContext ctx) {
+	protected boolean isProcessed(ActionContext ctx) {
+		return ctx.media().getSHA512() != null;
+	}
+
+	@Override
+	protected boolean isProcessable(ActionContext ctx) {
+		if (options().isSHA512()) {
+			// TODO return or log reason
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
 		LoomMedia media = ctx.media();
 		SHA512 hash = HashUtils.computeSHA512(media.file());
 		media.setSHA512(hash);

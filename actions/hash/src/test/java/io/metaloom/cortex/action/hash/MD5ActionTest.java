@@ -13,11 +13,10 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractBasicActionTest;
-import io.metaloom.cortex.common.action.ActionTestcases;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.test.data.TestMedia;
 
-public class MD5ActionTest extends AbstractBasicActionTest<MD5Action> implements ActionTestcases {
+public class MD5ActionTest extends AbstractBasicActionTest<MD5Action> {
 
 	@Override
 	protected void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult result, MD5Action actionMock) {

@@ -57,7 +57,11 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(TestMedia media) {
-		return media(media.path());
+		LoomMedia loomMedia = media(media.path());
+		if (loomMedia.exists()) {
+			loomMedia.setSHA512(media.sha512());
+		}
+		return loomMedia;
 	}
 
 	protected LoomMedia media(Path path) {

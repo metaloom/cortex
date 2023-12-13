@@ -1,7 +1,6 @@
 package io.metaloom.cortex.common.action;
 
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
@@ -32,7 +31,6 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		LoomMedia media = media(video1);
 		T actionMock = action();
 		assertProcessed(actionMock, media, video1);
-
 	}
 
 	@Test
@@ -79,7 +77,6 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		ActionResult result = actionMock.process(ctx(media));
 	}
 
-
 	@Test
 	@Override
 	public void testFailure() throws IOException {
@@ -97,7 +94,11 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 
 		ActionResult result = actionMock.process(ctx(media));
 		assertThat(result).isSkipped();
-		assertThat(media).hasXAttr(0);
+		assertDisabled(media, result);
+	}
+
+	protected void assertDisabled(LoomMedia media, ActionResult result) {
+		assertThat(media).hasXAttr(1);
 	}
 
 	private void assertProcessed(T actionMock, LoomMedia media, TestMedia testMedia) throws IOException {
