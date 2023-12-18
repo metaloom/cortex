@@ -1,11 +1,11 @@
-package io.metaloom.cortex.action.scene.detector;
+package io.metaloom.cortex.api.media.param;
 
-public class Scene {
+public class DetectedScene {
 
-	private long from = 0;
-	private long to = 0;
+	public long from = 0;
+	public long to = 0;
 
-	public Scene(long from, long to) {
+	public DetectedScene(long from, long to) {
 		this.from = from;
 		this.to = to;
 	}
@@ -21,4 +21,5 @@ public class Scene {
 	public long length() {
 		return to - from;
 	}
+
 }

@@ -10,6 +10,7 @@ import org.opencv.imgproc.Imgproc;
 
 import io.metaloom.cortex.action.scene.detector.DetectionResult;
 import io.metaloom.cortex.action.scene.detector.Detector;
+import io.metaloom.cortex.action.scene.detector.Scene;
 import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.cortex.action.scene.detector.SceneDetector;
 import io.metaloom.video4j.VideoFile;
@@ -25,7 +26,7 @@ public abstract class AbstractSceneDetector implements SceneDetector {
 	protected SceneDetectionResult detect(VideoFile video, Detector detector) {
 		int showCut = 0;
 		double shownDelta = 0;
-		SceneDetectionResult result = new SceneDetectionResult(); 
+		SceneDetectionResult result = new SceneDetectionResult();
 		for (int nFrame = 21_800; nFrame < video.length(); nFrame += videoChopRate) {
 			// System.out.println("Frame: " + nFrame);
 			video.seekToFrame(nFrame);
@@ -62,6 +63,10 @@ public abstract class AbstractSceneDetector implements SceneDetector {
 				img.getHeight() - 20);
 			viewer.show(img);
 
+		}
+		// No cut detection means one scene
+		if (result.scenes().isEmpty()) {
+			result.addScene(new Scene(0, video.length()));
 		}
 		return result;
 	}

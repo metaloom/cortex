@@ -7,7 +7,7 @@ public class SceneDetectionResult {
 
 	private List<Scene> scenes = new ArrayList<>();
 
-	public void addScenee(Scene scene) {
+	public void addScene(Scene scene) {
 		scenes.add(scene);
 	}
 

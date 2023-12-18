@@ -11,7 +11,7 @@ import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.loom.test.data.TestMedia;
 
-public abstract class AbstractBasicActionTest<T extends FilesystemAction> extends AbstractActionTest<T> implements ActionTestcases {
+public abstract class AbstractBasicActionTest<T extends FilesystemAction<?>> extends AbstractActionTest<T> implements ActionTestcases {
 
 	@Test
 	@Override
@@ -30,7 +30,11 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		TestMedia video1 = video1();
 		LoomMedia media = media(video1);
 		T actionMock = action();
-		assertProcessed(actionMock, media, video1);
+		assertProcessedVideo(actionMock, media, video1);
+	}
+
+	protected void assertProcessedVideo(T actionMock, LoomMedia media, TestMedia video) throws IOException {
+		assertProcessed(actionMock, media, video);
 	}
 
 	@Test
@@ -39,7 +43,11 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		TestMedia testMedia = docDOCX();
 		LoomMedia media = media(testMedia);
 		T actionMock = action();
-		assertProcessed(actionMock, media, testMedia);
+		assertProcessedDoc(actionMock, media, testMedia);
+	}
+
+	protected void assertProcessedDoc(T actionMock, LoomMedia media, TestMedia docMedia) throws IOException {
+		assertProcessed(actionMock, media, docMedia);
 	}
 
 	@Test
@@ -48,7 +56,11 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		TestMedia image1 = image1();
 		LoomMedia media = media(image1);
 		T actionMock = action();
-		assertProcessed(actionMock, media, image1);
+		assertProcessedImage(actionMock, media, image1);
+	}
+
+	protected void assertProcessedImage(T actionMock, LoomMedia media, TestMedia image) throws IOException {
+		assertProcessed(actionMock, media, image);
 	}
 
 	@Test
@@ -57,7 +69,11 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 		TestMedia audio1 = audio1();
 		LoomMedia media = media(audio1);
 		T actionMock = action();
-		assertProcessed(actionMock, media, audio1);
+		assertProcessedAudio(actionMock, media, audio1);
+	}
+
+	protected void assertProcessedAudio(T actionMock, LoomMedia media, TestMedia audio) throws IOException {
+		assertProcessed(actionMock, media, audio);
 	}
 
 	@Test
@@ -98,6 +114,10 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction> extend
 	}
 
 	protected void assertDisabled(LoomMedia media, ActionResult result) {
+		assertThat(media).hasXAttr(1);
+	}
+
+	protected void assertSkipped(T actionMock, LoomMedia media) throws IOException {
 		assertThat(media).hasXAttr(1);
 	}
 
