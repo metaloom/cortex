@@ -1,10 +1,10 @@
 package io.metaloom.cortex.action.thumbnail;
 
-import static io.metaloom.cortex.action.thumbnail.ThumbnailMedia.THUMBNAIL;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.DONE;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.FAILED;
 import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
+import static io.metaloom.cortex.media.thumbnail.ThumbnailMedia.THUMBNAIL;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,6 +21,7 @@ import io.metaloom.cortex.api.media.param.ThumbnailFlag;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
+import io.metaloom.cortex.media.thumbnail.ThumbnailMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video4j.Video4j;

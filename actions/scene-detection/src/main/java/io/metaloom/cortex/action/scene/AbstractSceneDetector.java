@@ -10,9 +10,9 @@ import org.opencv.imgproc.Imgproc;
 
 import io.metaloom.cortex.action.scene.detector.DetectionResult;
 import io.metaloom.cortex.action.scene.detector.Detector;
-import io.metaloom.cortex.action.scene.detector.Scene;
-import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.cortex.action.scene.detector.SceneDetector;
+import io.metaloom.cortex.media.scene.Scene;
+import io.metaloom.cortex.media.scene.SceneDetectionResult;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
 import io.metaloom.video4j.utils.SimpleImageViewer;

@@ -1,7 +1,7 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACEDETECTION_RESULT_KEY;
-import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
+import static io.metaloom.cortex.media.facedetect.FacedetectMedia.FACEDETECTION_RESULT_KEY;
+import static io.metaloom.cortex.media.facedetect.FacedetectMedia.FACE_DETECTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -10,9 +10,9 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.facedetect.FaceDetectionResult;
-import io.metaloom.cortex.action.facedetect.FacedetectMedia;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
+import io.metaloom.cortex.media.facedetect.FaceDetectionResult;
+import io.metaloom.cortex.media.facedetect.FacedetectMedia;
 
 public class FacedetectMediaTest extends AbstractMediaTest {
 

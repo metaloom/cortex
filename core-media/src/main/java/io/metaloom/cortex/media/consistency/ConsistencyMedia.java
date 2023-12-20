@@ -3,9 +3,9 @@ package io.metaloom.cortex.media.consistency;
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
-import io.metaloom.cortex.action.consistency.impl.ConsistencyMediaType;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
+import io.metaloom.cortex.media.consistency.impl.ConsistencyMediaType;
 
 public interface ConsistencyMedia extends LoomMedia {
 

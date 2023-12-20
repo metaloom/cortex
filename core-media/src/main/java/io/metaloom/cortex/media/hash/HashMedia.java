@@ -5,6 +5,7 @@ import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
+import io.metaloom.cortex.media.hash.impl.HashMediaType;
 import io.metaloom.utils.hash.ChunkHash;
 import io.metaloom.utils.hash.MD5;
 import io.metaloom.utils.hash.SHA256;

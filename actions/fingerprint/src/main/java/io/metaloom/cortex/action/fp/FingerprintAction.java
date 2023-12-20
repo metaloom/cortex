@@ -1,9 +1,9 @@
 package io.metaloom.cortex.action.fp;
 
-import static io.metaloom.cortex.action.fingerprint.FingerprintMedia.FINGERPRINT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
+import static io.metaloom.cortex.media.fingerprint.FingerprintMedia.FINGERPRINT;
 import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
 import javax.inject.Inject;
@@ -12,12 +12,12 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.fingerprint.FingerprintMedia;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
+import io.metaloom.cortex.media.fingerprint.FingerprintMedia;
 import io.metaloom.cortex.media.hash.HashMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;

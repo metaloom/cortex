@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.facedetect;
 
-import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+import static io.metaloom.cortex.media.facedetect.FacedetectMedia.FACE_DETECTION;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -24,6 +24,8 @@ import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
+import io.metaloom.cortex.media.facedetect.FaceDetectionResult;
+import io.metaloom.cortex.media.facedetect.FacedetectMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;

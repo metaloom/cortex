@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.dedup;
 
-import static io.metaloom.cortex.action.fingerprint.FingerprintMedia.FINGERPRINT;
+import static io.metaloom.cortex.media.fingerprint.FingerprintMedia.FINGERPRINT;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
