@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.scene;
 
 import static io.metaloom.cortex.action.scene.SceneDetectionMedia.*;
-import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
+import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +11,7 @@ import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.AbstractBasicActionTest;
+import io.metaloom.cortex.media.test.AbstractBasicActionTest;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.test.data.TestMedia;
 import io.metaloom.video4j.Video4j;

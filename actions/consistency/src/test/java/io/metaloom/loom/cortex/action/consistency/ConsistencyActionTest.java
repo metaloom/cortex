@@ -1,8 +1,7 @@
 package io.metaloom.loom.cortex.action.consistency;
 
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
-
-import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
+import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 
 import java.io.IOException;
 

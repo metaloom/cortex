@@ -1,8 +1,10 @@
 package io.metaloom.cortex.action.fp;
 
-import static io.metaloom.cortex.action.fp.FingerprintMedia.FINGERPRINT;
+import static io.metaloom.cortex.action.fingerprint.FingerprintMedia.FINGERPRINT;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
+import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
+import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,10 +12,13 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.cortex.action.fingerprint.FingerprintMedia;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.media.consistency.ConsistencyMedia;
+import io.metaloom.cortex.media.hash.HashMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video4j.Video4j;
@@ -49,8 +54,9 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 		// return ctx.skipped("no video media").next();
 		FingerprintMedia media = ctx.media(FINGERPRINT);
 		HashMedia hashMedia = ctx.media(HASH);
+		ConsistencyMedia consistencyMedia = ctx.media(CONSISTENCY);
 		// return ctx.skipped("incomplete media").next();
-		boolean isComplete = media.isComplete() != null && media.isComplete();
+		boolean isComplete = consistencyMedia.isComplete() != null && consistencyMedia.isComplete();
 		boolean isVideo = media.isVideo();
 		if (isVideo && !isComplete && options().isProcessIncomplete()) {
 			return true;
@@ -92,7 +98,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 
 	private void processMedia(ActionContext ctx) throws InterruptedException {
 		FingerprintMedia media = ctx.media(FINGERPRINT);
-		String fp =media.getFingerprint();
+		String fp = media.getFingerprint();
 		boolean isNull = fp != null && fp.equals("NULL");
 		boolean isCorrect = fp != null && fp.length() == 66;
 		if (!options().isRetryFailed() && (isNull || isCorrect)) {
@@ -104,7 +110,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 				Fingerprint fingerprint = hasher.hash(video);
 				if (fingerprint == null) {
 					print(ctx, "NULL", "(no result)");
-					media.setFingerprint( "NULL");
+					media.setFingerprint("NULL");
 				} else {
 					String hash = fingerprint.hex();
 					print(ctx, "DONE", "");
@@ -113,6 +119,5 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 			}
 		}
 	}
-
 
 }

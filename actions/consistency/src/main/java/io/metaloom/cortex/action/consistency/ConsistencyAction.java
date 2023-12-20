@@ -1,8 +1,8 @@
 package io.metaloom.cortex.action.consistency;
 
-import static io.metaloom.cortex.action.consistency.ConsistencyMedia.CONSISTENCY;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
+import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +15,7 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.media.consistency.ConsistencyMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.partial.PartialFile;
@@ -67,7 +68,7 @@ public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOpti
 
 	}
 
-	private void computeSum(LoomMedia media) throws NoSuchAlgorithmException, IOException {
+	private void computeSum(ConsistencyMedia media) throws NoSuchAlgorithmException, IOException {
 		PartialFile pf = new PartialFile(media.path());
 		long count = pf.computeZeroChunkCount();
 		media.setZeroChunkCount(count);

@@ -10,8 +10,8 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.facedetect.FaceDetectionResult;
 import io.metaloom.cortex.action.facedetect.FacedetectMedia;
-import io.metaloom.cortex.action.facedetect.file.model.FaceDetectionResult;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 
 public class FacedetectMediaTest extends AbstractMediaTest {

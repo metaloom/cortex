@@ -42,10 +42,16 @@
     <dependencies>
         <dependency>
             <groupId>io.metaloom.cortex</groupId>
-            <artifactId>cortex-common</artifactId>
+            <artifactId>cortex-core-media</artifactId>
         </dependency>
 
         <!--Test -->
+        <dependency>
+            <groupId>io.metaloom.cortex</groupId>
+            <artifactId>cortex-core-media</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.metaloom.cortex</groupId>
             <artifactId>cortex-common</artifactId>

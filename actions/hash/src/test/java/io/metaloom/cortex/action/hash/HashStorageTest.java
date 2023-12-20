@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.hash.HashMedia.HASH;
-import static io.metaloom.cortex.action.hash.HashMedia.MD5_KEY;
+import static io.metaloom.cortex.media.hash.HashMedia.HASH;
+import static io.metaloom.cortex.media.hash.HashMedia.MD5_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
+import io.metaloom.cortex.media.hash.HashMedia;
 import io.metaloom.utils.hash.MD5;
 import io.metaloom.utils.hash.SHA512;
 

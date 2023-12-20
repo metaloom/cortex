@@ -1,8 +1,8 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.action.hash.HashMedia.HASH;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
+import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,6 +14,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.media.hash.HashMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;

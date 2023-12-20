@@ -100,6 +100,11 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	}
 
 	@Override
+	public void setSHA512(SHA512 hash) {
+		put(SHA_512_KEY, hash);
+	}
+
+	@Override
 	public MetaStorage storage() {
 		return storage;
 	}

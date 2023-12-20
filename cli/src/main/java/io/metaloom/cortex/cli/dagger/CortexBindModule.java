@@ -33,7 +33,7 @@ public abstract class CortexBindModule {
 
 	@Binds
 	@Singleton
-	abstract MetaStorage bindMetaStorage(MetaStorage e);
+	abstract MetaStorage bindMetaStorage(MetaStorageImpl e);
 
 	@Provides
 	public static LinuxFilesystemScanner bindFilesystemScanner() {

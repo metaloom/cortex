@@ -1,9 +1,10 @@
 package io.metaloom.cortex.action.thumbnail;
 
-import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.action.thumbnail.ThumbnailMedia.THUMBNAIL;
+import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.DONE;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.FAILED;
+import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,10 +17,10 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.param.ThumbnailFlag;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
+import io.metaloom.cortex.media.consistency.ConsistencyMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.video4j.Video4j;
@@ -55,7 +56,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 
 	@Override
 	protected boolean isProcessable(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		ConsistencyMedia media = ctx.media(CONSISTENCY);
 		if (!options().isProcessIncomplete()) {
 			Boolean isComplete = media.isComplete();
 			if (isComplete != null && !isComplete) {

@@ -1,5 +1,7 @@
 package io.metaloom.cortex.action.loom;
 
+import static io.metaloom.cortex.media.hash.HashMedia.HASH;
+
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -11,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionOrder;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
+import io.metaloom.cortex.media.hash.HashMedia;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetRequest;
 

@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
@@ -25,7 +28,8 @@ import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
-public final class MetaStorageImpl implements MetaStorage {
+@Singleton
+public class MetaStorageImpl implements MetaStorage {
 
 	private final CortexOptions options;
 
@@ -35,6 +39,7 @@ public final class MetaStorageImpl implements MetaStorage {
 		.expireAfterWrite(Duration.ofDays(30))
 		.build();
 
+	@Inject
 	public MetaStorageImpl(CortexOptions options) {
 		this.options = options;
 	}

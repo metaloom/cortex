@@ -2,7 +2,7 @@ package io.metaloom.loom.cortex.action.facedetect;
 
 import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
-import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
+import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;

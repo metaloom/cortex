@@ -1,6 +1,6 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.cortex.action.consistency.ConsistencyMedia.CONSISTENCY;
+import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -8,8 +8,8 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import io.metaloom.cortex.action.consistency.ConsistencyMedia;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
+import io.metaloom.cortex.media.consistency.ConsistencyMedia;
 
 public class ConsistencyMediaTest extends AbstractMediaTest {
 

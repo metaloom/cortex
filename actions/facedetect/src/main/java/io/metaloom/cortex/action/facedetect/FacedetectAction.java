@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.facedetect.file.model.FaceDetectionResult;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
