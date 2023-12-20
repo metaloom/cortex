@@ -16,11 +16,11 @@ public interface HashMedia extends LoomMedia {
 
 	public static final int VERSION = 1;
 
-	public static final LoomMetaKey<ChunkHash> CHUNK_HASH_KEY = metaKey("chunk_hash", 1, XATTR, ChunkHash.class);
+	public static final LoomMetaKey<ChunkHash> CHUNK_HASH_KEY = metaKey("chunk_hash", 1, XATTR, ChunkHash.class, b -> ChunkHash.fromBuffer(b));
 
-	public static final LoomMetaKey<SHA256> SHA_256_KEY = metaKey("sha256", 1, XATTR, SHA256.class);
+	public static final LoomMetaKey<SHA256> SHA_256_KEY = metaKey("sha256", 1, XATTR, SHA256.class, b -> SHA256.fromBuffer(b));
 
-	public static final LoomMetaKey<MD5> MD5_KEY = metaKey("md5", 1, XATTR, MD5.class);
+	public static final LoomMetaKey<MD5> MD5_KEY = metaKey("md5", 1, XATTR, MD5.class, b -> MD5.fromBuffer(b));
 
 	default ChunkHash getChunkHash() {
 		return get(CHUNK_HASH_KEY);

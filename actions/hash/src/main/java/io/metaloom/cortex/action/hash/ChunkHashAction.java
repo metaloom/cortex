@@ -42,11 +42,10 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessable(ActionContext ctx) {
-		if (!options().isChunkHash()) {
-			// TODO return or log reason
-			return false;
-		} else {
+		if (options().isChunkHash()) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 

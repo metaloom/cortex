@@ -1,5 +1,8 @@
 package io.metaloom.cortex.api.media.impl;
 
+import java.nio.ByteBuffer;
+import java.util.function.Function;
+
 import io.metaloom.cortex.LoomWorker;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.LoomMetaType;
@@ -10,12 +13,18 @@ public class LoomMetaKeyImpl<T> implements LoomMetaKey<T> {
 	private final int version;
 	private final Class<T> valueClazz;
 	private final LoomMetaType type;
+	private final Function<ByteBuffer, T> creator;
 
 	public LoomMetaKeyImpl(String key, int version, LoomMetaType type, Class<T> valueClazz) {
+		this(key, version, type, valueClazz, null);
+	}
+
+	public LoomMetaKeyImpl(String key, int version, LoomMetaType type, Class<T> valueClazz, Function<ByteBuffer, T> creator) {
 		this.key = key;
 		this.version = version;
 		this.type = type;
 		this.valueClazz = valueClazz;
+		this.creator = creator;
 	}
 
 	@Override
@@ -26,6 +35,14 @@ public class LoomMetaKeyImpl<T> implements LoomMetaKey<T> {
 	@Override
 	public String key() {
 		return key;
+	}
+
+	@Override
+	public T newValue(ByteBuffer b) {
+		if (creator == null) {
+			throw new RuntimeException("No value creator function has been specified for this meta key");
+		}
+		return creator.apply(b);
 	}
 
 	@Override

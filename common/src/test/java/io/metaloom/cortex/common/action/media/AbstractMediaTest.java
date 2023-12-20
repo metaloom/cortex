@@ -54,9 +54,9 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 
 	protected LoomMedia media(TestMedia media) {
 		LoomMedia loomMedia = media(media.path());
-		if (loomMedia.exists()) {
-			loomMedia.setSHA512(media.sha512());
-		}
+//		if (loomMedia.exists()) {
+//			loomMedia.setSHA512(media.sha512());
+//		}
 		return loomMedia;
 	}
 

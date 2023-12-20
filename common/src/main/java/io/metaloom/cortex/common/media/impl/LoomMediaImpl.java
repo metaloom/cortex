@@ -19,6 +19,7 @@ import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.common.media.AbstractFilesystemMedia;
 import io.metaloom.utils.fs.FilterHelper;
 import io.metaloom.utils.fs.XAttrUtils;
+import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
 // The media is a singleton within the scope of the subcomponent
@@ -96,7 +97,17 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 
 	@Override
 	public SHA512 getSHA512() {
-		return get(SHA_512_KEY);
+		SHA512 hash = get(SHA_512_KEY);
+		if (hash == null) {
+			hash = HashUtils.computeSHA512(file());
+			setSHA512(hash);
+		}
+		return hash;
+	}
+
+	@Override
+	public boolean hasSHA512() {
+		return has(SHA_512_KEY);
 	}
 
 	@Override
@@ -107,6 +118,11 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	@Override
 	public MetaStorage storage() {
 		return storage;
+	}
+
+	@Override
+	public String toString() {
+		return shortHash() + ", file: " + absolutePath();
 	}
 
 }

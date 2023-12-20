@@ -25,6 +25,7 @@ import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.bson.BSON;
 import io.metaloom.utils.fs.XAttrUtils;
+import io.metaloom.utils.hash.AbstractStringHash;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
@@ -160,7 +161,13 @@ public class MetaStorageImpl implements MetaStorage {
 	}
 
 	protected <T> T readXAttr(LoomMedia media, LoomMetaKey<T> metaKey) {
-		if (BSONAttr.class.isAssignableFrom(metaKey.getValueClazz())) {
+		if (AbstractStringHash.class.isAssignableFrom(metaKey.getValueClazz())) {
+			ByteBuffer value = XAttrUtils.readBinXAttr(media.path(), metaKey.fullKey());
+			if (value == null) {
+				return null;
+			}
+			return metaKey.newValue(value);
+		} else if (BSONAttr.class.isAssignableFrom(metaKey.getValueClazz())) {
 			ByteBuffer bin = XAttrUtils.readBinXAttr(media.path(), metaKey.fullKey());
 			if (bin == null) {
 				return null;

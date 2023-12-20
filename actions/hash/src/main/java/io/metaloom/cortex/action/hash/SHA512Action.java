@@ -35,7 +35,7 @@ public class SHA512Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().getSHA512() != null;
+		return ctx.media().hasSHA512();
 	}
 
 	@Override

@@ -94,4 +94,9 @@ public abstract class AbstractMediaWrapper implements LoomMedia {
 		delegate.setSHA512(hash);
 	}
 
+	@Override
+	public boolean hasSHA512() {
+		return delegate.hasSHA512();
+	}
+
 }
