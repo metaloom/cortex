@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.api.media.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

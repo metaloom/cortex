@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.scene;
 
+import static io.metaloom.cortex.action.scene.SceneDetectionMedia.SCENE_DETECTION;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.io.IOException;
@@ -10,14 +11,11 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.scene.detector.Scene;
 import io.metaloom.cortex.action.scene.detector.SceneDetectionResult;
 import io.metaloom.cortex.action.scene.impl.OpticalFlowSceneDetector;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
-import io.metaloom.cortex.api.media.param.DetectedScene;
-import io.metaloom.cortex.api.media.param.SceneDetectionParameter;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -52,21 +50,16 @@ public class SceneDetectionAction extends AbstractMediaAction<SceneDetectionOpti
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		// TODO check flags
-		return false;
+		return ctx.media(SCENE_DETECTION).hasSceneDetection();
 	}
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException {
-		LoomMedia media = ctx.media();
+		SceneDetectionMedia media = ctx.media(SCENE_DETECTION);
 		if (media.isVideo()) {
 			VideoFile video = VideoFile.open(media.path());
 			SceneDetectionResult result = detector.detect(video);
-			SceneDetectionParameter param = new SceneDetectionParameter();
-			for (Scene scene : result.scenes()) {
-				param.getScenes().add(new DetectedScene(scene.getFrom(), scene.getTo()));
-			}
-			media.setSceneDetection(param);
+			media.setSceneDetection(result);
 			return ctx.origin(COMPUTED).next();
 		} else {
 			return ctx.skipped("no video media").next();

@@ -1,8 +1,7 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.api.media.HashMedia.SHA_256_KEY;
-import static io.metaloom.cortex.api.media.HashMedia.SHA_512_KEY;
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -20,6 +19,8 @@ import io.metaloom.cortex.common.action.AbstractBasicActionTest;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
 import io.metaloom.loom.test.data.TestMedia;
+import static io.metaloom.cortex.api.media.LoomMedia.*;
+import static io.metaloom.cortex.action.hash.HashMedia.*;
 
 public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 

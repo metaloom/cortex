@@ -1,6 +1,7 @@
 package io.metaloom.loom.cortex.action.consistency;
 
-import static io.metaloom.cortex.api.media.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
+
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 		LoomMedia media = createEmptyLoomMedia();
 		ActionResult result = action.process(media);
 		assertThat(result).isSkipped();
-		assertThat(media).hasXAttr(SHA_512_KEY);
+		assertThat(media).hasSHA512();
 	}
 
 	@Test

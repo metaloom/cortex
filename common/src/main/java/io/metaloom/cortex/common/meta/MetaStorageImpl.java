@@ -1,4 +1,6 @@
-package io.metaloom.cortex.common.meta.impl;
+package io.metaloom.cortex.common.meta;
+
+import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,9 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Objects;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -26,8 +25,7 @@ import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
-@Singleton
-public class MetaStorageImpl implements MetaStorage {
+public final class MetaStorageImpl implements MetaStorage {
 
 	private final CortexOptions options;
 
@@ -37,7 +35,6 @@ public class MetaStorageImpl implements MetaStorage {
 		.expireAfterWrite(Duration.ofDays(30))
 		.build();
 
-	@Inject
 	public MetaStorageImpl(CortexOptions options) {
 		this.options = options;
 	}
@@ -46,7 +43,7 @@ public class MetaStorageImpl implements MetaStorage {
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 
-		// We check the cache and return a result if the value has been cached. 
+		// We check the cache and return a result if the value has been cached.
 		// Otherwise we will query the type specific implementation
 		String fullKey = metaKey.fullKey();
 		T cacheValue = (T) attrCache.getIfPresent(fullKey);
@@ -121,6 +118,16 @@ public class MetaStorageImpl implements MetaStorage {
 		return new FileOutputStream(filePath.toFile());
 	}
 
+	@Override
+	public void setSHA512(LoomMedia media, SHA512 hash) {
+		put(media, SHA_512_KEY, hash);
+	}
+
+	@Override
+	public SHA512 getSHA512(LoomMedia media) {
+		return get(media, SHA_512_KEY);
+	}
+
 	protected <T> T readLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		try {
@@ -184,4 +191,5 @@ public class MetaStorageImpl implements MetaStorage {
 			// throw new IOException("Unable to create meta storage location for path " + folderPath);
 		}
 	}
+
 }

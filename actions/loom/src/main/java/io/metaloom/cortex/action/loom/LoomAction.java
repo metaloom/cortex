@@ -39,7 +39,7 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 
 	@Override
 	public ActionResult process(ActionContext ctx) throws IOException {
-		LoomMedia media = ctx.media();
+		HashMedia media = ctx.media(HASH);
 
 		AssetRequest.Builder request = AssetRequest.newBuilder()
 			.setSha512Sum(media.getSHA512().toString())

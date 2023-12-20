@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.facedetect;
 
+import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.awt.image.BufferedImage;
@@ -15,12 +16,12 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.cortex.action.facedetect.file.model.FaceDetectionResult;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
-import io.metaloom.cortex.api.media.param.FaceDetectionParameter;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
@@ -30,8 +31,7 @@ import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
-import io.metaloom.video4j.Videos;
-
+import io.metaloom.video4j.Videos;;
 @Singleton
 public class FacedetectAction extends AbstractMediaAction<FacedetectActionOptions> {
 
@@ -80,9 +80,9 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		FacedetectMedia media = ctx.media(FACE_DETECTION);
 		// TODO check the flags with the options to figure out whether we need to rerun the detection
-		return media.getFacedetectionFlag() != null;
+		return media.hasFacedetectionFlag();
 	}
 
 	@Override
@@ -99,26 +99,26 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 
 	private ActionResult processImage(ActionContext ctx) throws IOException {
 
-		LoomMedia media = ctx.media();
+		FacedetectMedia media = ctx.media(FACE_DETECTION);
 
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
 		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
-			media.setFaceCount(result.size());
-			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
-			FaceDetectionParameter params = new FaceDetectionParameter();
+			media.setFaceCount( result.size());
+			media.setFacedetectionFlag( FaceDetectionFlag.SUCCESS);
+			FaceDetectionResult params = new FaceDetectionResult();
 			params.setCount(result.size());
 			// TODO add face data
-			media.setFacedetectionParams(params);
+			media.setFacedetectionParams( params);
 		}
 		// TODO handle faces / get embeddings
 		return ctx.origin(COMPUTED).next();
 	}
 
 	private ActionResult processVideo(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		FacedetectMedia media = ctx.media(FACE_DETECTION);
 		try (VideoFile video = Videos.open(media.absolutePath())) {
 			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
 			media.setFaceCount(faces.size());

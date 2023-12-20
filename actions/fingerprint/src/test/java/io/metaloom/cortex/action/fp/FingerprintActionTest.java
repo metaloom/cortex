@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.fp;
 
-import static io.metaloom.cortex.api.media.FingerprintMedia.FINGERPRINT_KEY;
-import static io.metaloom.cortex.api.media.HashMedia.SHA_512_KEY;
+import static io.metaloom.cortex.action.fp.FingerprintMedia.FINGERPRINT_KEY;
+import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;

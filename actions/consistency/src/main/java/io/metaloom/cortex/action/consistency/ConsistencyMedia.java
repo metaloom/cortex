@@ -1,34 +1,29 @@
-package io.metaloom.cortex.api.media;
+package io.metaloom.cortex.action.consistency;
 
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
-import io.metaloom.utils.hash.ChunkHash;
+import io.metaloom.cortex.action.consistency.impl.ConsistencyMediaType;
+import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.media.LoomMetaKey;
 
-public interface ChunkMedia extends ProcessableMedia {
+public interface ConsistencyMedia extends LoomMedia {
 
-	public static final int VERSION = 1;
+	public static final ConsistencyMediaType CONSISTENCY = new ConsistencyMediaType();
 
 	public static final LoomMetaKey<Long> ZERO_CHUNK_COUNT_KEY = metaKey("zero_chunk_count", 1, XATTR, Long.class);
 
-	public static final LoomMetaKey<ChunkHash> CHUNK_HASH_KEY = metaKey("chunk_hash", 1, XATTR, ChunkHash.class);
-
-	default ChunkHash getChunkHash() {
-		return get(CHUNK_HASH_KEY);
-	}
-
-	default ChunkMedia setChunkHash(ChunkHash chunkHash) {
-		put(CHUNK_HASH_KEY, chunkHash);
-		return this;
+	default boolean hasZeroChunkCount() {
+		Long count = getZeroChunkCount();
+		return count != null;
 	}
 
 	default Long getZeroChunkCount() {
 		return get(ZERO_CHUNK_COUNT_KEY);
 	}
 
-	default ChunkMedia setZeroChunkCount(Long count) {
+	default void setZeroChunkCount(Long count) {
 		put(ZERO_CHUNK_COUNT_KEY, count);
-		return this;
 	}
 
 	default Boolean isComplete() {

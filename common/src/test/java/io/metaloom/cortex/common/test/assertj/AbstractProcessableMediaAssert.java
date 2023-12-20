@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.assertj.core.api.AbstractAssert;
 
-import io.metaloom.cortex.api.media.ChunkMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.ProcessableMedia;
+import io.metaloom.utils.hash.SHA512;
 
 public abstract class AbstractProcessableMediaAssert<T extends AbstractProcessableMediaAssert<T, M>, M extends ProcessableMedia>
 	extends AbstractAssert<T, M> {
@@ -49,6 +49,10 @@ public abstract class AbstractProcessableMediaAssert<T extends AbstractProcessab
 		}
 		return self();
 	}
+	
+	public <R> T hasSHA512(SHA512 sum) {
+
+	}
 
 	public <R> T hasXAttr(LoomMetaKey<R> meta, R value) {
 		R actualValue = actual.get(meta);
@@ -72,7 +76,7 @@ public abstract class AbstractProcessableMediaAssert<T extends AbstractProcessab
 	}
 
 	public T isConsistent() {
-		hasXAttr(ChunkMedia.ZERO_CHUNK_COUNT_KEY, 0L);
+		hasXAttr(ConsistencyMedia.ZERO_CHUNK_COUNT_KEY, 0L);
 		return self();
 	}
 

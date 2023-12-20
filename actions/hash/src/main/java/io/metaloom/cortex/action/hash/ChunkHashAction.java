@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
+import static io.metaloom.cortex.action.hash.HashMedia.HASH;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -36,7 +36,7 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().getChunkHash() != null;
+		return ctx.media(HASH).hasChunkHash();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
-		LoomMedia media = ctx.media();
+		HashMedia media = ctx.media(HASH);
 		if (asset != null && asset.getChunkHash() != null) {
 			media.setChunkHash(ChunkHash.fromString(asset.getChunkHash()));
 			return ctx.origin(REMOTE).next();

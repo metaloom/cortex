@@ -1,6 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
-import static io.metaloom.cortex.api.media.ChunkMedia.CHUNK_HASH_KEY;
+import static io.metaloom.cortex.action.hash.HashMedia.CHUNK_HASH_KEY;
 import static io.metaloom.cortex.common.test.assertj.CortexAssertions.assertThat;
 
 import java.io.IOException;

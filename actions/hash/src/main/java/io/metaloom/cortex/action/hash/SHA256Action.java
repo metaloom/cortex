@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
+import static io.metaloom.cortex.action.hash.HashMedia.HASH;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
@@ -36,7 +36,7 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().getSHA256() != null;
+		return ctx.media(HASH).hasSHA256();
 	}
 
 	@Override
@@ -51,9 +51,9 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
-		LoomMedia media = ctx.media();
+		HashMedia media = ctx.media().of(HASH);
 		if (asset != null && asset.getSha256Sum() != null) {
-			media.setSHA256(SHA256.fromString(asset.getSha256Sum()));
+			media.setSHA256( SHA256.fromString(asset.getSha256Sum()));
 			return ctx.origin(REMOTE).next();
 		} else {
 			SHA256 hash = HashUtils.computeSHA256(media.file());

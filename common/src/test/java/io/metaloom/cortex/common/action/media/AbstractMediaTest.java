@@ -12,7 +12,7 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
-import io.metaloom.cortex.common.meta.impl.MetaStorageImpl;
+import io.metaloom.cortex.common.meta.MetaStorageImpl;
 import io.metaloom.loom.test.TestEnvHelper;
 import io.metaloom.loom.test.data.AudioData;
 import io.metaloom.loom.test.data.DocData;
@@ -31,18 +31,14 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 
 	private final static Path BASE_DIR = Paths.get("target/base-storage");
 
-	protected TestDataCollection data;
+	protected TestDataCollection data;	
 
-	public static final SHA512 HASH = SHA512.fromString(
+	public static final SHA512 SHA512_HASH = SHA512.fromString(
 		"e7c22b994c59d9cf2b48e549b1e24666636045930d3da7c1acb299d1c3b7f931f94aae41edda2c2b207a36e10f8bcb8d45223e54878f5b316e7ce3b6bc019629");
 
 	@BeforeEach
 	public void setupData() throws IOException {
 		data = TestEnvHelper.prepareTestdata("action-test");
-	}
-
-	public MetaStorage storage() {
-		return new MetaStorageImpl(options());
 	}
 
 	protected CortexOptions options() {
@@ -65,7 +61,8 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(Path path) {
-		return new LoomMediaImpl(path, storage());
+		MetaStorage storage = new MetaStorageImpl(null);
+		return new LoomMediaImpl(path, storage);
 	}
 
 	@Override

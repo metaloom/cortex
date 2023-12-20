@@ -1,7 +1,6 @@
 package io.metaloom.cortex.cli;
 
 import io.metaloom.cortex.cli.dagger.CortexComponent;
-import io.metaloom.cortex.cli.dagger.DaggerCortexComponent;
 import picocli.CommandLine;
 
 public class CortexCLIMain {

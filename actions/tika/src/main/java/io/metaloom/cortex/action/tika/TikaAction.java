@@ -15,6 +15,7 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
+import static io.metaloom.cortex.action.tika.TikaMedia.TIKA;
 
 @Singleton
 public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
@@ -43,13 +44,13 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		TikaMedia media = ctx.media().of(TIKA);
 		return media.getTikaFlags() != null;
 	}
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
-		LoomMedia media = ctx.media();
+		TikaMedia media = ctx.media(TIKA);
 		String flags = getFlags(media);
 		if (NULL_FLAG.equals(flags)) {
 			return ctx.skipped("previously failed").next();
@@ -70,7 +71,7 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 	}
 
 	private ActionResult parseMedia(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		TikaMedia media = ctx.media(TIKA);
 		try {
 			String result = MediaTikaParser.parse(media);
 			// TODO store result
@@ -83,7 +84,7 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 		}
 	}
 
-	private String getFlags(LoomMedia media) {
+	private String getFlags(TikaMedia media) {
 		String tikaFlags = media.getTikaFlags();
 		if (tikaFlags == null) {
 			// media.setTikaFlags(tikaFlags);

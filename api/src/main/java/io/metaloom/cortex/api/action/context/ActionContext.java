@@ -7,6 +7,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.ResultOrigin;
 import io.metaloom.cortex.api.action.context.impl.ActionContextImpl;
 import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.media.MediaType;
 
 public interface ActionContext {
 
@@ -23,6 +24,10 @@ public interface ActionContext {
 
 	LoomMedia media();
 
+	default <T extends LoomMedia> T media(MediaType<T> type) {
+		return media().of(type);
+	}
+
 	ActionContext skipped(String reason);
 
 	ActionContext origin(ResultOrigin origin);
@@ -37,7 +42,8 @@ public interface ActionContext {
 
 	ActionContext info(String msg);
 
-	default ActionResult flow(Function<LoomMedia, Boolean> processingFilter, Callable<LoomMedia> onFilesystem, Callable<LoomMedia> onLoom, Callable<LoomMedia> on) {
+	default ActionResult flow(Function<LoomMedia, Boolean> processingFilter, Callable<LoomMedia> onFilesystem, Callable<LoomMedia> onLoom,
+		Callable<LoomMedia> on) {
 		return null;
 	}
 

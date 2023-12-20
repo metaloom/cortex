@@ -5,6 +5,7 @@ import java.io.OutputStream;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
+import io.metaloom.utils.hash.SHA512;
 
 public interface MetaStorage {
 
@@ -48,4 +49,8 @@ public interface MetaStorage {
 	 * @param value
 	 */
 	<T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value);
+
+	void setSHA512(LoomMedia media, SHA512 hash);
+
+	SHA512 getSHA512(LoomMedia media);
 }

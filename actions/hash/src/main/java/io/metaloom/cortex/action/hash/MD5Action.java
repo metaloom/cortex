@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.hash;
 
+import static io.metaloom.cortex.action.hash.HashMedia.HASH;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
@@ -36,7 +37,7 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().getMD5() != null;
+		return ctx.media(HASH).hasMD5();
 	}
 
 	@Override
@@ -51,7 +52,7 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
-		LoomMedia media = ctx.media();
+		HashMedia media = ctx.media(HASH);
 		if (asset != null && asset.getMd5Sum() != null) {
 			media.setMD5(MD5.fromString(asset.getMd5Sum()));
 			return ctx.origin(REMOTE).next();

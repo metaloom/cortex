@@ -1,6 +1,7 @@
 package io.metaloom.cortex.action.thumbnail;
 
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
+import static io.metaloom.cortex.action.thumbnail.ThumbnailMedia.THUMBNAIL;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.DONE;
 import static io.metaloom.cortex.api.media.param.ThumbnailFlag.FAILED;
 
@@ -68,7 +69,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		LoomMedia media = ctx.media();
+		ThumbnailMedia media = ctx.media(THUMBNAIL);
 		if (media.hasThumbnail()) {
 			return true;
 		}
@@ -99,7 +100,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws IOException {
-		LoomMedia media = ctx.media();
+		ThumbnailMedia media = ctx.media(THUMBNAIL);
 
 		try {
 			String path = media.absolutePath();

@@ -30,7 +30,7 @@ public class FingerprintDedupAction extends AbstractMediaAction<DedupActionOptio
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().getFingerprint() != null;
+		return ctx.media(FINGERPRINT).hasFingerprint();
 	}
 
 	@Override

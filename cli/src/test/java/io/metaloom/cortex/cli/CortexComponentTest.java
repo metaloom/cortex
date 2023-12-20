@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import io.metaloom.cortex.Cortex;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.cli.dagger.CortexComponent;
-import io.metaloom.cortex.cli.dagger.DaggerCortexComponent;
 import picocli.CommandLine;
 
 public class CortexComponentTest {

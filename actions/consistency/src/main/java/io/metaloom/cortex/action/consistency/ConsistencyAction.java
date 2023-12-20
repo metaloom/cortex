@@ -1,5 +1,6 @@
 package io.metaloom.cortex.action.consistency;
 
+import static io.metaloom.cortex.action.consistency.ConsistencyMedia.CONSISTENCY;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 
@@ -40,14 +41,13 @@ public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOpti
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		LoomMedia media = ctx.media();
-		Long count = media.getZeroChunkCount();
-		return count != null;
+		ConsistencyMedia media = ctx.media(CONSISTENCY);
+		return media.hasZeroChunkCount();
 	}
 
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
-		LoomMedia media = ctx.media();
+		ConsistencyMedia media = ctx.media(CONSISTENCY);
 
 		if (asset == null) {
 			// if (!isOfflineMode()) {
