@@ -51,10 +51,11 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 		// Mock the client
 		AssetResponse response = mock(AssetResponse.class);
 		LoomGRPCClient clientMock = mockClient(response);
+		CortexOptions cortexOptions = null;
 
 		// Invoke the action
 		LoomMedia media = mediaVideo1();
-		ActionResult result = mockAction(clientMock).process(ctx(media));
+		ActionResult result = mockAction(clientMock, cortexOptions).process(ctx(media));
 
 		assertThat(result).isSuccess().isContinueNext();
 		assertThat(media).hasXAttr(2)
@@ -69,10 +70,10 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 	}
 
 	@Override
-	public SHA256Action mockAction(LoomGRPCClient client) {
+	public SHA256Action mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isSHA256()).thenReturn(true);
-		return new SHA256Action(client, mock(CortexOptions.class), options);
+		return new SHA256Action(client, cortexOptions, options);
 	}
 
 	@Override

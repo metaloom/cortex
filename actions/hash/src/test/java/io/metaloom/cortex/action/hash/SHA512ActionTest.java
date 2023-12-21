@@ -67,10 +67,10 @@ public class SHA512ActionTest extends AbstractBasicActionTest<SHA512Action> {
 	}
 
 	@Override
-	public SHA512Action mockAction(LoomGRPCClient client) {
+	public SHA512Action mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isSHA512()).thenReturn(true);
-		return new SHA512Action(client, mock(CortexOptions.class), options);
+		return new SHA512Action(client, cortexOptions, options);
 	}
 
 	@Override

@@ -46,4 +46,9 @@ public class ActionResult {
 	public static ActionResult skipped(boolean continueNext) {
 		return new ActionResult(continueNext, ResultState.SKIPPED);
 	}
+
+	@Override
+	public String toString() {
+		return state.name() + ", next: " + isContinueNext();
+	}
 }

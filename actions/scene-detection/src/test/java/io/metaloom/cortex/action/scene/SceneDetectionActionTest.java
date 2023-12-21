@@ -1,6 +1,7 @@
 package io.metaloom.cortex.action.scene;
 
-import static io.metaloom.cortex.media.scene.SceneDetectionMedia.*;
+import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
+import static io.metaloom.cortex.media.scene.SceneDetectionMedia.SCENE_DETECTION;
 import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -55,10 +56,10 @@ public class SceneDetectionActionTest extends AbstractBasicActionTest<SceneDetec
 	}
 
 	@Override
-	public SceneDetectionAction mockAction(LoomGRPCClient client) {
+	public SceneDetectionAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
 		SceneDetectionOptions options = mock(SceneDetectionOptions.class);
 		when(options.isEnabled()).thenReturn(true);
-		return new SceneDetectionAction(client, mock(CortexOptions.class), options);
+		return new SceneDetectionAction(client, cortexOptions, options);
 	}
 
 }

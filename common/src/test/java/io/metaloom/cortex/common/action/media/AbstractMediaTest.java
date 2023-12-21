@@ -2,9 +2,12 @@ package io.metaloom.cortex.common.action.media;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.api.action.context.ActionContext;
@@ -29,9 +32,11 @@ import io.metaloom.utils.hash.SHA512;
  */
 public abstract class AbstractMediaTest implements DocData, ImageData, VideoData, AudioData, OtherData {
 
-	private final static Path BASE_DIR = Paths.get("target/base-storage");
+	protected TestDataCollection data;
 
-	protected TestDataCollection data;	
+	protected CortexOptions cortexOptions;
+
+	private Path metaPath;
 
 	public static final SHA512 SHA512_HASH = SHA512.fromString(
 		"e7c22b994c59d9cf2b48e549b1e24666636045930d3da7c1acb299d1c3b7f931f94aae41edda2c2b207a36e10f8bcb8d45223e54878f5b316e7ce3b6bc019629");
@@ -39,12 +44,21 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	@BeforeEach
 	public void setupData() throws IOException {
 		data = TestEnvHelper.prepareTestdata("action-test");
+		metaPath = Files.createTempDirectory(Paths.get("target"), "action_test");
+		cortexOptions = new CortexOptions();
+		cortexOptions.setMetaPath(metaPath);
+	}
+
+	@AfterEach
+	public void cleanup() throws IOException {
+		if (metaPath != null) {
+			FileUtils.deleteDirectory(metaPath.toFile());
+		}
+		cortexOptions = null;
 	}
 
 	protected CortexOptions options() {
-		CortexOptions options = new CortexOptions();
-		options.setMetaPath(BASE_DIR);
-		return options;
+		return cortexOptions;
 	}
 
 	public LoomMedia createEmptyLoomMedia() throws IOException {
@@ -53,15 +67,11 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(TestMedia media) {
-		LoomMedia loomMedia = media(media.path());
-//		if (loomMedia.exists()) {
-//			loomMedia.setSHA512(media.sha512());
-//		}
-		return loomMedia;
+		return media(media.path());
 	}
 
 	protected LoomMedia media(Path path) {
-		MetaStorage storage = new MetaStorageImpl(null);
+		MetaStorage storage = new MetaStorageImpl(options());
 		return new LoomMediaImpl(path, storage);
 	}
 

@@ -24,6 +24,9 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 
 	@Override
 	public ActionResult process(ActionContext ctx) {
+		if (!options().isEnabled()) {
+			return ctx.skipped("Disabled").next();
+		}
 		LoomMedia media = ctx.media();
 		if (!media.exists()) {
 			return ctx.failure("File " + media.path() + " not found").abort();

@@ -31,10 +31,10 @@ public class ChunkHashActionTest extends AbstractBasicActionTest<ChunkHashAction
 	}
 
 	@Override
-	public ChunkHashAction mockAction(LoomGRPCClient client) {
+	public ChunkHashAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isMD5()).thenReturn(true);
-		return new ChunkHashAction(client, mock(CortexOptions.class), options);
+		return new ChunkHashAction(client, cortexOptions, options);
 	}
 
 	@Override

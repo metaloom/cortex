@@ -67,7 +67,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media(FINGERPRINT).getFingerprint() != null;
+		return ctx.media(FINGERPRINT).hasFingerprint();
 	}
 
 	@Override

@@ -3,34 +3,51 @@ package io.metaloom.cortex.action.fp;
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 import static io.metaloom.cortex.media.fingerprint.FingerprintMedia.FINGERPRINT_KEY;
 import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.media.AbstractMediaTest;
-import io.metaloom.cortex.common.action.media.LoomClientMock;
+import io.metaloom.cortex.media.test.AbstractBasicActionTest;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.test.TestEnvHelper;
-import io.metaloom.loom.test.data.TestDataCollection;
+import io.metaloom.loom.test.data.TestMedia;
 
-public class FingerprintActionTest extends AbstractMediaTest {
+public class FingerprintActionTest extends AbstractBasicActionTest<FingerprintAction> {
 
-	@Test
-	public void testAction() throws IOException {
-		FingerprintAction action = mockAction();
-		TestDataCollection data = TestEnvHelper.prepareTestdata("action-test");
-		LoomMedia media = mediaVideo1();
-		ActionResult result = action.process(ctx(media));
+	@Override
+	protected void assertProcessed(TestMedia testMedia, LoomMedia media, ActionResult result, FingerprintAction actionMock) {
 		assertThat(result).isSuccess();
 		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY).hasXAttr(FINGERPRINT_KEY, data.sampleVideoFingerprint());
 	}
 
-	public FingerprintAction mockAction() {
-		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return new FingerprintAction(client, new CortexOptions(), new FingerprintOptions());
+	@Override
+	protected void assertProcessedDoc(FingerprintAction actionMock, LoomMedia media, TestMedia doc) throws IOException {
+		assertSkipped(actionMock, media);
+	}
+
+	@Override
+	protected void assertProcessedAudio(FingerprintAction actionMock, LoomMedia media, TestMedia audio) throws IOException {
+		assertSkipped(actionMock, media);
+	}
+
+	@Override
+	protected void assertProcessedImage(FingerprintAction actionMock, LoomMedia media, TestMedia image) throws IOException {
+		assertSkipped(actionMock, media);
+	}
+
+	@Override
+	protected void disableAction(FingerprintAction actionMock) {
+		FingerprintOptions options = actionMock.options();
+		when(options.isEnabled()).thenReturn(false);
+	}
+
+	@Override
+	public FingerprintAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+		FingerprintOptions options = mock(FingerprintOptions.class);
+		when(options.isEnabled()).thenReturn(true);
+		return new FingerprintAction(client, cortexOptions, options);
 	}
 }

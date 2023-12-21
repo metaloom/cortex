@@ -9,13 +9,14 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.api.action.FilesystemAction;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.client.grpc.method.LoomClientRequest;
 import io.metaloom.loom.proto.AssetResponse;
 
-public abstract class AbstractActionTest<T extends FilesystemAction> extends AbstractMediaTest {
+public abstract class AbstractActionTest<T extends FilesystemAction<?>> extends AbstractMediaTest {
 
 	private T action;
 
@@ -24,11 +25,11 @@ public abstract class AbstractActionTest<T extends FilesystemAction> extends Abs
 		action = mockAction();
 	}
 
-	public abstract T mockAction(LoomGRPCClient client);
+	public abstract T mockAction(LoomGRPCClient client, CortexOptions cortexOptions);
 
 	public T mockAction() {
 		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
-		return mockAction(client);
+		return mockAction(client, options());
 	}
 
 	public LoomGRPCClient mockClient(AssetResponse response) {

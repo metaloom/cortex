@@ -118,7 +118,7 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction<?>> ext
 	}
 
 	protected void assertSkipped(T actionMock, LoomMedia media) throws IOException {
-		assertThat(media).hasXAttr(1);
+		assertThat(media).hasXAttr(0);
 	}
 
 	private void assertProcessed(T actionMock, LoomMedia media, TestMedia testMedia) throws IOException {

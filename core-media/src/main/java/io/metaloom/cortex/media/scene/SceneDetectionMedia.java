@@ -15,7 +15,7 @@ public interface SceneDetectionMedia extends LoomMedia {
 		SceneDetectionResult.class);
 
 	default boolean hasSceneDetection() {
-		return getSceneDetection() != null;
+		return has(SCENE_DETECTION_FLAG_KEY);
 	}
 
 	default SceneDetectionResult getSceneDetection() {
