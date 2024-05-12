@@ -12,6 +12,8 @@ import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
 @Module
 public abstract class TikaActionModule extends AbstractActionModule {
 
+	private static final String KEY = "tika";
+
 	@Binds
 	@IntoSet
 	abstract FilesystemAction bindAction(TikaAction action);
@@ -19,11 +21,11 @@ public abstract class TikaActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(TikaActionOptions.class, "tika");
+		return new CortexActionOptionDeserializerInfo(TikaActionOptions.class, TikaActionModule.KEY);
 	}
 
 	@Provides
 	public static TikaActionOptions options(CortexOptions options) {
-		return actionOptions(options, "tika", new TikaActionOptions());
+		return actionOptions(options, KEY, new TikaActionOptions());
 	}
 }

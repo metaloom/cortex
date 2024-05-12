@@ -4,6 +4,7 @@ import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -25,7 +26,7 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 	public static final Logger log = LoggerFactory.getLogger(LoomAction.class);
 
 	@Inject
-	public LoomAction(LoomGRPCClient client, CortexOptions cortexOption, LoomActionOptions option) {
+	public LoomAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, LoomActionOptions option) {
 		super(client, cortexOption, option);
 	}
 
@@ -41,15 +42,31 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 
 	@Override
 	public ActionResult process(ActionContext ctx) throws IOException {
-		HashMedia media = ctx.media(HASH);
+		if (isOfflineMode()) {
+			log.info("Running in offline mode. Skipping action");
+			return ctx.next();
+		}
+		try {
+			HashMedia media = ctx.media(HASH);
+			AssetRequest.Builder builder = AssetRequest.newBuilder();
 
-		AssetRequest.Builder request = AssetRequest.newBuilder()
-			.setSha512Sum(media.getSHA512().toString())
-			.setMd5Sum(media.getMD5().toString())
-			.setSha256Sum(media.getSHA256().toString());
+			if (media.getSHA512() != null) {
+				builder.setSha512Sum(media.getSHA512().toString());
+			}
+			if (media.getMD5() != null) {
+				builder.setMd5Sum(media.getMD5().toString());
+			}
+			if (media.getSHA256() != null) {
+				builder.setSha256Sum(media.getSHA256().toString());
+			}
 
-		client().storeAsset(request.build());
-		return ctx.next();
+			AssetRequest request = builder.build();
+			client().storeAsset(request);
+			return ctx.next();
+		} catch (Exception e) {
+			log.error("Error while storing asset in Loom", e);
+			return ctx.failure(e.getMessage()).next();
+		}
 	}
 
 }

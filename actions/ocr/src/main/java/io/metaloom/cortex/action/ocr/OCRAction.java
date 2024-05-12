@@ -2,6 +2,7 @@ package io.metaloom.cortex.action.ocr;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -21,7 +22,7 @@ public class OCRAction extends AbstractMediaAction<OCROptions> {
 	public static final Logger log = LoggerFactory.getLogger(OCRAction.class);
 
 	@Inject
-	public OCRAction(LoomGRPCClient client, CortexOptions options, OCROptions actionOptions) {
+	public OCRAction(@Nullable LoomGRPCClient client, CortexOptions options, OCROptions actionOptions) {
 		super(client, options, actionOptions);
 	}
 

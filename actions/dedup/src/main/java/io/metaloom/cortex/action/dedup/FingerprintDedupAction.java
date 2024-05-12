@@ -2,6 +2,7 @@ package io.metaloom.cortex.action.dedup;
 
 import static io.metaloom.cortex.media.fingerprint.FingerprintMedia.FINGERPRINT;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -21,7 +22,7 @@ public class FingerprintDedupAction extends AbstractMediaAction<DedupActionOptio
 	public static final Logger log = LoggerFactory.getLogger(FingerprintDedupAction.class);
 
 	@Inject
-	public FingerprintDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
+	public FingerprintDedupAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
 		super(client, cortexOptions, options);
 	}
 

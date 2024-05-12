@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -46,7 +47,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	protected DLibFacedetector detector;
 
 	@Inject
-	public FacedetectAction(LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
+	public FacedetectAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

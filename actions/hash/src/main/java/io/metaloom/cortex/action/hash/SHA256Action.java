@@ -4,6 +4,7 @@ import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -26,7 +27,7 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
 
 	@Inject
-	public SHA256Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public SHA256Action(@Nullable LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 

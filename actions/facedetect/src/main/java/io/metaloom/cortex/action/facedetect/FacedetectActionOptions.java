@@ -4,6 +4,8 @@ import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
 public class FacedetectActionOptions extends AbstractActionOptions<FacedetectActionOptions> {
 
+	public static final String KEY = "facedetection";
+
 	@Override
 	protected FacedetectActionOptions self() {
 		return this;

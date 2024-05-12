@@ -19,11 +19,11 @@ public abstract class LoomActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(LoomActionOptions.class, "loom");
+		return new CortexActionOptionDeserializerInfo(LoomActionOptions.class, LoomActionOptions.KEY);
 	}
 
 	@Provides
 	public static LoomActionOptions options(CortexOptions options) {
-		return actionOptions(options, "loom", new LoomActionOptions());
+		return actionOptions(options, LoomActionOptions.KEY, new LoomActionOptions());
 	}
 }

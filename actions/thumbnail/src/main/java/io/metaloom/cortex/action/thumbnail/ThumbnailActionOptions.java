@@ -1,5 +1,7 @@
 package io.metaloom.cortex.action.thumbnail;
 
+import java.nio.file.Path;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,15 +16,18 @@ public class ThumbnailActionOptions extends AbstractActionOptions<ThumbnailActio
 
 	private static final int DEFAULT_ROWS = 1;
 
+	public static final String KEY = "thumbnail";
+
 	private int cols = DEFAULT_COLS;
 
 	private int rows = DEFAULT_ROWS;
 
 	private int tileSize = DEFAULT_TILE_SIZE;
 
+	private Path thumbnailDir;
+
 	@Inject
 	public ThumbnailActionOptions() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -49,6 +54,15 @@ public class ThumbnailActionOptions extends AbstractActionOptions<ThumbnailActio
 
 	public ThumbnailActionOptions setRows(int rows) {
 		this.rows = rows;
+		return this;
+	}
+
+	public Path getThumbnailDir() {
+		return thumbnailDir;
+	}
+
+	public ThumbnailActionOptions setThumbnailDir(Path thumbnailDir) {
+		this.thumbnailDir = thumbnailDir;
 		return this;
 	}
 }

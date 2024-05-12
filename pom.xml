@@ -35,8 +35,7 @@
     </properties>
 
     <!-- Only manage internal project deps here. External deps will be managed
-    via
-  bom pom -->
+    via bom pom -->
     <dependencyManagement>
         <dependencies>
             <dependency>

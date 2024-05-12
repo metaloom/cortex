@@ -19,11 +19,11 @@ public abstract class SceneDetectionActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(SceneDetectionOptions.class, "scene-detector");
+		return new CortexActionOptionDeserializerInfo(SceneDetectionOptions.class, SceneDetectionOptions.KEY);
 	}
 
 	@Provides
 	public static SceneDetectionOptions options(CortexOptions options) {
-		return actionOptions(options, "scene-detector", new SceneDetectionOptions());
+		return actionOptions(options, SceneDetectionOptions.KEY, new SceneDetectionOptions());
 	}
 }

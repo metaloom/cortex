@@ -7,6 +7,7 @@ import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -24,7 +25,7 @@ import io.metaloom.utils.hash.partial.PartialFile;
 public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOptions> {
 
 	@Inject
-	public ConsistencyAction(LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
+	public ConsistencyAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

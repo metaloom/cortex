@@ -64,9 +64,10 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				boolean processed = false;
 				System.out.println("[" + media.path() + "]");
 				for (FilesystemAction action : actions) {
+					log.debug("Processing {} using {}", media, action);
 					action.set(current, total);
 					try {
-						ActionResult result = action.process( new ActionContextImpl(media));
+						ActionResult result = action.process(new ActionContextImpl(media));
 						processed |= result.getState() == ResultState.SUCCESS;
 						if (!result.isContinueNext()) {
 							action.error(media, "Aborting further processing");

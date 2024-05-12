@@ -4,6 +4,7 @@ import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import static io.metaloom.cortex.api.action.ResultOrigin.REMOTE;
 import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -26,7 +27,7 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
 
 	@Inject
-	public MD5Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public MD5Action(@Nullable LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -46,6 +47,7 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 			// TODO return or log reason
 			return true;
 		} else {
+			log.debug("[{}] MD5 not enabled in hash options", this);
 			return false;
 		}
 	}

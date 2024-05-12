@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -89,8 +90,14 @@ public class CortexOptionsLoader {
 			log.info("Loading default configuration.");
 			options = generateDefaultConfig();
 		}
+
+		validateOptions(options);
 		return options;
 
+	}
+
+	private void validateOptions(CortexOptions options) {
+		Objects.requireNonNull(options.getMetaPath(), "The metaPath must be specified");
 	}
 
 	public CortexOptions load(Path configFile) {

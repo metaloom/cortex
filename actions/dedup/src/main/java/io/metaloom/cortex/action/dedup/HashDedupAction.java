@@ -6,6 +6,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,7 +31,7 @@ public class HashDedupAction extends AbstractMediaAction<DedupActionOptions> {
 	private final LoomMediaLoader loader;
 
 	@Inject
-	public HashDedupAction(LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options, LoomMediaLoader loader) {
+	public HashDedupAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options, LoomMediaLoader loader) {
 		super(client, cortexOptions, options);
 		this.loader = loader;
 	}

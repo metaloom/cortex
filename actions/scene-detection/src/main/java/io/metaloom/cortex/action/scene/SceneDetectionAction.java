@@ -5,6 +5,7 @@ import static io.metaloom.cortex.media.scene.SceneDetectionMedia.SCENE_DETECTION
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.action.scene.impl.OpticalFlowSceneDetector;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
-import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.scene.SceneDetectionMedia;
@@ -31,7 +31,7 @@ public class SceneDetectionAction extends AbstractMediaAction<SceneDetectionOpti
 	private OpticalFlowSceneDetector detector = new OpticalFlowSceneDetector();
 
 	@Inject
-	public SceneDetectionAction(LoomGRPCClient client, CortexOptions cortexOptions, SceneDetectionOptions options) {
+	public SceneDetectionAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, SceneDetectionOptions options) {
 		super(client, cortexOptions, options);
 	}
 

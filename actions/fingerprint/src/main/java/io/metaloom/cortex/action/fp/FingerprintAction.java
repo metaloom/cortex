@@ -6,6 +6,7 @@ import static io.metaloom.cortex.media.consistency.ConsistencyMedia.CONSISTENCY;
 import static io.metaloom.cortex.media.fingerprint.FingerprintMedia.FINGERPRINT;
 import static io.metaloom.cortex.media.hash.HashMedia.HASH;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -40,7 +41,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	}
 
 	@Inject
-	public FingerprintAction(LoomGRPCClient client, CortexOptions cortexOption, FingerprintOptions options) {
+	public FingerprintAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, FingerprintOptions options) {
 		super(client, cortexOption, options);
 	}
 

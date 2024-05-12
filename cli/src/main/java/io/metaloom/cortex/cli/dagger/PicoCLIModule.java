@@ -7,7 +7,7 @@ import picocli.CommandLine;
 import dagger.Module;
 
 @Module
-public abstract class PicoModule {
+public abstract class PicoCLIModule {
 
 	@Provides
 	public static CommandLine commandLine(CortexCLI cli, ProcessCommand processCommand) {

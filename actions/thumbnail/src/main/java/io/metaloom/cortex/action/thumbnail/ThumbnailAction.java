@@ -9,6 +9,7 @@ import static io.metaloom.cortex.media.thumbnail.ThumbnailMedia.THUMBNAIL;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,7 +38,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 	private final PreviewGenerator gen;
 
 	@Inject
-	public ThumbnailAction(LoomGRPCClient client, CortexOptions options, ThumbnailActionOptions actionOptions) {
+	public ThumbnailAction(@Nullable LoomGRPCClient client, CortexOptions options, ThumbnailActionOptions actionOptions) {
 		super(client, options, actionOptions);
 		int tileSize = actionOptions.getTileSize();
 		int cols = actionOptions.getCols();
@@ -97,7 +98,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	@Override
@@ -107,8 +108,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 		try {
 			String path = media.absolutePath();
 			try (VideoFile video = Videos.open(path)) {
-				// File outputFile = storage().
-				try (OutputStream os = media.thumbnailOutputStream()) {
+				try (OutputStream os = media.storage().outputStream(media, ThumbnailMedia.THUMBNAIL_BIN_KEY)) {
 					gen.save(video, os);
 					ctx.print("DONE", "");
 					media.setThumbnailFlag(DONE);
@@ -116,7 +116,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 			}
 			return ctx.origin(COMPUTED).next();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to compute thumbnail", e);
 			media.setThumbnailFlag(FAILED);
 			// TODO update failed status
 			// touchFailed(media);

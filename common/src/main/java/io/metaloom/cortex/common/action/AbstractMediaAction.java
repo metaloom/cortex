@@ -45,6 +45,7 @@ public abstract class AbstractMediaAction<T extends CortexActionOptions> extends
 						return compute(ctx, asset);
 					}
 				} catch (Exception e) {
+					log.error("Failure to process media", e);
 					// TODO encode msg
 					return ctx.failure(e.getMessage()).next();
 				}

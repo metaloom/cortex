@@ -32,11 +32,6 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 	public int analyze(String path) {
 		try {
 			Path folder = Paths.get(path);
-			// ActionOptions options = new ActionOptions();
-			// options.getProcessorSettings().setPort(getPort());
-			// options.getProcessorSettings().setHostname(getHostname());
-			// // TODO configure thumbnail dir
-			// options.getThumbnailSettings().setThumbnailPath("/opt/metaloom/loom-thumbnaildir");
 			processor.process(folder);
 			return OK.code();
 		} catch (Exception e) {

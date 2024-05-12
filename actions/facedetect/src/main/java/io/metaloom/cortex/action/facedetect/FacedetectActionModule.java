@@ -19,11 +19,11 @@ public abstract class FacedetectActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(FacedetectActionOptions.class, "facedetection");
+		return new CortexActionOptionDeserializerInfo(FacedetectActionOptions.class, FacedetectActionOptions.KEY);
 	}
 
 	@Provides
 	public static FacedetectActionOptions options(CortexOptions options) {
-		return actionOptions(options, "facedetection", new FacedetectActionOptions());
+		return actionOptions(options,  FacedetectActionOptions.KEY, new FacedetectActionOptions());
 	}
 }

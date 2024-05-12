@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
 
 @Module

@@ -28,7 +28,7 @@ public abstract class AbstractCortexAction<T extends CortexActionOptions> implem
 	}
 
 	public boolean isOfflineMode() {
-		return client() == null;
+		return client == null;
 	}
 
 	protected LoomGRPCClient client() {

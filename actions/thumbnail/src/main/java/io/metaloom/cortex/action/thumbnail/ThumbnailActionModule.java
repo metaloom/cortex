@@ -14,17 +14,17 @@ public abstract class ThumbnailActionModule extends AbstractActionModule {
 
 	@Binds
 	@IntoSet
-	abstract FilesystemAction<?> bindAction(ThumbnailAction action);
+	abstract FilesystemAction bindAction(ThumbnailAction action);
 
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(ThumbnailActionOptions.class, "thumbnail");
+		return new CortexActionOptionDeserializerInfo(ThumbnailActionOptions.class, ThumbnailActionOptions.KEY);
 	}
 
 	@Provides
 	public static ThumbnailActionOptions options(CortexOptions options) {
-		return actionOptions(options, "thumbnail", new ThumbnailActionOptions());
+		return actionOptions(options, ThumbnailActionOptions.KEY, new ThumbnailActionOptions());
 	}
 
 }

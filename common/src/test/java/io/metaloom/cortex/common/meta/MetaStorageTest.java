@@ -5,9 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,18 +26,21 @@ import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 
 public class MetaStorageTest extends AbstractMediaTest {
 
-	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_1", 0, LoomMetaType.FS, String.class);
+	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_fs_str", 0, LoomMetaType.FS, String.class);
 
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_FS_BSON_KEY = new LoomMetaKeyImpl<>("dummy_2", 0, LoomMetaType.FS, DummyBSONValue.class);
+	private static final LoomMetaKey<Byte> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaType.FS, Byte.class);
 
-	private static final LoomMetaKey<String> DUMMY_XATTR_STR_KEY = new LoomMetaKeyImpl<>("dummy_3", 0, LoomMetaType.XATTR, String.class);
-
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_XATTR_BSON_KEY = new LoomMetaKeyImpl<>("dummy_4", 0, LoomMetaType.XATTR,
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_FS_BSON_KEY = new LoomMetaKeyImpl<>("dummy_fs_bson", 0, LoomMetaType.FS,
 		DummyBSONValue.class);
 
-	private static final LoomMetaKey<String> DUMMY_HEAP_STR_KEY = new LoomMetaKeyImpl<>("dummy_5", 0, LoomMetaType.HEAP, String.class);
+	private static final LoomMetaKey<String> DUMMY_XATTR_STR_KEY = new LoomMetaKeyImpl<>("dummy_xattr_str", 0, LoomMetaType.XATTR, String.class);
 
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_HEAP_BSON_KEY = new LoomMetaKeyImpl<>("dummy_6", 0, LoomMetaType.HEAP,
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_XATTR_BSON_KEY = new LoomMetaKeyImpl<>("dummy_xattr_bson", 0, LoomMetaType.XATTR,
+		DummyBSONValue.class);
+
+	private static final LoomMetaKey<String> DUMMY_HEAP_STR_KEY = new LoomMetaKeyImpl<>("dummy_heap_str", 0, LoomMetaType.HEAP, String.class);
+
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_HEAP_BSON_KEY = new LoomMetaKeyImpl<>("dummy_heap_bson", 0, LoomMetaType.HEAP,
 		DummyBSONValue.class);
 
 	private MetaStorage storage;
@@ -65,6 +72,20 @@ public class MetaStorageTest extends AbstractMediaTest {
 	}
 
 	@Test
+	public void testFSBinaryData() throws IOException {
+		LoomMedia media = mediaVideo1();
+		assertFalse(storage.has(media, DUMMY_FS_BIN_KEY));
+		try (PrintWriter p = new PrintWriter(storage.outputStream(media, DUMMY_FS_BIN_KEY))) {
+			p.write("HelloWorld");
+		}
+		assertTrue(storage.has(media, DUMMY_FS_BIN_KEY));
+		try(InputStream ins = storage.inputStream(media, DUMMY_FS_BIN_KEY)) {
+			String text =  IOUtils.toString(ins, Charset.defaultCharset());
+			assertEquals("HelloWorld", text, "The read back value does not match for " + DUMMY_FS_BIN_KEY);
+		}
+	}
+
+	@Test
 	public void testFSKey() {
 		testPutHasGet(DUMMY_FS_STR_KEY, "Hello World");
 		testPutHasGet(DUMMY_FS_BSON_KEY, new DummyBSONValue().setName("bson"));
@@ -76,7 +97,7 @@ public class MetaStorageTest extends AbstractMediaTest {
 		try (OutputStream os = storage.outputStream(media, metaKey)) {
 			os.write(value.toString().getBytes());
 		}
-		assertTrue(storage.has(media, metaKey));
+		assertTrue(storage.has(media, metaKey), "Media has no value for key " + metaKey);
 	}
 
 	private <T> void testPutHasGet(LoomMetaKey<T> metaKey, T value) {

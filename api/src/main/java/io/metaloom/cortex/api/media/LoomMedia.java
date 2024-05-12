@@ -3,6 +3,7 @@ package io.metaloom.cortex.api.media;
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
+import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.utils.hash.SHA512;
 
 public interface LoomMedia extends ProcessableMedia {

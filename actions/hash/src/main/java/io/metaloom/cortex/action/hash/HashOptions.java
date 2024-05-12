@@ -4,6 +4,8 @@ import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
 public class HashOptions extends AbstractActionOptions<HashOptions> {
 
+	public static final String KEY = "hash";
+
 	private boolean md5 = true;
 
 	private boolean sha512 = true;

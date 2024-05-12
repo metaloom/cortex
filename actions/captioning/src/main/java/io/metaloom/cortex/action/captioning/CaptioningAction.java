@@ -2,6 +2,7 @@ package io.metaloom.cortex.action.captioning;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -16,7 +17,7 @@ import io.metaloom.loom.proto.AssetResponse;
 public class CaptioningAction extends AbstractMediaAction<CaptioningActionOptions> {
 
 	@Inject
-	public CaptioningAction(LoomGRPCClient client, CortexOptions cortexOption, CaptioningActionOptions option) {
+	public CaptioningAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, CaptioningActionOptions option) {
 		super(client, cortexOption, option);
 	}
 

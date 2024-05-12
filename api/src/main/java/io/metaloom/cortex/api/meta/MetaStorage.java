@@ -1,6 +1,7 @@
 package io.metaloom.cortex.api.meta;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import io.metaloom.cortex.api.media.LoomMedia;
@@ -31,6 +32,16 @@ public interface MetaStorage {
 	<T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
 
 	/**
+	 * Return an input stream to read for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @return
+	 */
+	<T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
+
+	/**
 	 * Return the meta property for the given key + media.
 	 * 
 	 * @param <T>
@@ -53,4 +64,5 @@ public interface MetaStorage {
 	void setSHA512(LoomMedia media, SHA512 hash);
 
 	SHA512 getSHA512(LoomMedia media);
+
 }

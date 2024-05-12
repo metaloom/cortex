@@ -2,6 +2,7 @@ package io.metaloom.cortex.action.hash;
 
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -24,7 +25,7 @@ public class SHA512Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
 	@Inject
-	public SHA512Action(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public SHA512Action(@Nullable LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -44,6 +45,7 @@ public class SHA512Action extends AbstractMediaAction<HashOptions> {
 			// TODO return or log reason
 			return true;
 		} else {
+			log.debug("[{}] SHA512 not enabled in hash options", this);
 			return false;
 		}
 	}

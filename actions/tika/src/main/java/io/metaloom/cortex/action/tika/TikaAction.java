@@ -1,7 +1,9 @@
 package io.metaloom.cortex.action.tika;
 
+import static io.metaloom.cortex.action.tika.TikaMedia.TIKA;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -15,7 +17,6 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.grpc.LoomGRPCClient;
 import io.metaloom.loom.proto.AssetResponse;
-import static io.metaloom.cortex.action.tika.TikaMedia.TIKA;
 
 @Singleton
 public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
@@ -27,7 +28,7 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 	public static String NULL_FLAG = "NULL";
 
 	@Inject
-	public TikaAction(LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options) {
+	public TikaAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options) {
 		super(client, cortexOption, options);
 	}
 
