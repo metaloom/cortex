@@ -3,16 +3,13 @@ package io.metaloom.cortex.common.meta;
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -25,9 +22,11 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.param.BSONAttr;
+import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.bson.BSON;
+import io.metaloom.utils.fs.FileUtils;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.AbstractStringHash;
 import io.metaloom.utils.hash.HashUtils;
@@ -120,14 +119,22 @@ public class MetaStorageImpl implements MetaStorage {
 		attrCache.put(fullKey, value);
 	}
 
+	/**
+	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#outputStream()}
+	 */
 	@Override
+	@Deprecated
 	public <T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
 		Path filePath = toMetaPath(media, metaKey);
-		ensureParentFolder(filePath);
+		FileUtils.ensureParentFolder(filePath);
 		com.google.common.io.Files.touch(filePath.toFile());
 		return new FileOutputStream(filePath.toFile());
 	}
 
+	/**
+	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#inputStream()}
+	 */
+	@Deprecated
 	@Override
 	public <T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
 		Path filePath = toMetaPath(media, metaKey);
@@ -151,12 +158,18 @@ public class MetaStorageImpl implements MetaStorage {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		try {
 			Path filePath = toMetaPath(media, metaKey);
-			if (Files.exists(filePath)) {
-				try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-					return (T) BSON.readValue(fis, metaKey.getValueClazz());
-				}
+			// Dedicated handling for stream access
+			if (metaKey.getValueClazz().isAssignableFrom(MetaDataStream.class)) {
+				return (T) new MetaDataStreamFSImpl(filePath);
 			} else {
-				return null;
+				// Try BSON instead
+				if (Files.exists(filePath)) {
+					try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
+						return (T) BSON.readValue(fis, metaKey.getValueClazz());
+					}
+				} else {
+					return null;
+				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -165,7 +178,7 @@ public class MetaStorageImpl implements MetaStorage {
 
 	protected <T> void writeLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey, T value) throws IOException {
 		Path filePath = toMetaPath(media, metaKey);
-		ensureParentFolder(filePath);
+		FileUtils.ensureParentFolder(filePath);
 		try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
 			BSON.writeValue(fos, value);
 		} catch (IOException e) {
@@ -207,14 +220,6 @@ public class MetaStorageImpl implements MetaStorage {
 		Path dirPath = HashUtils.segmentPath(basePath, hash);
 		Path filePath = dirPath.resolve(fileName);
 		return filePath;
-	}
-
-	private static void ensureParentFolder(Path filePath) throws IOException {
-		Path folderPath = filePath.getParent();
-		if (!Files.exists(folderPath)) {
-			Files.createDirectories(folderPath);
-			// throw new IOException("Unable to create meta storage location for path " + folderPath);
-		}
 	}
 
 }

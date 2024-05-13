@@ -2,6 +2,7 @@ package io.metaloom.cortex.common.meta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.LoomMetaType;
 import io.metaloom.cortex.api.media.impl.LoomMetaKeyImpl;
 import io.metaloom.cortex.api.media.param.BSONAttr;
+import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
@@ -28,7 +30,8 @@ public class MetaStorageTest extends AbstractMediaTest {
 
 	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_fs_str", 0, LoomMetaType.FS, String.class);
 
-	private static final LoomMetaKey<Byte> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaType.FS, Byte.class);
+	private static final LoomMetaKey<MetaDataStream> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaType.FS,
+		MetaDataStream.class);
 
 	private static final LoomMetaKey<DummyBSONValue> DUMMY_FS_BSON_KEY = new LoomMetaKeyImpl<>("dummy_fs_bson", 0, LoomMetaType.FS,
 		DummyBSONValue.class);
@@ -75,12 +78,15 @@ public class MetaStorageTest extends AbstractMediaTest {
 	public void testFSBinaryData() throws IOException {
 		LoomMedia media = mediaVideo1();
 		assertFalse(storage.has(media, DUMMY_FS_BIN_KEY));
-		try (PrintWriter p = new PrintWriter(storage.outputStream(media, DUMMY_FS_BIN_KEY))) {
+
+		MetaDataStream stream = storage.get(media, DUMMY_FS_BIN_KEY);
+		assertNotNull(stream, "The stream access should be returned even if the attribute has not yet been written");
+		try (PrintWriter p = new PrintWriter(stream.outputStream())) {
 			p.write("HelloWorld");
 		}
 		assertTrue(storage.has(media, DUMMY_FS_BIN_KEY));
-		try(InputStream ins = storage.inputStream(media, DUMMY_FS_BIN_KEY)) {
-			String text =  IOUtils.toString(ins, Charset.defaultCharset());
+		try (InputStream ins = stream.inputStream()) {
+			String text = IOUtils.toString(ins, Charset.defaultCharset());
 			assertEquals("HelloWorld", text, "The read back value does not match for " + DUMMY_FS_BIN_KEY);
 		}
 	}

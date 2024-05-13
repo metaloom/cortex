@@ -30,5 +30,5 @@ public interface LoomMetaKey<T> {
 
 	LoomMetaType type();
 
-	Class<?> getValueClazz();
+	Class<T> getValueClazz();
 }

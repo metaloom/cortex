@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.param.ThumbnailFlag;
+import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
@@ -108,7 +109,8 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 		try {
 			String path = media.absolutePath();
 			try (VideoFile video = Videos.open(path)) {
-				try (OutputStream os = media.storage().outputStream(media, ThumbnailMedia.THUMBNAIL_BIN_KEY)) {
+				MetaDataStream stream = media.get(ThumbnailMedia.THUMBNAIL_BIN_KEY);
+				try (OutputStream os = stream.outputStream()) {
 					gen.save(video, os);
 					ctx.print("DONE", "");
 					media.setThumbnailFlag(DONE);

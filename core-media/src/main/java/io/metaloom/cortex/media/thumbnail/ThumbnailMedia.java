@@ -6,8 +6,8 @@ import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
-import io.metaloom.cortex.api.media.MetaDataStream;
 import io.metaloom.cortex.api.media.param.ThumbnailFlag;
+import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.media.thumbnail.impl.ThumbnailMediaType;
 
 public interface ThumbnailMedia extends LoomMedia {

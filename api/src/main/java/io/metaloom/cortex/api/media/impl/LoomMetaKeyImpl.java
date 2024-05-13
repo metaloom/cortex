@@ -46,7 +46,7 @@ public class LoomMetaKeyImpl<T> implements LoomMetaKey<T> {
 	}
 
 	@Override
-	public Class<?> getValueClazz() {
+	public Class<T> getValueClazz() {
 		return valueClazz;
 	}
 

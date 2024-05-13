@@ -34,6 +34,7 @@ import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;;
+
 @Singleton
 public class FacedetectAction extends AbstractMediaAction<FacedetectActionOptions> {
 
@@ -108,12 +109,12 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		List<? extends Face> result = detector.detectFaces(image);
 
 		if (result != null && !result.isEmpty()) {
-			media.setFaceCount( result.size());
-			media.setFacedetectionFlag( FaceDetectionFlag.SUCCESS);
+			media.setFaceCount(result.size());
+			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
 			FaceDetectionResult params = new FaceDetectionResult();
 			params.setCount(result.size());
 			// TODO add face data
-			media.setFacedetectionParams( params);
+			media.setFacedetectionParams(params);
 		}
 		// TODO handle faces / get embeddings
 		return ctx.origin(COMPUTED).next();

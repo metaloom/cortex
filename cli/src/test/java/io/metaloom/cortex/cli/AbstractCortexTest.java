@@ -18,7 +18,6 @@ public abstract class AbstractCortexTest {
 		// options.getProcessorSettings().setPort(getPort());
 		// options.getProcessorSettings().setHostname(getHostname());
 		ThumbnailActionOptions thumbnailActionOptions = new ThumbnailActionOptions();
-		thumbnailActionOptions.setThumbnailDir(Paths.get("target/loom-thumbnaildir"));
 		options.getActions().put(ThumbnailActionOptions.KEY, thumbnailActionOptions);
 		for (Entry<String, CortexActionOptions> entry : options.getActions().entrySet()) {
 			System.out.println(entry.getKey() + " " + entry.getValue());
