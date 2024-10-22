@@ -95,7 +95,7 @@
             <!-- Loom Client -->
             <dependency>
                 <groupId>io.metaloom.loom.client</groupId>
-                <artifactId>loom-client-grpc</artifactId>
+                <artifactId>loom-client-rest</artifactId>
                 <version>${loom.client.version}</version>
             </dependency>
         </dependencies>

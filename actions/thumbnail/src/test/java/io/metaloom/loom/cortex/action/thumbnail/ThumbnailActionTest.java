@@ -20,7 +20,8 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.client.common.LoomClientException;
 
 public class ThumbnailActionTest extends AbstractMediaTest {
 
@@ -36,7 +37,7 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 	}
 
 	@Test
-	public void testAction() throws IOException {
+	public void testAction() throws IOException, LoomClientException {
 		ThumbnailAction action = mockAction();
 		LoomMedia media = mediaVideo3();
 		ActionResult result = action.process(ctx(media));
@@ -45,8 +46,8 @@ public class ThumbnailActionTest extends AbstractMediaTest {
 		assertThat(new File(thumbnailDir, media.getSHA512() + ".jpg")).exists();
 	}
 
-	public ThumbnailAction mockAction() {
-		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
+	public ThumbnailAction mockAction() throws LoomClientException {
+		LoomClient client = LoomClientMock.mockClient();
 
 		ThumbnailActionOptions options = new ThumbnailActionOptions();
 		return new ThumbnailAction(client, new CortexOptions(), options);

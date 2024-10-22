@@ -14,7 +14,7 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.media.scene.SceneDetectionMedia;
 import io.metaloom.cortex.media.scene.SceneDetectionResult;
 import io.metaloom.cortex.media.test.AbstractBasicActionTest;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.test.data.TestMedia;
 import io.metaloom.video4j.Video4j;
 
@@ -56,7 +56,7 @@ public class SceneDetectionActionTest extends AbstractBasicActionTest<SceneDetec
 	}
 
 	@Override
-	public SceneDetectionAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+	public SceneDetectionAction mockAction(LoomClient client, CortexOptions cortexOptions) {
 		SceneDetectionOptions options = mock(SceneDetectionOptions.class);
 		when(options.isEnabled()).thenReturn(true);
 		return new SceneDetectionAction(client, cortexOptions, options);

@@ -17,8 +17,10 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.media.test.AbstractBasicActionTest;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.api.asset.AssetId;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.client.common.LoomClientException;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.loom.test.data.TestMedia;
 
 public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
@@ -47,10 +49,10 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 	}
 
 	@Test
-	public void testPullFromLoom() {
+	public void testPullFromLoom() throws LoomClientException {
 		// Mock the client
 		AssetResponse response = mock(AssetResponse.class);
-		LoomGRPCClient clientMock = mockClient(response);
+		LoomClient clientMock = mockClient(response);
 		CortexOptions cortexOptions = null;
 
 		// Invoke the action
@@ -65,12 +67,13 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 		assertThat(media).hasSHA256();
 
 		// Verify that the db object was accessed
-		verify(clientMock, times(1)).loadAsset(any());
-		verify(response, times(1)).getSha256Sum();
+		AssetId id = any();
+		verify(clientMock, times(1)).loadAsset(id);
+		verify(response, times(1)).getHashes().getSHA256();
 	}
 
 	@Override
-	public SHA256Action mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+	public SHA256Action mockAction(LoomClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isSHA256()).thenReturn(true);
 		return new SHA256Action(client, cortexOptions, options);

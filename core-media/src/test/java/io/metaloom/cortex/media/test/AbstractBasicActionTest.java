@@ -1,6 +1,6 @@
 package io.metaloom.cortex.media.test;
 
-import static io.metaloom.cortex.media.test.assertj.ActionAssertions.*;
+import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 
 import java.io.IOException;
 

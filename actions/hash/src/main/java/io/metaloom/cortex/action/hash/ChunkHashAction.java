@@ -15,8 +15,8 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.hash.HashMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.hash.ChunkHash;
 import io.metaloom.utils.hash.HashUtils;
 
@@ -26,7 +26,7 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(ChunkHashAction.class);
 
 	@Inject
-	public ChunkHashAction(LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public ChunkHashAction(LoomClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -52,8 +52,8 @@ public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		HashMedia media = ctx.media(HASH);
-		if (asset != null && asset.getChunkHash() != null) {
-			media.setChunkHash(ChunkHash.fromString(asset.getChunkHash()));
+		if (asset != null && asset.getHashes().getChunkHash() != null) {
+			media.setChunkHash(asset.getHashes().getChunkHash());
 			return ctx.origin(REMOTE).next();
 		} else {
 			ChunkHash hash = HashUtils.computeChunkHash(media.file());

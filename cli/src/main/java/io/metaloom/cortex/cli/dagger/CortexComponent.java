@@ -25,6 +25,11 @@ public interface CortexComponent {
 
 	CortexOptionsLoader optionsLoader();
 
+	/**
+	 * Reference to the Pico CLI instance.
+	 * 
+	 * @return
+	 */
 	CommandLine cli();
 
 	@Component.Builder

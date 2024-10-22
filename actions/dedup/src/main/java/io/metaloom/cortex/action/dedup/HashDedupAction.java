@@ -19,8 +19,8 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.media.LoomMediaLoader;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.fs.FileUtils;
 import io.metaloom.utils.hash.SHA512;
 
@@ -31,7 +31,7 @@ public class HashDedupAction extends AbstractMediaAction<DedupActionOptions> {
 	private final LoomMediaLoader loader;
 
 	@Inject
-	public HashDedupAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options, LoomMediaLoader loader) {
+	public HashDedupAction(@Nullable LoomClient client, CortexOptions cortexOptions, DedupActionOptions options, LoomMediaLoader loader) {
 		super(client, cortexOptions, options);
 		this.loader = loader;
 	}
@@ -61,10 +61,10 @@ public class HashDedupAction extends AbstractMediaAction<DedupActionOptions> {
 
 			// We found an item. Lets check it.
 			if (asset != null) {
-				if (asset.getFilename() == null) {
+				if (asset.getFile().getFilename() == null) {
 					return ctx.info("Source from db has no current path").next();
 				}
-				File dbFile = new File(asset.getFilename());
+				File dbFile = new File(asset.getFile().getFilename());
 				if (!dbFile.exists()) {
 					return ctx.info("Source from db not found for currentpath").next();
 				}

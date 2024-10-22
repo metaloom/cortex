@@ -17,8 +17,9 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractFilesystemAction;
 import io.metaloom.cortex.media.hash.HashMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetRequest;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetUpdateRequest;
+import io.metaloom.utils.hash.SHA512;
 
 @Singleton
 public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
@@ -26,7 +27,7 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 	public static final Logger log = LoggerFactory.getLogger(LoomAction.class);
 
 	@Inject
-	public LoomAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, LoomActionOptions option) {
+	public LoomAction(@Nullable LoomClient client, CortexOptions cortexOption, LoomActionOptions option) {
 		super(client, cortexOption, option);
 	}
 
@@ -48,20 +49,20 @@ public class LoomAction extends AbstractFilesystemAction<LoomActionOptions> {
 		}
 		try {
 			HashMedia media = ctx.media(HASH);
-			AssetRequest.Builder builder = AssetRequest.newBuilder();
+			AssetUpdateRequest request = new AssetUpdateRequest();
 
 			if (media.getSHA512() != null) {
-				builder.setSha512Sum(media.getSHA512().toString());
+				request.getHashes().setSHA512(media.getSHA512());
 			}
 			if (media.getMD5() != null) {
-				builder.setMd5Sum(media.getMD5().toString());
+				request.getHashes().setMD5(media.getMD5());
 			}
 			if (media.getSHA256() != null) {
-				builder.setSha256Sum(media.getSHA256().toString());
+				request.getHashes().setSHA256(media.getSHA256());
 			}
 
-			AssetRequest request = builder.build();
-			client().storeAsset(request);
+			SHA512 hash = media.getSHA512();
+			client().updateAsset(hash, request);
 			return ctx.next();
 		} catch (Exception e) {
 			log.error("Error while storing asset in Loom", e);

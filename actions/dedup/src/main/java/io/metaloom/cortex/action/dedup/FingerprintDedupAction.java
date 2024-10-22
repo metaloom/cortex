@@ -13,8 +13,8 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 @Singleton
 public class FingerprintDedupAction extends AbstractMediaAction<DedupActionOptions> {
@@ -22,7 +22,7 @@ public class FingerprintDedupAction extends AbstractMediaAction<DedupActionOptio
 	public static final Logger log = LoggerFactory.getLogger(FingerprintDedupAction.class);
 
 	@Inject
-	public FingerprintDedupAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, DedupActionOptions options) {
+	public FingerprintDedupAction(@Nullable LoomClient client, CortexOptions cortexOptions, DedupActionOptions options) {
 		super(client, cortexOptions, options);
 	}
 

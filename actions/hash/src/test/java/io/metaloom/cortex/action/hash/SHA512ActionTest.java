@@ -13,7 +13,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.media.test.AbstractBasicActionTest;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.test.data.TestMedia;
 
 public class SHA512ActionTest extends AbstractBasicActionTest<SHA512Action> {
@@ -67,7 +67,7 @@ public class SHA512ActionTest extends AbstractBasicActionTest<SHA512Action> {
 	}
 
 	@Override
-	public SHA512Action mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+	public SHA512Action mockAction(LoomClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isSHA512()).thenReturn(true);
 		return new SHA512Action(client, cortexOptions, options);

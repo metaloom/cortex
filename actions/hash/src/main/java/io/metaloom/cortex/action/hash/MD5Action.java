@@ -16,8 +16,8 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.hash.HashMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.MD5;
 
@@ -27,7 +27,7 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
 
 	@Inject
-	public MD5Action(@Nullable LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public MD5Action(@Nullable LoomClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -55,8 +55,8 @@ public class MD5Action extends AbstractMediaAction<HashOptions> {
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		HashMedia media = ctx.media(HASH);
-		if (asset != null && asset.getMd5Sum() != null) {
-			media.setMD5(MD5.fromString(asset.getMd5Sum()));
+		if (asset != null && asset.getHashes().getMD5() != null) {
+			media.setMD5(asset.getHashes().getMD5());
 			return ctx.origin(REMOTE).next();
 		} else {
 			MD5 hash = HashUtils.computeMD5(media.file());

@@ -12,7 +12,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.media.test.AbstractBasicActionTest;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.test.data.TestMedia;
 
 public class FingerprintActionTest extends AbstractBasicActionTest<FingerprintAction> {
@@ -45,7 +45,7 @@ public class FingerprintActionTest extends AbstractBasicActionTest<FingerprintAc
 	}
 
 	@Override
-	public FingerprintAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+	public FingerprintAction mockAction(LoomClient client, CortexOptions cortexOptions) {
 		FingerprintOptions options = mock(FingerprintOptions.class);
 		when(options.isEnabled()).thenReturn(true);
 		return new FingerprintAction(client, cortexOptions, options);

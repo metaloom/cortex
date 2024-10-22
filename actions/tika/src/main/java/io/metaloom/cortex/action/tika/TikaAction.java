@@ -15,8 +15,8 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 @Singleton
 public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
@@ -28,7 +28,7 @@ public class TikaAction extends AbstractMediaAction<TikaActionOptions> {
 	public static String NULL_FLAG = "NULL";
 
 	@Inject
-	public TikaAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, TikaActionOptions options) {
+	public TikaAction(@Nullable LoomClient client, CortexOptions cortexOption, TikaActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

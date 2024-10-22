@@ -4,19 +4,34 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.client.grpc.method.LoomClientRequest;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.api.asset.AssetId;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.client.common.LoomClientException;
+import io.metaloom.loom.client.common.LoomClientRequest;
+import io.metaloom.loom.client.http.LoomHttpClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 public class LoomClientMock {
 
+	// @SuppressWarnings("unchecked")
+	// public static LoomGRPCClient mockGrpcClient() {
+	// LoomGRPCClient mock = mock(LoomGRPCClient.class);
+	// LoomClientRequest<AssetResponse> req = mock(LoomClientRequest.class);
+	// AssetResponse response = mock(AssetResponse.class);
+	// when(req.sync()).thenReturn(response);
+	// when(mock.loadAsset(any())).thenReturn(req);
+	// return mock;
+	// }
+
 	@SuppressWarnings("unchecked")
-	public static LoomGRPCClient mockGrpcClient() {
-		LoomGRPCClient mock = mock(LoomGRPCClient.class);
+	public static LoomClient mockClient() throws LoomClientException {
+		LoomHttpClient mock = mock(LoomHttpClient.class);
 		LoomClientRequest<AssetResponse> req = mock(LoomClientRequest.class);
 		AssetResponse response = mock(AssetResponse.class);
 		when(req.sync()).thenReturn(response);
-		when(mock.loadAsset(any())).thenReturn(req);
+		AssetId id = any();
+		when(mock.loadAsset(id)).thenReturn(req);
 		return mock;
 	}
+
 }

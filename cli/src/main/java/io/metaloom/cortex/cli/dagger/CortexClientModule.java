@@ -12,30 +12,69 @@ import dagger.Provides;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.LoomOptions;
 import io.metaloom.cortex.common.option.CortexOptionsLoader;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.client.http.LoomHttpClient;
 
 @Module
 public class CortexClientModule {
 
 	public static final Logger log = LoggerFactory.getLogger(CortexClientModule.class);
 
+	// @Provides
+	// @Singleton
+	// @Nullable
+	// public LoomGRPCClient grpcClient(CortexOptions options) {
+	// LoomOptions loom = options.getLoom();
+	// if (loom == null) {
+	// log.error("Loom options not set. Unable to create gRPC client");
+	// return null;
+	// }
+	//
+	// String host = loom.getHostname();
+	// int port = loom.getPort();
+	// if (host == null) {
+	// log.error("No Loom host set. Switching to offline mode. Not creating gRPC client");
+	// return null;
+	// }
+	// return LoomGRPCClient.builder().setHostname(host).setPort(port).build();
+	// }
+
+//	@Provides
+//	@Singleton
+//	@Nullable
+//	public LoomClient loomClient(LoomHttpClient client) {
+//		return client;
+//	}
+
 	@Provides
 	@Singleton
 	@Nullable
-	public LoomGRPCClient grpcClient(CortexOptions options) {
+	public LoomClient restClient(CortexOptions options) {
+
 		LoomOptions loom = options.getLoom();
 		if (loom == null) {
-			log.error("Loom options not set. Unable to create gRPC client");
+			log.error("Loom options not set. Unable to create REST client");
 			return null;
 		}
 
 		String host = loom.getHostname();
 		int port = loom.getPort();
 		if (host == null) {
-			log.error("No Loom host set. Switching to offline mode. Not creating gRPC client");
+			log.error("No Loom host set. Switching to offline mode. Not creating client");
 			return null;
 		}
-		return LoomGRPCClient.builder().setHostname(host).setPort(port).build();
+		// TODO switch between rest and gRPC
+
+		// Builder builder = LoomGRPCClient.builder().setHostname(hostname).setPort(port);
+		// LoomGRPCClient client = builder.build());
+		// return client;
+
+		LoomHttpClient client = LoomHttpClient.builder()
+			.setHostname(host)
+			.setPort(port)
+			.build();
+		return client;
+
 	}
 
 	@Provides

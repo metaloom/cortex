@@ -13,8 +13,8 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 @Singleton
 public class OCRAction extends AbstractMediaAction<OCROptions> {
@@ -22,7 +22,7 @@ public class OCRAction extends AbstractMediaAction<OCROptions> {
 	public static final Logger log = LoggerFactory.getLogger(OCRAction.class);
 
 	@Inject
-	public OCRAction(@Nullable LoomGRPCClient client, CortexOptions options, OCROptions actionOptions) {
+	public OCRAction(@Nullable LoomClient client, CortexOptions options, OCROptions actionOptions) {
 		super(client, options, actionOptions);
 	}
 

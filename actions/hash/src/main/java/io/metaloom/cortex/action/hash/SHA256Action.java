@@ -16,8 +16,8 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.hash.HashMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA256;
 
@@ -27,7 +27,7 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
 
 	@Inject
-	public SHA256Action(@Nullable LoomGRPCClient client, CortexOptions cortexOption, HashOptions options) {
+	public SHA256Action(@Nullable LoomClient client, CortexOptions cortexOption, HashOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -54,8 +54,8 @@ public class SHA256Action extends AbstractMediaAction<HashOptions> {
 	@Override
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		HashMedia media = ctx.media().of(HASH);
-		if (asset != null && asset.getSha256Sum() != null) {
-			media.setSHA256( SHA256.fromString(asset.getSha256Sum()));
+		if (asset != null && asset.getHashes().getSHA256() != null) {
+			media.setSHA256(asset.getHashes().getSHA256());
 			return ctx.origin(REMOTE).next();
 		} else {
 			SHA256 hash = HashUtils.computeSHA256(media.file());

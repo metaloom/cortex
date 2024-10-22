@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -14,20 +15,21 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.processor.MediaProcessor;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.client.grpc.impl.LoomGRPCClientImpl.Builder;
+import io.metaloom.loom.client.common.LoomClient;
 
 @Singleton
 public class DefaultMediaProcessorImpl implements MediaProcessor {
 
-	private final FilesystemProcessor processor;
 	private final CortexOptions options;
+	private final LoomClient client;
+	private final FilesystemProcessor processor;
 
 	public static final Logger log = LoggerFactory.getLogger(DefaultMediaProcessorImpl.class);
 
 	@Inject
-	public DefaultMediaProcessorImpl(CortexOptions options, FilesystemProcessor processor) {
+	public DefaultMediaProcessorImpl(CortexOptions options, @Nullable LoomClient client, FilesystemProcessor processor) {
 		this.options = options;
+		this.client = client;
 		this.processor = processor;
 	}
 
@@ -36,22 +38,10 @@ public class DefaultMediaProcessorImpl implements MediaProcessor {
 		if (!Files.exists(folder)) {
 			throw new FileNotFoundException("Startfolder not found " + folder.toString());
 		}
-
-		String hostname = options.getLoom().getHostname();
-		int port = options.getLoom().getPort();
-
-		if (hostname == null) {
-			log.info("No hostname specified. Processing in offline mode.");
-			process(null, folder);
-		} else {
-			Builder builder = LoomGRPCClient.builder().setHostname(hostname).setPort(port);
-			try (LoomGRPCClient client = builder.build()) {
-				process(client, folder);
-			}
-		}
+		process(client, folder);
 	}
 
-	private void process(LoomGRPCClient client, Path folder) throws IOException {
+	private void process(LoomClient client, Path folder) throws IOException {
 		processor.analyze(folder);
 	}
 

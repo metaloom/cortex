@@ -13,7 +13,7 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.media.test.AbstractBasicActionTest;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.test.data.TestMedia;
 
 public class ChunkHashActionTest extends AbstractBasicActionTest<ChunkHashAction> {
@@ -31,7 +31,7 @@ public class ChunkHashActionTest extends AbstractBasicActionTest<ChunkHashAction
 	}
 
 	@Override
-	public ChunkHashAction mockAction(LoomGRPCClient client, CortexOptions cortexOptions) {
+	public ChunkHashAction mockAction(LoomClient client, CortexOptions cortexOptions) {
 		HashOptions options = mock(HashOptions.class);
 		when(options.isMD5()).thenReturn(true);
 		return new ChunkHashAction(client, cortexOptions, options);

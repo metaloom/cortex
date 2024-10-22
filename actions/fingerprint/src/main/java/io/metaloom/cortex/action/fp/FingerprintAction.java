@@ -20,8 +20,8 @@ import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
 import io.metaloom.cortex.media.fingerprint.FingerprintMedia;
 import io.metaloom.cortex.media.hash.HashMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -41,7 +41,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	}
 
 	@Inject
-	public FingerprintAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, FingerprintOptions options) {
+	public FingerprintAction(@Nullable LoomClient client, CortexOptions cortexOption, FingerprintOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -75,7 +75,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) {
 		FingerprintMedia media = ctx.media(FINGERPRINT);
 		if (asset != null && asset.getFingerprint() != null) {
-			media.setFingerprint(asset.getFingerprint());
+			media.setFingerprint(asset.getFingerprint().getFingerprintV1());
 			return ctx.origin(REMOTE).next();
 		} else {
 			try {

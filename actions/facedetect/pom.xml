@@ -13,10 +13,6 @@
 
     <name>MetaLoom // Cortex :: Actions - Facedetect</name>
 
-    <properties>
-        <grpc.version>1.50.2</grpc.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

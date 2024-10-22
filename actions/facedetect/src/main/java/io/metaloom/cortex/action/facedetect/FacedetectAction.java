@@ -27,8 +27,8 @@ import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
 import io.metaloom.cortex.media.facedetect.FaceDetectionResult;
 import io.metaloom.cortex.media.facedetect.FacedetectMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
@@ -48,7 +48,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	protected DLibFacedetector detector;
 
 	@Inject
-	public FacedetectAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
+	public FacedetectAction(@Nullable LoomClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

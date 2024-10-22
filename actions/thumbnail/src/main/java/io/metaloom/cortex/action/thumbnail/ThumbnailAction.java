@@ -24,8 +24,8 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
 import io.metaloom.cortex.media.thumbnail.ThumbnailMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -39,7 +39,7 @@ public class ThumbnailAction extends AbstractMediaAction<ThumbnailActionOptions>
 	private final PreviewGenerator gen;
 
 	@Inject
-	public ThumbnailAction(@Nullable LoomGRPCClient client, CortexOptions options, ThumbnailActionOptions actionOptions) {
+	public ThumbnailAction(@Nullable LoomClient client, CortexOptions options, ThumbnailActionOptions actionOptions) {
 		super(client, options, actionOptions);
 		int tileSize = actionOptions.getTileSize();
 		int cols = actionOptions.getCols();

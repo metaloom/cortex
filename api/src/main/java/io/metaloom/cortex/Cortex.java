@@ -4,5 +4,4 @@ public interface Cortex {
 
 	void checkActions();
 
-
 }

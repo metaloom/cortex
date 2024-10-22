@@ -10,15 +10,15 @@ import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.hash.SHA512;
 
 public abstract class AbstractMediaAction<T extends CortexActionOptions> extends AbstractFilesystemAction<T> {
 
 	public static final Logger log = LoggerFactory.getLogger(AbstractMediaAction.class);
 
-	public AbstractMediaAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
+	public AbstractMediaAction(LoomClient client, CortexOptions cortexOption, T option) {
 		super(client, cortexOption, option);
 	}
 

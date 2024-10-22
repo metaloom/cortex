@@ -19,8 +19,8 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.scene.SceneDetectionMedia;
 import io.metaloom.cortex.media.scene.SceneDetectionResult;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.video4j.VideoFile;
 
 @Singleton
@@ -31,7 +31,7 @@ public class SceneDetectionAction extends AbstractMediaAction<SceneDetectionOpti
 	private OpticalFlowSceneDetector detector = new OpticalFlowSceneDetector();
 
 	@Inject
-	public SceneDetectionAction(@Nullable LoomGRPCClient client, CortexOptions cortexOptions, SceneDetectionOptions options) {
+	public SceneDetectionAction(@Nullable LoomClient client, CortexOptions cortexOptions, SceneDetectionOptions options) {
 		super(client, cortexOptions, options);
 	}
 

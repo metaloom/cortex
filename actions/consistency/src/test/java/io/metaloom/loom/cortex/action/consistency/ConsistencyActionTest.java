@@ -12,12 +12,13 @@ import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.client.common.LoomClientException;
 
 public class ConsistencyActionTest extends AbstractMediaTest {
 
 	@Test
-	public void testSkipAction() throws IOException {
+	public void testSkipAction() throws IOException, LoomClientException {
 		ConsistencyAction action = mockAction();
 		LoomMedia media = createEmptyLoomMedia();
 		ActionResult result = action.process(media);
@@ -26,7 +27,7 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 	}
 
 	@Test
-	public void testProcessVideo() throws IOException {
+	public void testProcessVideo() throws IOException, LoomClientException {
 		ConsistencyAction action = mockAction();
 		LoomMedia media = mediaVideo1();
 		ActionResult result = action.process(media);
@@ -36,8 +37,8 @@ public class ConsistencyActionTest extends AbstractMediaTest {
 		assertThat(media).hasXAttr(2);
 	}
 
-	private ConsistencyAction mockAction() {
-		LoomGRPCClient client = LoomClientMock.mockGrpcClient();
+	private ConsistencyAction mockAction() throws LoomClientException {
+		LoomClient client = LoomClientMock.mockClient();
 		ConsistencyAction action = new ConsistencyAction(client, null, null);
 		return action;
 	}

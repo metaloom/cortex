@@ -17,15 +17,15 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.media.consistency.ConsistencyMedia;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
-import io.metaloom.loom.proto.AssetResponse;
+import io.metaloom.loom.client.common.LoomClient;
+import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.hash.partial.PartialFile;
 
 @Singleton
 public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOptions> {
 
 	@Inject
-	public ConsistencyAction(@Nullable LoomGRPCClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
+	public ConsistencyAction(@Nullable LoomClient client, CortexOptions cortexOption, ConsistencyActionOptions options) {
 		super(client, cortexOption, options);
 	}
 
@@ -57,7 +57,7 @@ public class ConsistencyAction extends AbstractMediaAction<ConsistencyActionOpti
 			return ctx.origin(COMPUTED).next();
 
 		} else {
-			Long dbCount = asset.getZeroChunkCount();
+			Long dbCount = asset.getConsistency().getZeroChunkCount();
 			if (dbCount != null) {
 				media.setZeroChunkCount(dbCount);
 				return ctx.origin(REMOTE).next();

@@ -3,19 +3,21 @@ package io.metaloom.cortex.common.action;
 import static io.metaloom.utils.ConvertUtils.toHumanTime;
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
+import javax.annotation.Nullable;
+
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.api.option.action.CortexActionOptions;
-import io.metaloom.loom.client.grpc.LoomGRPCClient;
+import io.metaloom.loom.client.common.LoomClient;
 
 public abstract class AbstractFilesystemAction<T extends CortexActionOptions> extends AbstractCortexAction<T> implements FilesystemAction<T> {
 
 	private long current = 1L;
 	private long total = 1L;
 
-	public AbstractFilesystemAction(LoomGRPCClient client, CortexOptions cortexOption, T option) {
+	public AbstractFilesystemAction(@Nullable LoomClient client, CortexOptions cortexOption, T option) {
 		super(client, cortexOption, option);
 
 	}
