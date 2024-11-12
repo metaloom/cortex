@@ -60,6 +60,15 @@
             <artifactId>caffeine</artifactId>
         </dependency>
 
+        <!-- Avro-->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+        </dependency>
 
         <!-- DI -->
         <dependency>

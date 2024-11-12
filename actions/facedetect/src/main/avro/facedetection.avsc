@@ -1,0 +1,48 @@
+{
+    "type": "record",
+    "name": "Facedetection",
+    "namespace": "io.metaloom.loom.cortex.action.facedetect.avro",
+    "fields": [
+        {
+            "name": "asset_hash",
+            "type": "string"
+        },
+        {
+            "name": "frame",
+            "type": "int"
+        },
+        {
+            "name": "box",
+            "type": {
+                "name": "FacedetectionBox",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "startX",
+                        "type": "int"
+                    },
+                    {
+                        "name": "startY",
+                        "type": "int"
+                    },
+                    {
+                        "name": "height",
+                        "type": "int"
+                    },
+                    {
+                        "name": "width",
+                        "type": "int"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "embedding",
+            "type": {
+                "type": "array",
+                "items": "float"
+            },
+            "default": []
+        }
+    ]
+}

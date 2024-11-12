@@ -1,9 +1,10 @@
-package io.metaloom.cortex.media.facedetect;
+package io.metaloom.cortex.action.facedetect;
 
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
-import static io.metaloom.cortex.api.media.LoomMetaType.FS;
-import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.FS;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 
+import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
@@ -13,12 +14,18 @@ public interface FacedetectMedia extends LoomMedia {
 
 	public static final FaceDetectionType FACE_DETECTION = new FaceDetectionType();
 
+	/**
+	 * XAttr which stores the count of detected faces.
+	 */
 	public static final LoomMetaKey<Integer> FACEDETECT_COUNT_KEY = metaKey("facedetect_count", 1, XATTR, Integer.class);
 
+	/**
+	 * XAttr which stores the state of the fact detection process.
+	 */
 	public static final LoomMetaKey<FaceDetectionFlag> FACEDETECTION_FLAG_KEY = metaKey("facedetect_flag", 1, XATTR, FaceDetectionFlag.class);
 
-	public static final LoomMetaKey<FaceDetectionResult> FACEDETECTION_RESULT_KEY = metaKey("facedetect_result", 1, FS,
-		FaceDetectionResult.class);
+	public static final LoomMetaKey<FaceData> FACEDETECTION_RESULT_KEY = metaKey("facedetect_result", 1, FS,
+		FaceData.class);
 
 	default Integer getFaceCount() {
 		return get(FACEDETECT_COUNT_KEY);
@@ -36,11 +43,11 @@ public interface FacedetectMedia extends LoomMedia {
 		put(FACEDETECTION_FLAG_KEY, flag);
 	}
 
-	default FaceDetectionResult getFacedetectionParams() {
+	default FaceData getFacedetectionParams() {
 		return get(FACEDETECTION_RESULT_KEY);
 	}
 
-	default void setFacedetectionParams(FaceDetectionResult result) {
+	default void setFacedetectionParams(FaceData result) {
 		put(FACEDETECTION_RESULT_KEY, result);
 	}
 

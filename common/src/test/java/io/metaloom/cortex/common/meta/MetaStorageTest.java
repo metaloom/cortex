@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.HashSet;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +19,14 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
-import io.metaloom.cortex.api.media.LoomMetaType;
 import io.metaloom.cortex.api.media.impl.LoomMetaKeyImpl;
 import io.metaloom.cortex.api.media.param.BSONAttr;
+import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
+import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
+import io.metaloom.cortex.api.media.type.handler.impl.AvroLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.FSLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.HeapLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.XAttrLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
@@ -28,22 +34,22 @@ import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 
 public class MetaStorageTest extends AbstractMediaTest {
 
-	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_fs_str", 0, LoomMetaType.FS, String.class);
+	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_fs_str", 0, LoomMetaCoreType.FS, String.class);
 
-	private static final LoomMetaKey<MetaDataStream> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaType.FS,
+	private static final LoomMetaKey<MetaDataStream> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaCoreType.FS,
 		MetaDataStream.class);
 
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_FS_BSON_KEY = new LoomMetaKeyImpl<>("dummy_fs_bson", 0, LoomMetaType.FS,
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_FS_BSON_KEY = new LoomMetaKeyImpl<>("dummy_fs_bson", 0, LoomMetaCoreType.FS,
 		DummyBSONValue.class);
 
-	private static final LoomMetaKey<String> DUMMY_XATTR_STR_KEY = new LoomMetaKeyImpl<>("dummy_xattr_str", 0, LoomMetaType.XATTR, String.class);
+	private static final LoomMetaKey<String> DUMMY_XATTR_STR_KEY = new LoomMetaKeyImpl<>("dummy_xattr_str", 0, LoomMetaCoreType.XATTR, String.class);
 
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_XATTR_BSON_KEY = new LoomMetaKeyImpl<>("dummy_xattr_bson", 0, LoomMetaType.XATTR,
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_XATTR_BSON_KEY = new LoomMetaKeyImpl<>("dummy_xattr_bson", 0, LoomMetaCoreType.XATTR,
 		DummyBSONValue.class);
 
-	private static final LoomMetaKey<String> DUMMY_HEAP_STR_KEY = new LoomMetaKeyImpl<>("dummy_heap_str", 0, LoomMetaType.HEAP, String.class);
+	private static final LoomMetaKey<String> DUMMY_HEAP_STR_KEY = new LoomMetaKeyImpl<>("dummy_heap_str", 0, LoomMetaCoreType.HEAP, String.class);
 
-	private static final LoomMetaKey<DummyBSONValue> DUMMY_HEAP_BSON_KEY = new LoomMetaKeyImpl<>("dummy_heap_bson", 0, LoomMetaType.HEAP,
+	private static final LoomMetaKey<DummyBSONValue> DUMMY_HEAP_BSON_KEY = new LoomMetaKeyImpl<>("dummy_heap_bson", 0, LoomMetaCoreType.HEAP,
 		DummyBSONValue.class);
 
 	private MetaStorage storage;
@@ -52,7 +58,13 @@ public class MetaStorageTest extends AbstractMediaTest {
 	public void setupMetaStorage() throws IOException {
 		CortexOptions options = new CortexOptions();
 		options.setMetaPath(Files.createTempDirectory("meta"));
-		storage = new MetaStorageImpl(options);
+
+		HashSet<LoomMetaTypeHandler> handlers = new HashSet<>();
+		handlers.add(new HeapLoomMetaTypeHandlerImpl());
+		handlers.add(new AvroLoomMetaTypeHandlerImpl());
+		handlers.add(new XAttrLoomMetaTypeHandlerImpl());
+		handlers.add(new FSLoomMetaTypeHandlerImpl(options));
+		storage = new MetaStorageImpl(options, handlers);
 	}
 
 	@Test

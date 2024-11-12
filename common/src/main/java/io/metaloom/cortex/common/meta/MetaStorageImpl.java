@@ -2,16 +2,18 @@ package io.metaloom.cortex.common.meta;
 
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,102 +23,62 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
-import io.metaloom.cortex.api.media.param.BSONAttr;
-import io.metaloom.cortex.api.meta.MetaDataStream;
+import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
+import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
+import io.metaloom.cortex.api.media.type.handler.impl.MetaStorageException;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.bson.BSON;
 import io.metaloom.utils.fs.FileUtils;
-import io.metaloom.utils.fs.XAttrUtils;
-import io.metaloom.utils.hash.AbstractStringHash;
 import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
+/**
+ * The meta storage implementation caches and delegates operation calls for keys on different key handlers.
+ */
 @Singleton
 public class MetaStorageImpl implements MetaStorage {
 
 	private final CortexOptions options;
 
-	// TODO inject cache and make it configurable
-	private Cache<String, Object> attrCache = Caffeine.newBuilder()
-		.maximumSize(10_000)
-		.expireAfterWrite(Duration.ofDays(30))
-		.build();
+	private final Set<LoomMetaTypeHandler> handlers;
 
 	@Inject
-	public MetaStorageImpl(CortexOptions options) {
+	public MetaStorageImpl(CortexOptions options, Set<LoomMetaTypeHandler> handlers) {
 		this.options = options;
+		this.handlers = handlers;
 	}
 
 	@Override
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-
-		// We check the cache and return a result if the value has been cached.
-		// Otherwise we will query the type specific implementation
-		String fullKey = metaKey.fullKey();
-		T cacheValue = (T) attrCache.getIfPresent(fullKey);
-		if (cacheValue != null) {
-			return true;
+		LoomMetaCoreType type = metaKey.type();
+		if (type == null) {
+			Objects.requireNonNull(type, "Type not set");
 		}
+		return getHandler(type).has(media, metaKey);
+	}
 
-		switch (metaKey.type()) {
-		case FS:
-			return toMetaPath(media, metaKey).toFile().exists();
-		case HEAP:
-			return attrCache.getIfPresent(metaKey.key()) != null;
-		case XATTR:
-			return XAttrUtils.hasXAttr(media.path(), metaKey.fullKey());
-		default:
-			throw new RuntimeException("Unable to check attribute " + metaKey.key() + " unknown type " + metaKey.type());
+	private LoomMetaTypeHandler getHandler(LoomMetaCoreType type) {
+		Optional<LoomMetaTypeHandler> op = handlers.stream().filter(h -> h.type() == type).findFirst();
+		if (op.isEmpty()) {
+			List<String> handlerNames = handlers.stream().map(LoomMetaTypeHandler::name).collect(Collectors.toList());
+			throw new MetaStorageException("Failed to locate handler for type " + type + ". Only know: " + handlerNames);
 		}
+		return op.get();
 	}
 
 	@Override
 	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-
-		String fullKey = metaKey.fullKey();
-		T cacheValue = (T) attrCache.getIfPresent(fullKey);
-		if (cacheValue != null) {
-			return cacheValue;
-		}
-
-		switch (metaKey.type()) {
-		case FS:
-			return readLocalStorage(media, metaKey);
-		case HEAP:
-			// We already checked the cache before
-			return null;
-		case XATTR:
-			return readXAttr(media, metaKey);
-		default:
-			throw new RuntimeException("Unknown type " + metaKey.type());
-		}
+		LoomMetaTypeHandler handler = getHandler(metaKey.type());
+		return handler.read(media, metaKey);
 	}
 
 	@Override
 	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-		String fullKey = metaKey.fullKey();
-		switch (metaKey.type()) {
-		case XATTR:
-			writeXAttr(media, metaKey, value);
-			break;
-		case FS:
-			try {
-				writeLocalStorage(media, metaKey, value);
-			} catch (IOException e) {
-				throw new RuntimeException("Error while writing meta attribute to file", e);
-			}
-			break;
-		case HEAP:
-			// NOOP
-			break;
-		default:
-			throw new RuntimeException("Invalid persistance type");
-		}
-		attrCache.put(fullKey, value);
+		LoomMetaTypeHandler handler = getHandler(metaKey.type());
+		handler.store(media, metaKey, value);
 	}
 
 	/**
@@ -152,65 +114,6 @@ public class MetaStorageImpl implements MetaStorage {
 	@Override
 	public SHA512 getSHA512(LoomMedia media) {
 		return get(media, SHA_512_KEY);
-	}
-
-	protected <T> T readLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey) {
-		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-		try {
-			Path filePath = toMetaPath(media, metaKey);
-			// Dedicated handling for stream access
-			if (metaKey.getValueClazz().isAssignableFrom(MetaDataStream.class)) {
-				return (T) new MetaDataStreamFSImpl(filePath);
-			} else {
-				// Try BSON instead
-				if (Files.exists(filePath)) {
-					try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-						return (T) BSON.readValue(fis, metaKey.getValueClazz());
-					}
-				} else {
-					return null;
-				}
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected <T> void writeLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey, T value) throws IOException {
-		Path filePath = toMetaPath(media, metaKey);
-		FileUtils.ensureParentFolder(filePath);
-		try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
-			BSON.writeValue(fos, value);
-		} catch (IOException e) {
-			throw new RuntimeException("Error while writing value " + metaKey.fullKey() + " for media " + media.getSHA512(), e);
-		}
-	}
-
-	protected <T> T readXAttr(LoomMedia media, LoomMetaKey<T> metaKey) {
-		if (AbstractStringHash.class.isAssignableFrom(metaKey.getValueClazz())) {
-			ByteBuffer value = XAttrUtils.readBinXAttr(media.path(), metaKey.fullKey());
-			if (value == null) {
-				return null;
-			}
-			return metaKey.newValue(value);
-		} else if (BSONAttr.class.isAssignableFrom(metaKey.getValueClazz())) {
-			ByteBuffer bin = XAttrUtils.readBinXAttr(media.path(), metaKey.fullKey());
-			if (bin == null) {
-				return null;
-			}
-			return (T) BSON.readValue(bin, metaKey.getValueClazz());
-		} else {
-			return (T) XAttrUtils.readXAttr(media.path(), metaKey.fullKey(), metaKey.getValueClazz());
-		}
-	}
-
-	protected <T> void writeXAttr(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
-		if (value instanceof BSONAttr) {
-			byte[] data = BSON.writeValue(value);
-			XAttrUtils.writeBinXAttr(media.path(), metaKey.fullKey(), ByteBuffer.wrap(data));
-		} else {
-			XAttrUtils.writeXAttr(media.path(), metaKey.fullKey(), value);
-		}
 	}
 
 	protected <T> Path toMetaPath(LoomMedia media, LoomMetaKey<T> key) {

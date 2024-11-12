@@ -1,7 +1,7 @@
 package io.metaloom.cortex.media.scene;
 
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
-import static io.metaloom.cortex.api.media.LoomMetaType.FS;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.FS;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;

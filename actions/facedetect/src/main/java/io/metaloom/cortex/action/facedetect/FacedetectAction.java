@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.facedetect;
 
+import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
-import static io.metaloom.cortex.media.facedetect.FacedetectMedia.FACE_DETECTION;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
@@ -25,10 +26,9 @@ import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
-import io.metaloom.cortex.media.facedetect.FaceDetectionResult;
-import io.metaloom.cortex.media.facedetect.FacedetectMedia;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
@@ -103,7 +103,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	private ActionResult processImage(ActionContext ctx) throws IOException {
 
 		FacedetectMedia media = ctx.media(FACE_DETECTION);
-
+		SHA512 hash = media.getSHA512();
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
 		List<? extends Face> result = detector.detectFaces(image);
@@ -111,8 +111,8 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		if (result != null && !result.isEmpty()) {
 			media.setFaceCount(result.size());
 			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
-			FaceDetectionResult params = new FaceDetectionResult();
-			params.setCount(result.size());
+			FaceData params = new FaceData(hash);
+			params.getEntries().addAll(result);
 			// TODO add face data
 			media.setFacedetectionParams(params);
 		}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.media.type.handler.impl.HeapLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.media.impl.LoomMediaImpl;
@@ -71,8 +73,16 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	}
 
 	protected LoomMedia media(Path path) {
-		MetaStorage storage = new MetaStorageImpl(options());
-		return new LoomMediaImpl(path, storage);
+		return new LoomMediaImpl(path, storage());
+	}
+
+	/**
+	 * Tests may override this method in order to provide custom storage implementations.
+	 * 
+	 * @return
+	 */
+	public MetaStorage storage() {
+		return new MetaStorageImpl(cortexOptions, Set.of(new HeapLoomMetaTypeHandlerImpl()));
 	}
 
 	@Override

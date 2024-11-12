@@ -1,6 +1,6 @@
 package io.metaloom.cortex.media.test.assertj;
 
-import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 import static io.metaloom.cortex.media.consistency.ConsistencyMedia.ZERO_CHUNK_COUNT_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

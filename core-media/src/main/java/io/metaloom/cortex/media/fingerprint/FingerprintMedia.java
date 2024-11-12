@@ -1,7 +1,7 @@
 package io.metaloom.cortex.media.fingerprint;
 
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
-import static io.metaloom.cortex.api.media.LoomMetaType.XATTR;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;

@@ -1,7 +1,7 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
+import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.api.media.LoomMedia.SHA_512_KEY;
-import static io.metaloom.cortex.media.facedetect.FacedetectMedia.FACE_DETECTION;
 import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.facedetect.FacedetectAction;
 import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
+import io.metaloom.cortex.action.facedetect.FacedetectMedia;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
-import io.metaloom.cortex.media.facedetect.FacedetectMedia;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.client.common.LoomClientException;
 
