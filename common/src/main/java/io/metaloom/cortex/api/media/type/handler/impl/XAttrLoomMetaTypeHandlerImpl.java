@@ -4,20 +4,14 @@ import java.nio.ByteBuffer;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
-import io.metaloom.cortex.api.media.param.BSONAttr;
 import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
 import io.metaloom.cortex.api.media.type.LoomMetaType;
 import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
-import io.metaloom.cortex.common.bson.BSON;
+import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.AbstractStringHash;
 
 public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
-
-	@Override
-	public String name() {
-		return "xattr";
-	}
 
 	@Override
 	public LoomMetaType type() {
@@ -25,18 +19,27 @@ public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	}
 
 	@Override
-	public <T> void store(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		checkAttrSupport(metaKey);
 		writeXAttr(media, metaKey, value);
 	}
 
 	@Override
-	public <T> T read(LoomMedia media, LoomMetaKey<T> metaKey) {
+	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
+		checkAttrSupport(metaKey);
 		return readXAttr(media, metaKey);
 	}
 
 	@Override
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
+		checkAttrSupport(metaKey);
 		return XAttrUtils.hasXAttr(media.path(), metaKey.fullKey());
+	}
+
+	private <T> void checkAttrSupport(LoomMetaKey<T> metaKey) {
+		if (metaKey.getValueClazz().isAssignableFrom(MetaDataStream.class)) {
+			throw new MetaStorageException("Streams are not supported for XAttr");
+		}
 	}
 
 	protected <T> T readXAttr(LoomMedia media, LoomMetaKey<T> metaKey) {
@@ -46,24 +49,13 @@ public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 				return null;
 			}
 			return metaKey.newValue(value);
-		} else if (BSONAttr.class.isAssignableFrom(metaKey.getValueClazz())) {
-			ByteBuffer bin = XAttrUtils.readBinXAttr(media.path(), metaKey.fullKey());
-			if (bin == null) {
-				return null;
-			}
-			return (T) BSON.readValue(bin, metaKey.getValueClazz());
 		} else {
 			return (T) XAttrUtils.readXAttr(media.path(), metaKey.fullKey(), metaKey.getValueClazz());
 		}
 	}
 
 	protected <T> void writeXAttr(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
-		if (value instanceof BSONAttr) {
-			byte[] data = BSON.writeValue(value);
-			XAttrUtils.writeBinXAttr(media.path(), metaKey.fullKey(), ByteBuffer.wrap(data));
-		} else {
-			XAttrUtils.writeXAttr(media.path(), metaKey.fullKey(), value);
-		}
+		XAttrUtils.writeXAttr(media.path(), metaKey.fullKey(), value);
 	}
 
 }

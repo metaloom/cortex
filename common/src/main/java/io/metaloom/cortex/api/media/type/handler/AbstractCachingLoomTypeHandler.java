@@ -24,7 +24,6 @@ public abstract class AbstractCachingLoomTypeHandler implements LoomMetaTypeHand
 	@Override
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
 		// We check the cache and return a result if the value has been cached.
-		// Otherwise we will query the type specific implementation
 		String fullKey = metaKey.fullKey();
 		T cacheValue = (T) attrCache.getIfPresent(fullKey);
 		if (cacheValue != null) {
@@ -34,7 +33,7 @@ public abstract class AbstractCachingLoomTypeHandler implements LoomMetaTypeHand
 	}
 
 	@Override
-	public <T> T read(LoomMedia media, LoomMetaKey<T> metaKey) {
+	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		String fullKey = metaKey.fullKey();
 		T cacheValue = (T) attrCache.getIfPresent(fullKey);
 		if (cacheValue != null) {
@@ -44,7 +43,7 @@ public abstract class AbstractCachingLoomTypeHandler implements LoomMetaTypeHand
 	}
 
 	@Override
-	public <T> void store(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
 		String fullKey = metaKey.fullKey();
 		attrCache.put(fullKey, value);
 	}

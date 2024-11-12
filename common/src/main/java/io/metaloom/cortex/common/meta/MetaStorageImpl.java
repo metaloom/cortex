@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,12 +17,10 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
+import io.metaloom.cortex.api.media.type.LoomMetaType;
 import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
 import io.metaloom.cortex.api.media.type.handler.impl.MetaStorageException;
 import io.metaloom.cortex.api.meta.MetaStorage;
@@ -61,8 +58,8 @@ public class MetaStorageImpl implements MetaStorage {
 	private LoomMetaTypeHandler getHandler(LoomMetaCoreType type) {
 		Optional<LoomMetaTypeHandler> op = handlers.stream().filter(h -> h.type() == type).findFirst();
 		if (op.isEmpty()) {
-			List<String> handlerNames = handlers.stream().map(LoomMetaTypeHandler::name).collect(Collectors.toList());
-			throw new MetaStorageException("Failed to locate handler for type " + type + ". Only know: " + handlerNames);
+			List<LoomMetaType> handlerTypes = handlers.stream().map(LoomMetaTypeHandler::type).collect(Collectors.toList());
+			throw new MetaStorageException("Failed to locate handler for type " + type + ". Only know: " + handlerTypes);
 		}
 		return op.get();
 	}
@@ -71,40 +68,40 @@ public class MetaStorageImpl implements MetaStorage {
 	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		LoomMetaTypeHandler handler = getHandler(metaKey.type());
-		return handler.read(media, metaKey);
+		return handler.get(media, metaKey);
 	}
 
 	@Override
 	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		LoomMetaTypeHandler handler = getHandler(metaKey.type());
-		handler.store(media, metaKey, value);
+		handler.put(media, metaKey, value);
 	}
 
-	/**
-	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#outputStream()}
-	 */
-	@Override
-	@Deprecated
-	public <T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
-		Path filePath = toMetaPath(media, metaKey);
-		FileUtils.ensureParentFolder(filePath);
-		com.google.common.io.Files.touch(filePath.toFile());
-		return new FileOutputStream(filePath.toFile());
-	}
-
-	/**
-	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#inputStream()}
-	 */
-	@Deprecated
-	@Override
-	public <T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
-		Path filePath = toMetaPath(media, metaKey);
-		if (!Files.exists(filePath)) {
-			throw new IOException("Metadata file for " + media + " could not be found.");
-		}
-		return Files.newInputStream(filePath);
-	}
+//	/**
+//	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#outputStream()}
+//	 */
+//	@Override
+//	@Deprecated
+//	public <T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
+//		Path filePath = toMetaPath(media, metaKey);
+//		FileUtils.ensureParentFolder(filePath);
+//		com.google.common.io.Files.touch(filePath.toFile());
+//		return new FileOutputStream(filePath.toFile());
+//	}
+//
+//	/**
+//	 * Use {@link MetaDataStream} in keys instead and access using {@link MetaDataStream#inputStream()}
+//	 */
+//	@Deprecated
+//	@Override
+//	public <T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException {
+//		Path filePath = toMetaPath(media, metaKey);
+//		if (!Files.exists(filePath)) {
+//			throw new IOException("Metadata file for " + media + " could not be found.");
+//		}
+//		return Files.newInputStream(filePath);
+//	}
 
 	@Override
 	public void setSHA512(LoomMedia media, SHA512 hash) {

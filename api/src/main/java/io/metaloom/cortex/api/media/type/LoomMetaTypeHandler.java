@@ -12,11 +12,9 @@ public interface LoomMetaTypeHandler {
 	 */
 	LoomMetaType type();
 
-	String name();
+	<T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value);
 
-	<T> void store(LoomMedia media, LoomMetaKey<T> metaKey, T value);
-
-	<T> T read(LoomMedia media, LoomMetaKey<T> metaKey);
+	<T> T get(LoomMedia media, LoomMetaKey<T> metaKey);
 
 	<T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey);
 }

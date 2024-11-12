@@ -20,26 +20,26 @@ public interface MetaStorage {
 	 */
 	<T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey);
 
-	/**
-	 * Return an output stream to write to for the given key + media.
-	 * 
-	 * @param <T>
-	 * @param media
-	 * @param metaKey
-	 * @return
-	 * @throws IOException
-	 */
-	<T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
-
-	/**
-	 * Return an input stream to read for the given key + media.
-	 * 
-	 * @param <T>
-	 * @param media
-	 * @param metaKey
-	 * @return
-	 */
-	<T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
+//	/**
+//	 * Return an output stream to write to for the given key + media.
+//	 * 
+//	 * @param <T>
+//	 * @param media
+//	 * @param metaKey
+//	 * @return
+//	 * @throws IOException
+//	 */
+//	<T> OutputStream outputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
+//
+//	/**
+//	 * Return an input stream to read for the given key + media.
+//	 * 
+//	 * @param <T>
+//	 * @param media
+//	 * @param metaKey
+//	 * @return
+//	 */
+//	<T> InputStream inputStream(LoomMedia media, LoomMetaKey<T> metaKey) throws IOException;
 
 	/**
 	 * Return the meta property for the given key + media.

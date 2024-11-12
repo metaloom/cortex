@@ -1,9 +1,8 @@
 package io.metaloom.cortex.api.media.type.handler.impl;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ import io.metaloom.cortex.api.media.type.LoomMetaType;
 import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
 import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.bson.BSON;
 import io.metaloom.cortex.common.meta.MetaDataStreamFSImpl;
 import io.metaloom.utils.fs.FileUtils;
 import io.metaloom.utils.hash.HashUtils;
@@ -39,12 +37,7 @@ public class FSLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	}
 
 	@Override
-	public String name() {
-		return "fs";
-	}
-
-	@Override
-	public <T> void store(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
 		try {
 			writeLocalStorage(media, metaKey, value);
 		} catch (IOException e) {
@@ -58,37 +51,36 @@ public class FSLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	}
 
 	@Override
-	public <T> T read(LoomMedia media, LoomMetaKey<T> metaKey) {
+	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		return readLocalStorage(media, metaKey);
 	}
 
 	protected <T> T readLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
-		try {
-			Path filePath = toMetaPath(media, metaKey);
-			// Dedicated handling for stream access
-			if (metaKey.getValueClazz().isAssignableFrom(MetaDataStream.class)) {
-				return (T) new MetaDataStreamFSImpl(filePath);
-			} else {
-				// Try BSON instead
-				if (Files.exists(filePath)) {
-					try (FileInputStream fis = new FileInputStream(filePath.toFile())) {
-						return (T) BSON.readValue(fis, metaKey.getValueClazz());
-					}
-				} else {
-					return null;
-				}
+		Path filePath = toMetaPath(media, metaKey);
+		// Dedicated handling for stream access
+		if (metaKey.getValueClazz().isAssignableFrom(MetaDataStream.class)) {
+			return (T) new MetaDataStreamFSImpl(filePath);
+		} else {
+			try {
+				return (T) org.apache.commons.io.FileUtils.readFileToString(filePath.toFile(), Charset.defaultCharset());
+			} catch (IOException e) {
+				throw new MetaStorageException("Failed to read value for key " + metaKey.fullKey() + " from filesystem", e);
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		}
 	}
 
 	protected <T> void writeLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey, T value) throws IOException {
+		Objects.requireNonNull(value);
 		Path filePath = toMetaPath(media, metaKey);
 		FileUtils.ensureParentFolder(filePath);
 		try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
-			BSON.writeValue(fos, value);
+			if (value instanceof String s) {
+				fos.write(s.getBytes());
+				fos.flush();
+			} else {
+				throw new RuntimeException("Value type " + value.getClass().getSimpleName() + " not supported for " + type() + " handler");
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("Error while writing value " + metaKey.fullKey() + " for media " + media.getSHA512(), e);
 		}
