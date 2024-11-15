@@ -1,7 +1,7 @@
 package io.metaloom.cortex.action.facedetect;
 
 import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
-import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.FS;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.AVRO;
 import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 
 import io.metaloom.cortex.action.facedetect.file.model.FaceData;
@@ -9,6 +9,7 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.media.facedetect.impl.FaceDetectionType;
+import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
 
 public interface FacedetectMedia extends LoomMedia {
 
@@ -24,8 +25,7 @@ public interface FacedetectMedia extends LoomMedia {
 	 */
 	public static final LoomMetaKey<FaceDetectionFlag> FACEDETECTION_FLAG_KEY = metaKey("facedetect_flag", 1, XATTR, FaceDetectionFlag.class);
 
-	public static final LoomMetaKey<FaceData> FACEDETECTION_RESULT_KEY = metaKey("facedetect_result", 1, FS,
-		FaceData.class);
+	public static final LoomMetaKey<Facedetection> FACEDETECTION_RESULT_KEY = metaKey("facedetect_result", 1, AVRO, Facedetection.class);
 
 	default Integer getFaceCount() {
 		return get(FACEDETECT_COUNT_KEY);
@@ -43,11 +43,11 @@ public interface FacedetectMedia extends LoomMedia {
 		put(FACEDETECTION_FLAG_KEY, flag);
 	}
 
-	default FaceData getFacedetectionParams() {
+	default Facedetection getFacedetectionParams() {
 		return get(FACEDETECTION_RESULT_KEY);
 	}
 
-	default void setFacedetectionParams(FaceData result) {
+	default void setFacedetectionParams(Facedetection result) {
 		put(FACEDETECTION_RESULT_KEY, result);
 	}
 

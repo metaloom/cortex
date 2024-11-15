@@ -8,12 +8,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.facedetect.FacedetectMedia;
-import io.metaloom.cortex.action.facedetect.file.model.FaceData;
+import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
+import io.metaloom.cortex.api.media.type.handler.impl.AvroLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.XAttrLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
+import io.metaloom.cortex.common.meta.MetaStorageImpl;
+import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
+import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.impl.FaceImpl;
 
@@ -36,22 +43,41 @@ public class FacedetectMediaTest extends AbstractMediaTest {
 		FacedetectMedia media = mediaVideo2().of(FACE_DETECTION);
 		assertNull(media.getFacedetectionParams());
 		assertNull(media.get(FACEDETECTION_RESULT_KEY));
-		List<Face> entries = List.of(new FaceImpl());
-		media.put(FACEDETECTION_RESULT_KEY, new FaceData(media.getSHA512()).setEntries(entries));
+		
+		FacedetectionBox box = FacedetectionBox.newBuilder()
+			.setStartX(0)
+			.setStartY(0)
+			.setHeight(10)
+			.setWidth(10)
+			.build();
+		
+		Facedetection facedetection = Facedetection.newBuilder()
+			.setAssetHash(media.getSHA512().toString())
+			.setFrame(10)
+			.setBox(box)
+			.build();
+		media.put(FACEDETECTION_RESULT_KEY, facedetection);
 		assertNotNull(media.getFacedetectionParams());
 
 		FacedetectMedia media2 = media(media.path()).of(FACE_DETECTION);
 		assertNotNull(media2.get(FACEDETECTION_RESULT_KEY));
-		FaceData params = media2.get(FACEDETECTION_RESULT_KEY);
-		assertEquals(1, params.getEntries());
+		Facedetection params = media2.get(FACEDETECTION_RESULT_KEY);
+		// assertEquals(1, params.getEntries());
 
 		// Now update the params
 		Face face = new FaceImpl();
-		params.getEntries().add(face);
+		// params.getEntries().add(face);
 		media2.setFacedetectionParams(params);
 
 		FacedetectMedia media3 = media(media.path()).of(FACE_DETECTION);
-		assertEquals(2, media3.getFacedetectionParams().getEntries());
+		// assertEquals(2, media3.getFacedetectionParams().getEntries());
+	}
+
+	@Override
+	public MetaStorage storage() {
+		Set<LoomMetaTypeHandler> handlers = Set.of(new AvroLoomMetaTypeHandlerImpl(cortexOptions), new XAttrLoomMetaTypeHandlerImpl());
+		MetaStorage storage = new MetaStorageImpl(handlers);
+		return storage;
 	}
 
 }

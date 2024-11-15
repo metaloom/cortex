@@ -3,8 +3,8 @@ package io.metaloom.cortex.common.meta;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,6 @@ import io.metaloom.cortex.api.media.type.handler.impl.MetaStorageException;
 import io.metaloom.cortex.api.media.type.handler.impl.XAttrLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.cortex.api.meta.MetaStorage;
-import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 
 public class MetaStorageTest extends AbstractMediaTest {
@@ -54,15 +53,14 @@ public class MetaStorageTest extends AbstractMediaTest {
 
 	@BeforeEach
 	public void setupMetaStorage() throws IOException {
-		CortexOptions options = new CortexOptions();
-		options.setMetaPath(Files.createTempDirectory("meta"));
+		cortexOptions.setMetaPath(Files.createTempDirectory("meta"));
 
 		HashSet<LoomMetaTypeHandler> handlers = new HashSet<>();
 		handlers.add(new HeapLoomMetaTypeHandlerImpl());
-		handlers.add(new AvroLoomMetaTypeHandlerImpl());
+		handlers.add(new AvroLoomMetaTypeHandlerImpl(cortexOptions));
 		handlers.add(new XAttrLoomMetaTypeHandlerImpl());
-		handlers.add(new FSLoomMetaTypeHandlerImpl(options));
-		storage = new MetaStorageImpl(options, handlers);
+		handlers.add(new FSLoomMetaTypeHandlerImpl(cortexOptions));
+		storage = new MetaStorageImpl(handlers);
 	}
 
 	@Test

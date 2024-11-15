@@ -82,7 +82,7 @@ public abstract class AbstractMediaTest implements DocData, ImageData, VideoData
 	 * @return
 	 */
 	public MetaStorage storage() {
-		return new MetaStorageImpl(cortexOptions, Set.of(new HeapLoomMetaTypeHandlerImpl()));
+		return new MetaStorageImpl(Set.of(new HeapLoomMetaTypeHandlerImpl()));
 	}
 
 	@Override

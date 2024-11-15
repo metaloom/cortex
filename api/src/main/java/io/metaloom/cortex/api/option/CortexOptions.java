@@ -44,6 +44,11 @@ public class CortexOptions {
 		return this;
 	}
 
+	/**
+	 * Basepath for the metadata storage files.
+	 * 
+	 * @return
+	 */
 	public Path getMetaPath() {
 		return metaPath;
 	}
