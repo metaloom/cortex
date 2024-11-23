@@ -19,12 +19,12 @@ public abstract class FingerprintActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(FingerprintOptions.class, "fingerprint");
+		return new CortexActionOptionDeserializerInfo(FingerprintActionOptions.class, "fingerprint");
 	}
 
 	@Provides
-	public static FingerprintOptions options(CortexOptions options) {
-		return actionOptions(options, "fingerprint", new FingerprintOptions());
+	public static FingerprintActionOptions options(CortexOptions options) {
+		return actionOptions(options, "fingerprint", new FingerprintActionOptions());
 	}
 
 }

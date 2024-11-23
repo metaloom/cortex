@@ -32,7 +32,7 @@ public class ChunkHashActionTest extends AbstractBasicActionTest<ChunkHashAction
 
 	@Override
 	public ChunkHashAction mockAction(LoomClient client, CortexOptions cortexOptions) {
-		HashOptions options = mock(HashOptions.class);
+		HashActionOptions options = mock(HashActionOptions.class);
 		when(options.isMD5()).thenReturn(true);
 		return new ChunkHashAction(client, cortexOptions, options);
 	}
@@ -44,7 +44,7 @@ public class ChunkHashActionTest extends AbstractBasicActionTest<ChunkHashAction
 
 	@Override
 	protected void disableAction(ChunkHashAction actionMock) {
-		HashOptions options = actionMock.options();
+		HashActionOptions options = actionMock.options();
 		when(options.isChunkHash()).thenReturn(false);
 	}
 

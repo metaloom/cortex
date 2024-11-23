@@ -12,7 +12,7 @@ import io.metaloom.cortex.common.option.CortexActionOptionDeserializerInfo;
 @Module
 public abstract class LLMActionModule extends AbstractActionModule {
 
-	private static final String KEY = "tika";
+	private static final String KEY = "llm";
 
 	@Binds
 	@IntoSet

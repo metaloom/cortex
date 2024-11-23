@@ -2,6 +2,9 @@ package io.metaloom.cortex.api.media.type.handler.impl;
 
 import java.nio.ByteBuffer;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
@@ -11,7 +14,12 @@ import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.AbstractStringHash;
 
+@Singleton
 public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
+
+	@Inject
+	public XAttrLoomMetaTypeHandlerImpl() {
+	}
 
 	@Override
 	public LoomMetaType type() {

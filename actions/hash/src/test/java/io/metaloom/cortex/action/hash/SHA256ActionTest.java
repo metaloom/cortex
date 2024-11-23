@@ -74,7 +74,7 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 
 	@Override
 	public SHA256Action mockAction(LoomClient client, CortexOptions cortexOptions) {
-		HashOptions options = mock(HashOptions.class);
+		HashActionOptions options = mock(HashActionOptions.class);
 		when(options.isSHA256()).thenReturn(true);
 		return new SHA256Action(client, cortexOptions, options);
 	}
@@ -86,7 +86,7 @@ public class SHA256ActionTest extends AbstractBasicActionTest<SHA256Action> {
 
 	@Override
 	protected void disableAction(SHA256Action actionMock) {
-		HashOptions options = actionMock.options();
+		HashActionOptions options = actionMock.options();
 		when(options.isSHA256()).thenReturn(false);
 	}
 

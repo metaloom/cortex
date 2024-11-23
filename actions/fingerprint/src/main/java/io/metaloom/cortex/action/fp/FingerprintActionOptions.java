@@ -2,10 +2,10 @@ package io.metaloom.cortex.action.fp;
 
 import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
-public class FingerprintOptions extends AbstractActionOptions<FingerprintOptions> {
+public class FingerprintActionOptions extends AbstractActionOptions<FingerprintActionOptions> {
 
 	@Override
-	protected FingerprintOptions self() {
+	protected FingerprintActionOptions self() {
 		return this;
 	}
 

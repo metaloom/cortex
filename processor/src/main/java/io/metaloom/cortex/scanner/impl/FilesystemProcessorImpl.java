@@ -44,7 +44,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 	}
 
 	@Override
-	public void analyze(Path path) throws IOException {
+	public void analyze(List<String> enabledActions, Path path) throws IOException {
 
 		AtomicLong count = new AtomicLong(0);
 		// 1. Scan the whole fs tree and count the files.
@@ -64,7 +64,12 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				boolean processed = false;
 				System.out.println("[" + media.path() + "]");
 				for (FilesystemAction action : actions) {
-					log.debug("Processing {} using {}", media, action);
+					if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
+						log.warn("Action {} will be skipped", action.name());
+						continue;
+					}
+
+					log.debug("Processing media {} using action {}", media, action.name());
 					action.set(current, total);
 					try {
 						ActionResult result = action.process(new ActionContextImpl(media));
@@ -86,7 +91,7 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 					System.out.println();
 				}
 				SHA512 hashsum = media.getSHA512();
-				log.trace("Adding " + hashsum);
+				log.trace("Adding {}", hashsum);
 				if (current % 1000 == 0) {
 					log.info("Count: " + current);
 				}

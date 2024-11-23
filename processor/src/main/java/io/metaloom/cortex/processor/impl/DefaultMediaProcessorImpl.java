@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -34,15 +35,15 @@ public class DefaultMediaProcessorImpl implements MediaProcessor {
 	}
 
 	@Override
-	public void process(Path folder) throws IOException {
+	public void process(List<String> enabledActions, Path folder) throws IOException {
 		if (!Files.exists(folder)) {
 			throw new FileNotFoundException("Startfolder not found " + folder.toString());
 		}
-		process(client, folder);
+		process(enabledActions, client, folder);
 	}
 
-	private void process(LoomClient client, Path folder) throws IOException {
-		processor.analyze(folder);
+	private void process(List<String> enabledActions, LoomClient client, Path folder) throws IOException {
+		processor.analyze(enabledActions, folder);
 	}
 
 }

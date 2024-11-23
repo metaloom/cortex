@@ -21,12 +21,12 @@ import io.metaloom.utils.hash.ChunkHash;
 import io.metaloom.utils.hash.HashUtils;
 
 @Singleton
-public class ChunkHashAction extends AbstractMediaAction<HashOptions> {
+public class ChunkHashAction extends AbstractMediaAction<HashActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(ChunkHashAction.class);
 
 	@Inject
-	public ChunkHashAction(LoomClient client, CortexOptions cortexOption, HashOptions options) {
+	public ChunkHashAction(LoomClient client, CortexOptions cortexOption, HashActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

@@ -2,6 +2,7 @@ package io.metaloom.cortex.scanner;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 import io.metaloom.fs.linux.LinuxFilesystemScanner;
 
@@ -10,7 +11,7 @@ import io.metaloom.fs.linux.LinuxFilesystemScanner;
  */
 public interface FilesystemProcessor {
 
-	void analyze(Path path) throws IOException;
+	void analyze(List<String> enabledActions, Path path) throws IOException;
 
 	LinuxFilesystemScanner getScanner();
 

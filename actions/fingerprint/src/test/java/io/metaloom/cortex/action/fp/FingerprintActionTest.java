@@ -40,13 +40,13 @@ public class FingerprintActionTest extends AbstractBasicActionTest<FingerprintAc
 
 	@Override
 	protected void disableAction(FingerprintAction actionMock) {
-		FingerprintOptions options = actionMock.options();
+		FingerprintActionOptions options = actionMock.options();
 		when(options.isEnabled()).thenReturn(false);
 	}
 
 	@Override
 	public FingerprintAction mockAction(LoomClient client, CortexOptions cortexOptions) {
-		FingerprintOptions options = mock(FingerprintOptions.class);
+		FingerprintActionOptions options = mock(FingerprintActionOptions.class);
 		when(options.isEnabled()).thenReturn(true);
 		return new FingerprintAction(client, cortexOptions, options);
 	}

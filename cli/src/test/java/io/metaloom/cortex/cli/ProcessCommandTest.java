@@ -22,7 +22,7 @@ public class ProcessCommandTest extends AbstractCortexTest {
 		String path = LocalTestData.localDir().toString();
 		CortexOptions defaultOptions = createOptions();
 
-		int code = CortexCLIMain.execute(defaultOptions, "p", "analyze", path);
+		int code = CortexCLIMain.execute(defaultOptions, "p", "run", "-a" , "sha512,llm", path);
 		assertEquals(0, code, "The command should not have failed");
 	}
 

@@ -30,7 +30,7 @@ import io.metaloom.video4j.fingerprint.v2.MultiSectorVideoFingerprinter;
 import io.metaloom.video4j.fingerprint.v2.impl.MultiSectorVideoFingerprinterImpl;
 
 @Singleton
-public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
+public class FingerprintAction extends AbstractMediaAction<FingerprintActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FingerprintAction.class);
 
@@ -41,7 +41,7 @@ public class FingerprintAction extends AbstractMediaAction<FingerprintOptions> {
 	}
 
 	@Inject
-	public FingerprintAction(@Nullable LoomClient client, CortexOptions cortexOption, FingerprintOptions options) {
+	public FingerprintAction(@Nullable LoomClient client, CortexOptions cortexOption, FingerprintActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

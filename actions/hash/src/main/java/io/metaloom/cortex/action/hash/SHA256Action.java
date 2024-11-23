@@ -22,18 +22,18 @@ import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA256;
 
 @Singleton
-public class SHA256Action extends AbstractMediaAction<HashOptions> {
+public class SHA256Action extends AbstractMediaAction<HashActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA256Action.class);
 
 	@Inject
-	public SHA256Action(@Nullable LoomClient client, CortexOptions cortexOption, HashOptions options) {
+	public SHA256Action(@Nullable LoomClient client, CortexOptions cortexOption, HashActionOptions options) {
 		super(client, cortexOption, options);
 	}
 
 	@Override
 	public String name() {
-		return "SHA256";
+		return "sha256";
 	}
 
 	@Override

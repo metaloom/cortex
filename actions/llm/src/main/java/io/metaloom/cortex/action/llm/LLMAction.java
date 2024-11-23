@@ -1,5 +1,8 @@
 package io.metaloom.cortex.action.llm;
 
+import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
+import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -13,12 +16,15 @@ import io.metaloom.ai.genai.llm.prompt.Prompt;
 import io.metaloom.ai.genai.llm.prompt.impl.PromptImpl;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
+import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
+
+	public static final LoomMetaKey<String> LLM_RESULT_KEY = metaKey("llm_result", 1, XATTR, String.class);
 
 	@Inject
 	public LLMAction(@Nullable LoomClient client, CortexOptions cortexOption, LLMActionOptions options) {
@@ -33,12 +39,13 @@ public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
 
 	@Override
 	protected boolean isProcessable(ActionContext ctx) {
+		// Every media has a filename thus can be processed.
 		return true;
 	}
 
 	@Override
 	protected boolean isProcessed(ActionContext ctx) {
-		return ctx.media().hasSHA512();
+		return ctx.media().has(LLM_RESULT_KEY);
 	}
 
 	@Override
@@ -51,7 +58,8 @@ public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
 		LLMProvider provider = new OllamaLLMProvider();
 		String text = provider.generate(llmCtx);
 		System.out.println(text);
-		return null;
+		ctx.media().put(LLM_RESULT_KEY, text);
+		return ActionResult.processed(true);
 	}
 
 }

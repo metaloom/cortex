@@ -31,14 +31,14 @@ public class MD5ActionTest extends AbstractBasicActionTest<MD5Action> {
 
 	@Override
 	public MD5Action mockAction(LoomClient client, CortexOptions cortexOptions) {
-		HashOptions options = mock(HashOptions.class);
+		HashActionOptions options = mock(HashActionOptions.class);
 		when(options.isMD5()).thenReturn(true);
 		return new MD5Action(client, cortexOptions, options);
 	}
 
 	@Override
 	protected void disableAction(MD5Action actionMock) {
-		HashOptions options = actionMock.options();
+		HashActionOptions options = actionMock.options();
 		when(options.isMD5()).thenReturn(false);
 	}
 

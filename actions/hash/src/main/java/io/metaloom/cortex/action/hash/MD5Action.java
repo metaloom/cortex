@@ -22,12 +22,12 @@ import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.MD5;
 
 @Singleton
-public class MD5Action extends AbstractMediaAction<HashOptions> {
+public class MD5Action extends AbstractMediaAction<HashActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(MD5Action.class);
 
 	@Inject
-	public MD5Action(@Nullable LoomClient client, CortexOptions cortexOption, HashOptions options) {
+	public MD5Action(@Nullable LoomClient client, CortexOptions cortexOption, HashActionOptions options) {
 		super(client, cortexOption, options);
 	}
 

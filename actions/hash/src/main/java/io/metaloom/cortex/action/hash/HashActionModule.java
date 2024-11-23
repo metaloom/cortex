@@ -27,11 +27,11 @@ public abstract class HashActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(HashOptions.class, HashOptions.KEY);
+		return new CortexActionOptionDeserializerInfo(HashActionOptions.class, HashActionOptions.KEY);
 	}
 
 	@Provides
-	public static HashOptions options(CortexOptions options) {
-		return actionOptions(options, HashOptions.KEY, new HashOptions());
+	public static HashActionOptions options(CortexOptions options) {
+		return actionOptions(options, HashActionOptions.KEY, new HashActionOptions());
 	}
 }

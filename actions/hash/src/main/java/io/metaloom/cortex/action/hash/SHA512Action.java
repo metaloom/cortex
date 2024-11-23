@@ -20,18 +20,18 @@ import io.metaloom.utils.hash.HashUtils;
 import io.metaloom.utils.hash.SHA512;
 
 @Singleton
-public class SHA512Action extends AbstractMediaAction<HashOptions> {
+public class SHA512Action extends AbstractMediaAction<HashActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(SHA512Action.class);
 
 	@Inject
-	public SHA512Action(@Nullable LoomClient client, CortexOptions cortexOption, HashOptions options) {
+	public SHA512Action(@Nullable LoomClient client, CortexOptions cortexOption, HashActionOptions options) {
 		super(client, cortexOption, options);
 	}
 
 	@Override
 	public String name() {
-		return "SHA512";
+		return "sha512";
 	}
 
 	@Override

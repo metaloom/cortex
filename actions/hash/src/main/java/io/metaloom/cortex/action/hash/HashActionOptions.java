@@ -2,7 +2,7 @@ package io.metaloom.cortex.action.hash;
 
 import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
-public class HashOptions extends AbstractActionOptions<HashOptions> {
+public class HashActionOptions extends AbstractActionOptions<HashActionOptions> {
 
 	public static final String KEY = "hash";
 
@@ -15,7 +15,7 @@ public class HashOptions extends AbstractActionOptions<HashOptions> {
 	private boolean chunkHash = true;
 
 	@Override
-	protected HashOptions self() {
+	protected HashActionOptions self() {
 		return this;
 	}
 
@@ -23,7 +23,7 @@ public class HashOptions extends AbstractActionOptions<HashOptions> {
 		return md5;
 	}
 
-	public HashOptions setMD5(boolean flag) {
+	public HashActionOptions setMD5(boolean flag) {
 		this.md5 = flag;
 		return this;
 	}
@@ -32,7 +32,7 @@ public class HashOptions extends AbstractActionOptions<HashOptions> {
 		return chunkHash;
 	}
 
-	public HashOptions setChunkHash(boolean chunkHash) {
+	public HashActionOptions setChunkHash(boolean chunkHash) {
 		this.chunkHash = chunkHash;
 		return this;
 	}
@@ -41,7 +41,7 @@ public class HashOptions extends AbstractActionOptions<HashOptions> {
 		return sha256;
 	}
 
-	public HashOptions setSHA256(boolean flag) {
+	public HashActionOptions setSHA256(boolean flag) {
 		this.sha256 = flag;
 		return this;
 	}
@@ -50,7 +50,7 @@ public class HashOptions extends AbstractActionOptions<HashOptions> {
 		return sha512;
 	}
 
-	public HashOptions setSHA512(boolean flag) {
+	public HashActionOptions setSHA512(boolean flag) {
 		this.sha512 = flag;
 		return this;
 	}
