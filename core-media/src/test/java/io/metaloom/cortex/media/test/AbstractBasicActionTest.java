@@ -3,12 +3,18 @@ package io.metaloom.cortex.media.test;
 import static io.metaloom.cortex.media.test.assertj.ActionAssertions.assertThat;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.media.LoomMedia;
+import io.metaloom.cortex.api.media.type.handler.impl.AvroLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.HeapLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.media.type.handler.impl.XAttrLoomMetaTypeHandlerImpl;
+import io.metaloom.cortex.api.meta.MetaStorage;
+import io.metaloom.cortex.common.meta.MetaStorageImpl;
 import io.metaloom.loom.test.data.TestMedia;
 
 public abstract class AbstractBasicActionTest<T extends FilesystemAction<?>> extends AbstractActionTest<T> implements ActionTestcases {
@@ -134,4 +140,9 @@ public abstract class AbstractBasicActionTest<T extends FilesystemAction<?>> ext
 
 	protected abstract void disableAction(T actionMock);
 
+	@Override
+	public MetaStorage storage() {
+		return new MetaStorageImpl(
+			Set.of(new HeapLoomMetaTypeHandlerImpl(), new AvroLoomMetaTypeHandlerImpl(options()), new XAttrLoomMetaTypeHandlerImpl()));
+	}
 }

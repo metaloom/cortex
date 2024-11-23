@@ -59,6 +59,11 @@
         </dependency>
         <dependency>
             <groupId>io.metaloom.cortex</groupId>
+            <artifactId>cortex-llm-action</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.metaloom.cortex</groupId>
             <artifactId>cortex-tika-action</artifactId>
             <version>${project.version}</version>
         </dependency>

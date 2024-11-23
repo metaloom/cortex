@@ -20,6 +20,7 @@
         <module>facedetect</module>
         <module>scene-detection</module>
         <module>ocr</module>
+        <module>llm</module>
         <module>tika</module>
         <module>captioning</module>
         <module>loom</module>
