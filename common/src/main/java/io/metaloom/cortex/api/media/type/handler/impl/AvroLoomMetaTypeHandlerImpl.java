@@ -3,6 +3,7 @@ package io.metaloom.cortex.api.media.type.handler.impl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,6 +37,7 @@ public class AvroLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 		this.options = options;
 		this.basePath = options.getMetaPath();
 		try {
+			Objects.requireNonNull(basePath, "The metaPath was not set in the configuration");
 			FileUtils.ensureParentFolder(basePath);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to verify basePath " + basePath, e);

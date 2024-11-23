@@ -65,7 +65,9 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 				System.out.println("[" + media.path() + "]");
 				for (FilesystemAction action : actions) {
 					if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
-						log.warn("Action {} will be skipped", action.name());
+						if (log.isDebugEnabled()) {
+							log.debug("Action {} will be skipped", action.name());
+						}
 						continue;
 					}
 

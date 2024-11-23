@@ -17,12 +17,12 @@ import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
 
 @Singleton
-public class OCRAction extends AbstractMediaAction<OCROptions> {
+public class OCRAction extends AbstractMediaAction<OCRActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(OCRAction.class);
 
 	@Inject
-	public OCRAction(@Nullable LoomClient client, CortexOptions options, OCROptions actionOptions) {
+	public OCRAction(@Nullable LoomClient client, CortexOptions options, OCRActionOptions actionOptions) {
 		super(client, options, actionOptions);
 	}
 

@@ -19,12 +19,12 @@ public abstract class OCRActionModule extends AbstractActionModule {
 	@IntoSet
 	@Provides
 	public static CortexActionOptionDeserializerInfo optionInfo() {
-		return new CortexActionOptionDeserializerInfo(OCROptions.class, OCROptions.KEY);
+		return new CortexActionOptionDeserializerInfo(OCRActionOptions.class, OCRActionOptions.KEY);
 	}
 
 	@Provides
-	public static OCROptions options(CortexOptions options) {
-		return actionOptions(options, OCROptions.KEY, new OCROptions());
+	public static OCRActionOptions options(CortexOptions options) {
+		return actionOptions(options, OCRActionOptions.KEY, new OCRActionOptions());
 	}
 
 }
