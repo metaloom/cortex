@@ -21,10 +21,11 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
+import io.vertx.core.json.JsonObject;
 
 public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
 
-	public static final LoomMetaKey<String> LLM_RESULT_KEY = metaKey("llm_result", 1, XATTR, String.class);
+	public static final LoomMetaKey<JsonObject> LLM_RESULT_KEY = metaKey("llm_result", 1, XATTR, JsonObject.class);
 
 	@Inject
 	public LLMAction(@Nullable LoomClient client, CortexOptions cortexOption, LLMActionOptions options) {
@@ -52,13 +53,25 @@ public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
 	protected ActionResult compute(ActionContext ctx, AssetResponse asset) throws Exception {
 		// TODO make model configurable
 		LargeLanguageModel model = new LargeLanguageModelImpl("gemma2:27b", options().ollamaUrl(), 2048, LLMProviderType.OLLAMA);
-		Prompt prompt = new PromptImpl("Write hello world");
+		Prompt prompt = new PromptImpl("""
+			Extract metadata from the given filename and output JSON.
+			
+			Example JSON Format:
+			{
+				"format": "1080p",
+				"genre": "action",
+				"year": "2024",
+				"title": "The human readable title"
+			}
+			Filename:
+			${name}
+			""");
+		prompt.set("name", ctx.media().file().getName());
 		LLMContext llmCtx = LLMContext.ctx(prompt, model);
 
 		LLMProvider provider = new OllamaLLMProvider();
-		String text = provider.generate(llmCtx);
-		System.out.println(text);
-		ctx.media().put(LLM_RESULT_KEY, text);
+		JsonObject json = provider.generateJson(llmCtx);
+		ctx.media().put(LLM_RESULT_KEY, json);
 		return ActionResult.processed(true);
 	}
 

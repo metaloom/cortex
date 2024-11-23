@@ -23,6 +23,7 @@
         <module>core-media</module>
         <module>actions</module>
         <module>processor</module>
+        <module>core</module>
         <module>cli</module>
     </modules>
 
@@ -57,6 +58,11 @@
                 <artifactId>cortex-common</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>io.metaloom.cortex</groupId>
+                <artifactId>cortex-core</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.metaloom.cortex</groupId>
