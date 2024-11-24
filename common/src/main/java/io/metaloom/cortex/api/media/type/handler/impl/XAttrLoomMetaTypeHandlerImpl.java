@@ -13,6 +13,7 @@ import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
 import io.metaloom.cortex.api.meta.MetaDataStream;
 import io.metaloom.utils.fs.XAttrUtils;
 import io.metaloom.utils.hash.AbstractStringHash;
+import io.vertx.core.json.JsonObject;
 
 @Singleton
 public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
@@ -57,6 +58,9 @@ public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 				return null;
 			}
 			return metaKey.newValue(value);
+		} else if (JsonObject.class.isAssignableFrom(metaKey.getValueClazz())) {
+			String str = XAttrUtils.readXAttr(media.path(), metaKey.fullKey(), String.class);
+			return (T) new JsonObject(str);
 		} else {
 			return (T) XAttrUtils.readXAttr(media.path(), metaKey.fullKey(), metaKey.getValueClazz());
 		}
