@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.metaloom.ai.genai.llm.LLMContext;
 import io.metaloom.ai.genai.llm.LLMProvider;
@@ -26,6 +27,7 @@ import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.vertx.core.json.JsonObject;
 
+@Singleton
 public class LLMAction extends AbstractMediaAction<LLMActionOptions> {
 
 	@Inject

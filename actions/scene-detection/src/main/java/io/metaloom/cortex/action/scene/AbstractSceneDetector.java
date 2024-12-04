@@ -3,6 +3,7 @@ package io.metaloom.cortex.action.scene;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 
 import org.opencv.core.Size;
@@ -21,7 +22,13 @@ public abstract class AbstractSceneDetector implements SceneDetector {
 
 	private final int videoChopRate = 1;
 	protected final int VIDEO_SCALE_SIZE = 512;
-	private SimpleImageViewer viewer = new SimpleImageViewer();
+	private SimpleImageViewer viewer;
+
+	public AbstractSceneDetector() {
+		if (!GraphicsEnvironment.isHeadless()) {
+			viewer = new SimpleImageViewer();
+		}
+	}
 
 	protected SceneDetectionResult detect(VideoFile video, Detector detector) {
 		int showCut = 0;
@@ -41,27 +48,29 @@ public abstract class AbstractSceneDetector implements SceneDetector {
 				showCut = 1;
 			}
 
-			// int diff = (int) ((delta / 100) * 3);
-			// System.out.println(nFrame + " " + diff + " " + String.format("%.2f", delta));
-			// Color color = new Color(red, 0, 0);
-			// g.setColor(color);
-			// g.fillRect(10, 10, 10, 10);
-			Graphics g = img.getGraphics();
-			if (showCut != 0 && showCut < 8) {
-				g.setColor(Color.GREEN);
-				g.fillRect(10, 10, 50, 50);
-				showCut++;
-			} else {
-				showCut = 0;
+			if (viewer != null) {
+				// int diff = (int) ((delta / 100) * 3);
+				// System.out.println(nFrame + " " + diff + " " + String.format("%.2f", delta));
+				// Color color = new Color(red, 0, 0);
+				// g.setColor(color);
+				// g.fillRect(10, 10, 10, 10);
+				Graphics g = img.getGraphics();
+				if (showCut != 0 && showCut < 8) {
+					g.setColor(Color.GREEN);
+					g.fillRect(10, 10, 50, 50);
+					showCut++;
+				} else {
+					showCut = 0;
+				}
+				g.setColor(Color.WHITE);
+				g.setFont(new Font("TimesRoman", Font.BOLD, 20));
+				if (frameResult.delta() > frameResult.threshold() / 2) {
+					shownDelta = frameResult.delta();
+				}
+				g.drawString(nFrame + " " + String.format("%.2f", frameResult.delta()) + " D: " + String.format("%.0f", shownDelta), 30,
+					img.getHeight() - 20);
+				viewer.show(img);
 			}
-			g.setColor(Color.WHITE);
-			g.setFont(new Font("TimesRoman", Font.BOLD, 20));
-			if (frameResult.delta() > frameResult.threshold() / 2) {
-				shownDelta = frameResult.delta();
-			}
-			g.drawString(nFrame + " " + String.format("%.2f", frameResult.delta()) + " D: " + String.format("%.0f", shownDelta), 30,
-				img.getHeight() - 20);
-			viewer.show(img);
 
 		}
 		// No cut detection means one scene

@@ -35,6 +35,10 @@
             <groupId>io.metaloom.cortex</groupId>
             <artifactId>cortex-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar</artifactId>
+        </dependency>
 
         <!-- Actions -->
         <dependency>

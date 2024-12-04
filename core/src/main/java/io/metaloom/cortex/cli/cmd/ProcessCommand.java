@@ -5,6 +5,7 @@ import static io.metaloom.cortex.cli.ExitCode.OK;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,8 +38,11 @@ public class ProcessCommand extends AbstractLoomWorkerCommand {
 		@Parameters(index = "0", description = "Path to be processed") String path) {
 		try {
 			Path folder = Paths.get(path);
-			String[] actions = enabledActions.split(",");
-			processor.process(List.of(actions), folder);
+			List<String> actionList = Collections.emptyList();
+			if (enabledActions != null) {
+				actionList = List.of(enabledActions.split(","));
+			}
+			processor.process(actionList, folder);
 			return OK.code();
 		} catch (Exception e) {
 			log.error("Restoring collections failed.", e);

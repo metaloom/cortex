@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.FilesystemAction;
 import io.metaloom.cortex.api.action.ResultState;
+import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.action.context.impl.ActionContextImpl;
 import io.metaloom.cortex.common.media.LoomMediaLoader;
 import io.metaloom.cortex.scanner.FilesystemProcessor;
@@ -24,6 +25,7 @@ import io.metaloom.fs.FileState;
 import io.metaloom.fs.linux.LinuxFilesystemScanner;
 import io.metaloom.utils.fs.FilterHelper;
 import io.metaloom.utils.hash.SHA512;
+import me.tongfei.progressbar.ProgressBar;
 
 @Singleton
 public class FilesystemProcessorImpl implements FilesystemProcessor {
@@ -57,47 +59,58 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 			.collect(Collectors.toList());
 
 		long total = newMediaFiles.size();
+		try (ProgressBar pb = new ProgressBar("Processor", total)) {
 
-		newMediaFiles.stream().map(info -> loader.load(info.path()))
-			.forEach(media -> {
-				long current = count.incrementAndGet();
-				boolean processed = false;
-				System.out.println("[" + media.path() + "]");
-				for (FilesystemAction action : actions) {
-					if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
-						if (log.isDebugEnabled()) {
-							log.debug("Action {} will be skipped", action.name());
-						}
-						continue;
-					}
+			newMediaFiles.stream().map(info -> loader.load(info.path()))
+				.forEach(media -> {
 
-					log.debug("Processing media {} using action {}", media, action.name());
-					action.set(current, total);
-					try {
-						ActionResult result = action.process(new ActionContextImpl(media));
-						processed |= result.getState() == ResultState.SUCCESS;
-						if (!result.isContinueNext()) {
-							action.error(media, "Aborting further processing");
-							// Abort further processing
-							return;
+					long current = count.incrementAndGet();
+					boolean processed = false;
+					// pb.setExtraMessage("[" + media.path().toFile().getName() + "]");
+					for (FilesystemAction<?> action : actions) {
+						if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
+							if (log.isDebugEnabled()) {
+								log.debug("Action {} will be skipped", action.name());
+							}
+							continue;
 						}
-					} catch (Exception e) {
-						action.error(media, "Error while processing action " + action.name());
-						e.printStackTrace();
+
+						log.debug("Processing media {} using action {}", media, action.name());
+						action.set(current, total);
+						try {
+							ActionContext ctx = new ActionContextImpl(media);
+							ActionResult result = action.process(ctx);
+							if (result == null) {
+								log.error("Action '{}' failed to process media {}. Invalid result returned.", action.name(), media);
+								return;
+							}
+							action.print(ctx, "ok", "msg");
+							processed |= result.getState() == ResultState.SUCCESS;
+							if (!result.isContinueNext()) {
+								action.error(media, "Aborting further processing");
+								// Abort further processing
+								return;
+							}
+						} catch (Exception e) {
+							action.error(media, "Error while processing action " + action.name());
+							e.printStackTrace();
+						}
+						if (current % 100 == 0) {
+							action.flush();
+						}
 					}
-					if (current % 100 == 0) {
-						action.flush();
+					if (processed) {
+						System.out.println();
 					}
-				}
-				if (processed) {
-					System.out.println();
-				}
-				SHA512 hashsum = media.getSHA512();
-				log.trace("Adding {}", hashsum);
-				if (current % 1000 == 0) {
-					log.info("Count: " + current);
-				}
-			});
+					SHA512 hashsum = media.getSHA512();
+					log.trace("Adding {}", hashsum);
+					if (current % 1000 == 0) {
+						log.info("Count: " + current);
+					}
+					pb.step();
+					pb.refresh();
+				});
+		}
 	}
 
 	@Override
