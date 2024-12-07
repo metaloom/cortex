@@ -32,6 +32,8 @@ public interface ActionContext {
 
 	ActionContext origin(ResultOrigin origin);
 
+	ResultOrigin origin();
+
 	ActionContext failure(String cause);
 
 	ActionResult next();

@@ -55,7 +55,6 @@ public class SHA512Action extends AbstractMediaAction<HashActionOptions> {
 		LoomMedia media = ctx.media();
 		SHA512 hash = HashUtils.computeSHA512(media.file());
 		media.setSHA512(hash);
-		print(ctx, "COMPLETED", "(computed)");
 		return ctx.origin(COMPUTED).next();
 	}
 

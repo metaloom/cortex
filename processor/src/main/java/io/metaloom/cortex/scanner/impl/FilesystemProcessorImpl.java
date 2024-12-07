@@ -59,58 +59,61 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 			.collect(Collectors.toList());
 
 		long total = newMediaFiles.size();
-		try (ProgressBar pb = new ProgressBar("Processor", total)) {
+		// try (ProgressBar pb = new ProgressBar("Processor", total)) {
 
-			newMediaFiles.stream().map(info -> loader.load(info.path()))
-				.forEach(media -> {
+		newMediaFiles.stream().map(info -> loader.load(info.path()))
+			.forEach(media -> {
 
-					long current = count.incrementAndGet();
-					boolean processed = false;
-					// pb.setExtraMessage("[" + media.path().toFile().getName() + "]");
-					for (FilesystemAction<?> action : actions) {
-						if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
-							if (log.isDebugEnabled()) {
-								log.debug("Action {} will be skipped", action.name());
-							}
-							continue;
+				long current = count.incrementAndGet();
+				boolean processed = false;
+				// pb.setExtraMessage("[" + media.path().toFile().getName() + "]");
+				for (FilesystemAction<?> action : actions) {
+					if (enabledActions != null && !enabledActions.isEmpty() && !enabledActions.contains(action.name().toLowerCase())) {
+						if (log.isDebugEnabled()) {
+							log.debug("Action {} will be skipped", action.name());
+						}
+						continue;
+					}
+
+					log.debug("Processing media {} using action {}", media, action.name());
+					action.set(current, total);
+					try {
+						ActionContext ctx = new ActionContextImpl(media);
+						ActionResult result = action.process(ctx);
+						if (result == null) {
+							log.error("Action '{}' failed to process media {}. Invalid result returned.", action.name(), media);
+							return;
 						}
 
-						log.debug("Processing media {} using action {}", media, action.name());
-						action.set(current, total);
-						try {
-							ActionContext ctx = new ActionContextImpl(media);
-							ActionResult result = action.process(ctx);
-							if (result == null) {
-								log.error("Action '{}' failed to process media {}. Invalid result returned.", action.name(), media);
-								return;
-							}
-							action.print(ctx, "ok", "msg");
-							processed |= result.getState() == ResultState.SUCCESS;
-							if (!result.isContinueNext()) {
-								action.error(media, "Aborting further processing");
-								// Abort further processing
-								return;
-							}
-						} catch (Exception e) {
-							action.error(media, "Error while processing action " + action.name());
-							e.printStackTrace();
+						String originName = ctx.origin() != null ? ctx.origin().name() : "NA";
+						action.print(ctx, result.getState().name(), originName);
+						processed |= result.getState() == ResultState.SUCCESS;
+						if (!result.isContinueNext()) {
+							action.error(media, "Aborting further processing");
+							// Abort further processing
+							return;
 						}
-						if (current % 100 == 0) {
-							action.flush();
-						}
+					} catch (Exception e) {
+						action.error(media, "Error while processing action " + action.name());
+						e.printStackTrace();
 					}
-					if (processed) {
-						System.out.println();
+					if (current % 100 == 0) {
+						action.flush();
 					}
-					SHA512 hashsum = media.getSHA512();
-					log.trace("Adding {}", hashsum);
-					if (current % 1000 == 0) {
-						log.info("Count: " + current);
-					}
-					pb.step();
-					pb.refresh();
-				});
-		}
+				}
+				if (processed) {
+					System.out.println();
+				}
+				SHA512 hashsum = media.getSHA512();
+				log.trace("Adding {}", hashsum);
+				if (current % 1000 == 0) {
+					log.info("Count: " + current);
+				}
+				// pb.step();
+				// pb.refresh();
+				// System.out.println();
+			});
+		// }
 	}
 
 	@Override

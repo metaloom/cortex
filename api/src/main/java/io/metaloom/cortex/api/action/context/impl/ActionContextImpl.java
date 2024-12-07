@@ -61,6 +61,11 @@ public class ActionContextImpl implements ActionContext {
 	}
 
 	@Override
+	public ResultOrigin origin() {
+		return origin;
+	}
+
+	@Override
 	public ActionContext failure(String cause) {
 		return this;
 	}
