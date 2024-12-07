@@ -26,7 +26,7 @@ import io.metaloom.utils.hash.SHA512;
 @Singleton
 public class LoomMediaImpl extends AbstractFilesystemMedia {
 
-	private final Path path;
+	private Path path;
 	private final MetaStorage storage;
 
 	@Inject
@@ -38,6 +38,10 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	@Override
 	public Path path() {
 		return path;
+	}
+
+	public void setPath(Path path) {
+		this.path = path;
 	}
 
 	@Override
@@ -98,6 +102,16 @@ public class LoomMediaImpl extends AbstractFilesystemMedia {
 	@Override
 	public SHA512 getSHA512() {
 		SHA512 hash = get(SHA_512_KEY);
+
+		// Try original hash xattr
+		if (hash == null) {
+			String attrStr = XAttrUtils.readXAttr(path(), "sha512sum", String.class);
+			if (attrStr != null) {
+				hash = SHA512.fromString(attrStr);
+				setSHA512(hash);
+			}
+		}
+
 		if (hash == null) {
 			hash = HashUtils.computeSHA512(file());
 			setSHA512(hash);

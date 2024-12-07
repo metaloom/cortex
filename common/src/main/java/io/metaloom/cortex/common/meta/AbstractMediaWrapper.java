@@ -50,6 +50,11 @@ public abstract class AbstractMediaWrapper implements LoomMedia {
 	}
 
 	@Override
+	public void setPath(Path path) {
+		delegate.setPath(path);
+	}
+
+	@Override
 	public long size() throws IOException {
 		return delegate.size();
 	}

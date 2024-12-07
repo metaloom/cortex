@@ -36,6 +36,8 @@ public interface ProcessableMedia extends MetaStorageAccess {
 	 */
 	Path path();
 
+	void setPath(Path path);
+
 	/**
 	 * Size in bytes.
 	 * 

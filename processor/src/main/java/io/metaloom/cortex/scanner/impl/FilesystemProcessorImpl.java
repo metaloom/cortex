@@ -94,8 +94,8 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 							return;
 						}
 					} catch (Exception e) {
-						action.error(media, "Error while processing action " + action.name());
 						e.printStackTrace();
+						action.error(media, "Error while processing action " + action.name());
 					}
 					if (current % 100 == 0) {
 						action.flush();
@@ -105,9 +105,11 @@ public class FilesystemProcessorImpl implements FilesystemProcessor {
 					System.out.println();
 				}
 				SHA512 hashsum = media.getSHA512();
-				log.trace("Adding {}", hashsum);
-				if (current % 1000 == 0) {
-					log.info("Count: " + current);
+				if (log.isTraceEnabled()) {
+					log.trace("Adding {}", hashsum);
+					if (current % 1000 == 0) {
+						log.trace("Count: " + current);
+					}
 				}
 				// pb.step();
 				// pb.refresh();

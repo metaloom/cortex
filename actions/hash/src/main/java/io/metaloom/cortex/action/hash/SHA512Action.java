@@ -27,6 +27,11 @@ public class SHA512Action extends AbstractMediaAction<HashActionOptions> {
 	@Inject
 	public SHA512Action(@Nullable LoomClient client, CortexOptions cortexOption, HashActionOptions options) {
 		super(client, cortexOption, options);
+		if (options().isSHA512()) {
+			log.info("SHA512 hashing enabled");
+		} else {
+			log.info("SHA512 hashing disabled");
+		}
 	}
 
 	@Override
@@ -41,13 +46,7 @@ public class SHA512Action extends AbstractMediaAction<HashActionOptions> {
 
 	@Override
 	protected boolean isProcessable(ActionContext ctx) {
-		if (options().isSHA512()) {
-			// TODO return or log reason
-			return true;
-		} else {
-			log.debug("[{}] SHA512 not enabled in hash options", this);
-			return false;
-		}
+		return options().isSHA512();
 	}
 
 	@Override
