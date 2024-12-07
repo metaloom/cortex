@@ -76,8 +76,6 @@ public class CortexOptionsLoader {
 	/**
 	 * Try to load the loom options from different locations (classpath, config folder). Otherwise a default configuration will be generated.
 	 * 
-	 * @param defaultOption
-	 * 
 	 * @return
 	 */
 	public CortexOptions load() {
