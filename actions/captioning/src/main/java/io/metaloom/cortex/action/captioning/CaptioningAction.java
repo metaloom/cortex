@@ -16,9 +16,12 @@ import io.metaloom.loom.rest.model.asset.AssetResponse;
 @Singleton
 public class CaptioningAction extends AbstractMediaAction<CaptioningActionOptions> {
 
+	private final SmolVLMClient smolvlmClient;
+
 	@Inject
 	public CaptioningAction(@Nullable LoomClient client, CortexOptions cortexOption, CaptioningActionOptions option) {
 		super(client, cortexOption, option);
+		this.smolvlmClient = new SmolVLMClient(option.getSmolVLMHost(), option.getSmolVLMPort());
 	}
 
 	@Override
