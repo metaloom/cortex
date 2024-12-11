@@ -1,13 +1,21 @@
 package io.metaloom.cortex.action.captioning;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.codec.binary.Base64OutputStream;
+import org.imgscalr.Scalr;
+
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import io.metaloom.video4j.utils.ImageUtils;
 import io.vertx.core.json.JsonObject;
 
 public class SmolVLMClient {
@@ -72,5 +80,24 @@ public class SmolVLMClient {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	public String captionByImage(BufferedImage image, int targetSize) throws URISyntaxException, IOException {
+		BufferedImage lowRes = Scalr.resize(image, targetSize);
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		// Save the resized image as JPG into the stream
+		try (Base64OutputStream os = new Base64OutputStream(bos)) {
+			ImageUtils.saveJPG(os, lowRes);
+		}
+
+		// Get the encoded bytes from the ByteArrayOutputStream
+		byte[] encodedBytes = bos.toByteArray();
+
+		// Convert the encoded bytes to a string
+		String encodedString = new String(encodedBytes, StandardCharsets.UTF_8);
+
+		return captionByImageData(encodedString);
 	}
 }
