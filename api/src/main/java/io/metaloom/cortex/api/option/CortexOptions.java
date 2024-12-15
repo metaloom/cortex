@@ -9,7 +9,7 @@ import io.metaloom.cortex.api.option.action.CortexActionOptions;
 public class CortexOptions {
 
 	private Map<String, CortexActionOptions> actions = new HashMap<>();
-	private LoomOptions loom = new LoomOptions();
+	private LoomClientOptions loom = new LoomClientOptions();
 	private boolean dryrun;
 
 	private Path metaPath;
@@ -26,11 +26,11 @@ public class CortexOptions {
 		return this;
 	}
 
-	public LoomOptions getLoom() {
+	public LoomClientOptions getLoom() {
 		return loom;
 	}
 
-	public CortexOptions setLoom(LoomOptions loom) {
+	public CortexOptions setLoom(LoomClientOptions loom) {
 		this.loom = loom;
 		return this;
 	}

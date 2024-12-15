@@ -1,6 +1,6 @@
 package io.metaloom.cortex.api.option;
 
-public class LoomOptions {
+public class LoomClientOptions {
 
 	private String hostname;
 	private int port;
@@ -9,7 +9,7 @@ public class LoomOptions {
 		return port;
 	}
 
-	public LoomOptions setPort(int port) {
+	public LoomClientOptions setPort(int port) {
 		this.port = port;
 		return this;
 	}
@@ -18,7 +18,7 @@ public class LoomOptions {
 		return hostname;
 	}
 
-	public LoomOptions setHostname(String hostname) {
+	public LoomClientOptions setHostname(String hostname) {
 		this.hostname = hostname;
 		return this;
 	}

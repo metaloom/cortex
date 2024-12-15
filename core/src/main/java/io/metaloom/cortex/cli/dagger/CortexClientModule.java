@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import dagger.Module;
 import dagger.Provides;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.api.option.LoomOptions;
+import io.metaloom.cortex.api.option.LoomClientOptions;
 import io.metaloom.cortex.common.option.CortexOptionsLoader;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.client.http.LoomHttpClient;
@@ -51,7 +51,7 @@ public class CortexClientModule {
 	@Nullable
 	public LoomClient restClient(CortexOptions options) {
 
-		LoomOptions loom = options.getLoom();
+		LoomClientOptions loom = options.getLoom();
 		if (loom == null) {
 			log.error("Loom options not set. Unable to create REST client");
 			return null;
