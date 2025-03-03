@@ -71,7 +71,11 @@ public class OpticalFlowSceneDetector extends AbstractSceneDetector {
 			MatOfPoint2f p0 = new MatOfPoint2f(corners.toArray());
 			MatOfPoint2f p1 = new MatOfPoint2f();
 			MatOfPoint2f status = new MatOfPoint2f();
+			try {
 			flow.calc(previousGray.get(), grayFrame, p0, p1, status, err);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 			// select good points
 			List<Point> goodNew = new ArrayList<>();

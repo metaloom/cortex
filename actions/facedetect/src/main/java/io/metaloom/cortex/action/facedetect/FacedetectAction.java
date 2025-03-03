@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
@@ -41,7 +40,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
 
-	private static final int WINDOW_COUNT = 10;
+	private static final int WINDOW_COUNT = 20;
 	private static final int WINDOW_SIZE = 10;
 	private static final int WINDOW_STEPS = 5;
 

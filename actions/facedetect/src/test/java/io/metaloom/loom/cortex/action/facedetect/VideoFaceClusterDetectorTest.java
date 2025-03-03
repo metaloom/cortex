@@ -27,7 +27,7 @@ public class VideoFaceClusterDetectorTest {
 	@Test
 	public void testExampleCode() throws InterruptedException, IOException {
 
-		try (VideoFile video = Videos.open("/extra/vid/6.mkv")) {
+		try (VideoFile video = Videos.open("/extra/vid/3.avi")) {
 			long start = System.currentTimeMillis();
 			List<Face>  faces = detector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
 			long dur = System.currentTimeMillis() - start;

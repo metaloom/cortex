@@ -16,18 +16,20 @@ import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
 import io.metaloom.cortex.action.facedetect.FacedetectMedia;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.option.CortexOptions;
-import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.client.common.LoomClientException;
+import io.metaloom.video4j.Video4j;
 
-public class FacedetectActionTest extends AbstractMediaTest {
+public class FacedetectActionTest extends AbstractFacedetectMediaTest {
 
 	private FacedetectAction action;
+	
 
 	@BeforeEach
 	public void setupAction() throws IOException, LoomClientException {
 		action = mockAction();
+		action.initialize();
 	}
 
 	@Test
@@ -35,7 +37,7 @@ public class FacedetectActionTest extends AbstractMediaTest {
 		FacedetectMedia media = mediaVideo2().of(FACE_DETECTION);
 		ActionResult result = action.process(ctx(media));
 		assertThat(result).isSuccess();
-		assertThat(media).hasXAttr(2).hasXAttr(SHA_512_KEY, FacedetectMedia.FACEDETECT_COUNT_KEY);
+		assertThat(media).hasXAttr(1).hasXAttr(SHA_512_KEY);
 		assertTrue(media.getFaceCount() > 10, "There should be at least 10 detections.");
 	}
 
@@ -55,4 +57,8 @@ public class FacedetectActionTest extends AbstractMediaTest {
 		option.setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
 		return new FacedetectAction(client, new CortexOptions(), option);
 	}
+	
+	
+	
+	
 }

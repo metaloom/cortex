@@ -3,8 +3,8 @@ package io.metaloom.loom.cortex.action.facedetect;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
+import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.utils.FloatUtils;
 import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video.facedetect.face.Face;
@@ -21,13 +21,26 @@ public interface FaceDataTest {
 		// face.set("age", "76");
 		faces.add(face);
 
-		
+		int nFrame = 42;
+
 		Facedetection f = Facedetection.newBuilder()
+			.setAssetHash(hash.toString())
+			.setFrame(nFrame)
+			.setBox(toBox(box))
 			.setEmbedding(FloatUtils.toList(face.getEmbedding()))
 			.build();
-//		FaceData faceData = new FaceData(hash);
-//		faceData.setEntries(faces);
+		// FaceData faceData = new FaceData(hash);
+		// faceData.setEntries(faces);
 		return f;
 	}
-	
+
+	static FacedetectionBox toBox(FaceBox box) {
+		return FacedetectionBox.newBuilder()
+			.setHeight(box.getHeight())
+			.setWidth(box.getWidth())
+			.setStartX(box.getStartX())
+			.setStartY(box.getStartY())
+			.build();
+	}
+
 }

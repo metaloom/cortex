@@ -8,6 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.facedetection.client.FaceDetectionServerClient;
+import io.metaloom.facedetection.client.model.DetectionResponse;
+import io.metaloom.facedetection.client.model.FaceModel;
 import io.metaloom.video.facedetect.FaceVideoFrame;
 import io.metaloom.video.facedetect.FacedetectorUtils;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
@@ -16,14 +19,19 @@ import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
 import io.metaloom.video4j.opencv.CVUtils;
+import io.metaloom.video4j.utils.ImageUtils;
+import io.metaloom.video4j.utils.SimpleImageViewer;
 
 public class VideoFaceScanner {
 
 	private final static Logger log = LoggerFactory.getLogger(VideoFaceScanner.class);
 
+	public static final String FACE_DETECT_SERVER_BASEURL = "http://localhost:8001/api/v1";
+
 	private static DLibFacedetector DLIB_DETECTOR;
-	// private SimpleImageViewer viewer = new SimpleImageViewer();
-	// private SimpleImageViewer viewer2 = new SimpleImageViewer();
+	private static FaceDetectionServerClient client;
+	private SimpleImageViewer viewer = new SimpleImageViewer();
+	private SimpleImageViewer viewer2 = new SimpleImageViewer();
 
 	static {
 		Video4j.init();
@@ -31,6 +39,8 @@ public class VideoFaceScanner {
 			DLIB_DETECTOR = DLibFacedetector.create();
 			DLIB_DETECTOR.setMinFaceHeightFactor(0.01f);
 			DLIB_DETECTOR.enableCNNDetector();
+			client = FaceDetectionServerClient.newBuilder()
+				.setBaseURL(FACE_DETECT_SERVER_BASEURL).build();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -71,9 +81,9 @@ public class VideoFaceScanner {
 		for (long nFrame = from; nFrame < to; nFrame += windowSteps) {
 			FaceVideoFrame frame = scanDetailFrame(video, nFrame);
 			if (frame != null && frame.hasFace()) {
-				// DLIB_DETECTOR.markFaces(frame);
-				// DLIB_DETECTOR.markLandmarks(frame);
-				// viewer2.show(frame);
+				DLIB_DETECTOR.markFaces(frame);
+				DLIB_DETECTOR.markLandmarks(frame);
+				viewer2.show(frame);
 				for (Face face : frame.faces()) {
 					if (face.hasEmbedding()) {
 						face.set("frame", frame.number());
@@ -103,10 +113,20 @@ public class VideoFaceScanner {
 		video.seekToFrame(nFrame);
 
 		VideoFrame frame = video.frame();
-		FaceVideoFrame faceFrame = DLIB_DETECTOR.detectEmbeddings(frame);
-		// DLIB_DETECTOR.markLandmarks(faceFrame);
-		// DLIB_DETECTOR.markFaces(faceFrame);
+		FaceVideoFrame faceFrame = DLIB_DETECTOR.detectFaces(frame);
 		if (faceFrame.hasFace()) {
+			try {
+				String imageData = ImageUtils.toBase64JPG(frame.toImage());
+				DetectionResponse response = client.detect(null, imageData);
+				List<FaceModel> detectedFaces = response.getFaces();
+				ArrayList<? extends Face> faces = new ArrayList<>();
+				for (FaceModel face : detectedFaces) {
+
+				}
+				faceFrame.setFaces(faces);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return faceFrame;
 		} else {
 			return null;
@@ -126,12 +146,13 @@ public class VideoFaceScanner {
 			video.seekToFrame(nFrame);
 			VideoFrame frame = video.frame();
 			CVUtils.resize(frame, 512);
-			// viewer.show(frame);
 			FaceVideoFrame faceFrame = DLIB_DETECTOR.detectFaces(frame);
 			if (faceFrame.hasFace()) {
 				log.info("[W" + nWindow + "] Adding window with " + faceFrame.faces().size() + " faces.");
+				DLIB_DETECTOR.markLandmarks(faceFrame);
 				DLIB_DETECTOR.markFaces(faceFrame);
 				windows.add(new FrameWindow(nWindow, faceFrame, faceFrame.height(), faceFrame.width()));
+				viewer.show(faceFrame);
 				nWindow++;
 			}
 		}

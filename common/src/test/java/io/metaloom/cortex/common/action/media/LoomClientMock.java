@@ -10,6 +10,7 @@ import io.metaloom.loom.client.common.LoomClientException;
 import io.metaloom.loom.client.common.LoomClientRequest;
 import io.metaloom.loom.client.http.LoomHttpClient;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
+import io.metaloom.utils.hash.SHA512;
 
 public class LoomClientMock {
 
@@ -29,8 +30,10 @@ public class LoomClientMock {
 		LoomClientRequest<AssetResponse> req = mock(LoomClientRequest.class);
 		AssetResponse response = mock(AssetResponse.class);
 		when(req.sync()).thenReturn(response);
-		AssetId id = any();
-		when(mock.loadAsset(id)).thenReturn(req);
+//		AssetId id = any();
+		SHA512 sha512 = any();
+		when(mock.loadAsset(sha512)).thenReturn(req);
+		//when(mock.loadAsset(id)).thenReturn(req);
 		return mock;
 	}
 

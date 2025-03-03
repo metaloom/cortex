@@ -4,7 +4,6 @@ import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.AVRO;
 import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 
-import io.metaloom.cortex.action.facedetect.file.model.FaceData;
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;

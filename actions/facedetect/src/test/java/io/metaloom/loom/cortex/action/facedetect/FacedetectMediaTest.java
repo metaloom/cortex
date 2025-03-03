@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -17,14 +16,13 @@ import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
 import io.metaloom.cortex.api.media.type.handler.impl.AvroLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.media.type.handler.impl.XAttrLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.meta.MetaStorage;
-import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 import io.metaloom.cortex.common.meta.MetaStorageImpl;
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
 import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.impl.FaceImpl;
 
-public class FacedetectMediaTest extends AbstractMediaTest {
+public class FacedetectMediaTest extends AbstractFacedetectMediaTest {
 
 	@Test
 	public void testFaceCount() throws IOException {
