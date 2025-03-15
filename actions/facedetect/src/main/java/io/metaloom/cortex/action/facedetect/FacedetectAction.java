@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
+import io.metaloom.cortex.action.facedetect.video.VideoFaceScannerReport;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.action.context.ActionContext;
 import io.metaloom.cortex.api.media.LoomMedia;
@@ -124,8 +125,8 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	private ActionResult processVideo(ActionContext ctx) {
 		FacedetectMedia media = ctx.media(FACE_DETECTION);
 		try (VideoFile video = Videos.open(media.absolutePath())) {
-			List<Face> faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
-			media.setFaceCount(faces.size());
+			VideoFaceScannerReport faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
+			media.setFaceCount(faces.getFaces().size());
 			// TODO add params, flags
 			return ctx.origin(COMPUTED).next();
 		} catch (InterruptedException e) {
