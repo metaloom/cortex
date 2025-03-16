@@ -1,5 +1,7 @@
 package io.metaloom.cortex.api.media.type.handler.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -38,6 +40,16 @@ public class HeapLoomMetaTypeHandlerImpl extends AbstractCachingLoomTypeHandler 
 	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		checkAttrSupport(metaKey);
 		return super.get(media, metaKey);
+	}
+
+	@Override
+	public <T> List<T> getAll(LoomMedia media, LoomMetaKey<T> metaKey) {
+		throw new RuntimeException("Not supported operation for Heap storage");
+	}
+
+	@Override
+	public <T> void append(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		throw new RuntimeException("Not supported operation for Heap storage");
 	}
 
 	private <T> void checkAttrSupport(LoomMetaKey<T> metaKey) {

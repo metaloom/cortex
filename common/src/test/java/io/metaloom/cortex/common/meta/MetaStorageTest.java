@@ -20,8 +20,6 @@ import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
-import io.metaloom.cortex.api.media.impl.LoomMetaKeyImpl;
-import io.metaloom.cortex.api.media.type.LoomMetaCoreType;
 import io.metaloom.cortex.api.media.type.LoomMetaTypeHandler;
 import io.metaloom.cortex.api.media.type.handler.impl.AvroLoomMetaTypeHandlerImpl;
 import io.metaloom.cortex.api.media.type.handler.impl.FSLoomMetaTypeHandlerImpl;
@@ -33,21 +31,6 @@ import io.metaloom.cortex.api.meta.MetaStorage;
 import io.metaloom.cortex.common.action.media.AbstractMediaTest;
 
 public class MetaStorageTest extends AbstractMediaTest {
-
-	private static final LoomMetaKey<String> DUMMY_FS_STR_KEY = new LoomMetaKeyImpl<>("dummy_fs_str", 0, LoomMetaCoreType.FS, String.class);
-
-	private static final LoomMetaKey<MetaDataStream> DUMMY_FS_BIN_KEY = new LoomMetaKeyImpl<>("dummy_fs_bin", 0, LoomMetaCoreType.FS,
-		MetaDataStream.class);
-
-	private static final LoomMetaKey<MetaDataStream> DUMMY_XATTR_BIN_KEY = new LoomMetaKeyImpl<>("dummy_xattr_bin", 0, LoomMetaCoreType.XATTR,
-		MetaDataStream.class);
-
-	private static final LoomMetaKey<String> DUMMY_XATTR_STR_KEY = new LoomMetaKeyImpl<>("dummy_xattr_str", 0, LoomMetaCoreType.XATTR, String.class);
-
-	private static final LoomMetaKey<String> DUMMY_HEAP_STR_KEY = new LoomMetaKeyImpl<>("dummy_heap_str", 0, LoomMetaCoreType.HEAP, String.class);
-
-	private static final LoomMetaKey<MetaDataStream> DUMMY_HEAP_BIN_KEY = new LoomMetaKeyImpl<>("dummy_heap_str", 0, LoomMetaCoreType.HEAP,
-		MetaDataStream.class);
 
 	private MetaStorage storage;
 

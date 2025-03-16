@@ -1,6 +1,7 @@
 package io.metaloom.cortex.api.media.type.handler.impl;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -40,9 +41,19 @@ public class XAttrLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	}
 
 	@Override
+	public <T> List<T> getAll(LoomMedia media, LoomMetaKey<T> metaKey) {
+		throw new RuntimeException("Not supported operation for XAttr storage");
+	}
+
+	@Override
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
 		checkAttrSupport(metaKey);
 		return XAttrUtils.hasXAttr(media.path(), metaKey.fullKey());
+	}
+
+	@Override
+	public <T> void append(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		throw new RuntimeException("Not supported operation for XAttr storage");
 	}
 
 	private <T> void checkAttrSupport(LoomMetaKey<T> metaKey) {

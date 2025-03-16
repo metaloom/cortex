@@ -3,6 +3,9 @@ package io.metaloom.cortex.api.media.type.handler.impl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -56,8 +59,29 @@ public class AvroLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 
 			File file = toMetaPath(media, metaKey).toFile();
 			try (DataFileWriter<T> dataFileWriter = new DataFileWriter<>(datumWriter)) {
-				// dataFileWriter.appendTo(file);
 				dataFileWriter.create(gc.getSchema(), file);
+				dataFileWriter.append(value);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			throw new RuntimeException("The provided value is not compatible with this avro type handler.");
+		}
+	}
+
+	@Override
+	public <T> void append(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		DatumWriter<T> datumWriter = new SpecificDatumWriter<>(metaKey.getValueClazz());
+		if (value instanceof GenericContainer gc) {
+
+			File file = toMetaPath(media, metaKey).toFile();
+			boolean exists = file.exists();
+			try (DataFileWriter<T> dataFileWriter = new DataFileWriter<>(datumWriter)) {
+				if (exists) {
+					dataFileWriter.appendTo(file);
+				} else {
+					dataFileWriter.create(gc.getSchema(), file);
+				}
 				dataFileWriter.append(value);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -75,13 +99,28 @@ public class AvroLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 			return null;
 		}
 		try (DataFileReader<T> dataFileReader = new DataFileReader<>(file, datumReader)) {
-			T item = null;
-			item = dataFileReader.next();
-			// Read the movie record from the file
-			// if (dataFileReader.hasNext()) {
-			// movie = dataFileReader.next();
-			// }
+			T item = item = dataFileReader.next();
 			return item;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public <T> List<T> getAll(LoomMedia media, LoomMetaKey<T> metaKey) {
+		DatumReader<T> datumReader = new SpecificDatumReader<>(metaKey.getValueClazz());
+		File file = toMetaPath(media, metaKey).toFile();
+		if (!file.exists()) {
+			return Collections.emptyList();
+		}
+		try (DataFileReader<T> dataFileReader = new DataFileReader<>(file, datumReader)) {
+			List<T> list = new ArrayList<T>();
+			while (dataFileReader.hasNext()) {
+				T item = dataFileReader.next();
+				list.add(item);
+			}
+			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -92,12 +131,6 @@ public class AvroLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	public <T> boolean has(LoomMedia media, LoomMetaKey<T> metaKey) {
 		return toMetaPath(media, metaKey).toFile().exists();
 	}
-
-	// protected File getFileForHash(SHA512 hash) {
-	// File avroStorage = new File(basePath.toFile(), "avro");
-	//
-	// return new File(avroStorage, hash.toString() + ".avro");
-	// }
 
 	protected <T> Path toMetaPath(LoomMedia media, LoomMetaKey<T> key) {
 		SHA512 hash = media.getSHA512();

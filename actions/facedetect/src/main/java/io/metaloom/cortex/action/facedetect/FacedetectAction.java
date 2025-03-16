@@ -6,6 +6,7 @@ import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.avro.util.ByteBufferOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,21 +32,21 @@ import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
+import io.metaloom.utils.ByteBufferUtils;
 import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
-import io.metaloom.video4j.Videos;;
+import io.metaloom.video4j.Videos;
+import io.metaloom.video4j.utils.ImageUtils;;
 
 @Singleton
 public class FacedetectAction extends AbstractMediaAction<FacedetectActionOptions> {
 
 	public static final Logger log = LoggerFactory.getLogger(FacedetectAction.class);
 
-	private static final int WINDOW_COUNT = 20;
-	private static final int WINDOW_SIZE = 10;
-	private static final int WINDOW_STEPS = 5;
+	private static final int WINDOW_COUNT = 50;
 
 	protected VideoFaceScanner videoDetector;
 	protected DLibFacedetector detector;
@@ -114,8 +116,8 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 			media.setFaceCount(result.size());
 			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
 			Facedetection detection = new Facedetection();
-//			FaceData params = new FaceData(hash);
-//			params.getEntries().addAll(result);
+			// FaceData params = new FaceData(hash);
+			// params.getEntries().addAll(result);
 			// TODO add face data
 			media.setFacedetectionParams(detection);
 		}
@@ -126,8 +128,18 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	private ActionResult processVideo(ActionContext ctx) {
 		FacedetectMedia media = ctx.media(FACE_DETECTION);
 		try (VideoFile video = Videos.open(media.absolutePath())) {
-			VideoFaceScannerReport faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_STEPS);
-			media.setFaceCount(faces.getFaces().size());
+			VideoFaceScannerReport report = videoDetector.scan(video, WINDOW_COUNT);
+			media.setFaceCount(report.getFaces().size());
+
+			for (Face face : report.getFaces()) {
+				BufferedImage image = face.get("image");
+				ByteBufferOutputStream os = new ByteBufferOutputStream();
+				ImageUtils.saveJPG(os, image);
+				Facedetection params = Facedetection.newBuilder()
+					.setThumbnail(ByteBufferUtils.convertToOne(os.getBufferList()))
+					.build();
+				media.setFacedetectionParams(params);
+			}
 			// TODO add params, flags
 			return ctx.origin(COMPUTED).next();
 		} catch (InterruptedException | IOException | URISyntaxException e) {

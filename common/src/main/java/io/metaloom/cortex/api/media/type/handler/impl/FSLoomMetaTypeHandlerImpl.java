@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -53,6 +54,16 @@ public class FSLoomMetaTypeHandlerImpl implements LoomMetaTypeHandler {
 	@Override
 	public <T> T get(LoomMedia media, LoomMetaKey<T> metaKey) {
 		return readLocalStorage(media, metaKey);
+	}
+	
+	@Override
+	public <T> List<T> getAll(LoomMedia media, LoomMetaKey<T> metaKey) {
+		throw new RuntimeException("Not supported operation for FS storage");
+	}
+
+	@Override
+	public <T> void append(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		throw new RuntimeException("Not supported operation for FS storage");
 	}
 
 	protected <T> T readLocalStorage(LoomMedia media, LoomMetaKey<T> metaKey) {
