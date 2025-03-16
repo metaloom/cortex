@@ -6,6 +6,7 @@ import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -125,11 +126,11 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 	private ActionResult processVideo(ActionContext ctx) {
 		FacedetectMedia media = ctx.media(FACE_DETECTION);
 		try (VideoFile video = Videos.open(media.absolutePath())) {
-			VideoFaceScannerReport faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_SIZE, WINDOW_STEPS);
+			VideoFaceScannerReport faces = videoDetector.scan(video, WINDOW_COUNT, WINDOW_STEPS);
 			media.setFaceCount(faces.getFaces().size());
 			// TODO add params, flags
 			return ctx.origin(COMPUTED).next();
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | IOException | URISyntaxException e) {
 			log.error("Failed to process video", e);
 			return ctx.failure(e.getMessage()).next();
 		}
