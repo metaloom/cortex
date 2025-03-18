@@ -6,7 +6,6 @@ import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.apache.avro.util.ByteBufferOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.metaloom.cortex.action.facedetect.video.VideoFace;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScannerReport;
 import io.metaloom.cortex.api.action.ActionResult;
@@ -31,11 +31,13 @@ import io.metaloom.cortex.common.action.AbstractMediaAction;
 import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
+import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.ByteBufferUtils;
 import io.metaloom.utils.hash.SHA512;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
+import io.metaloom.video.facedetect.face.FaceBox;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -110,43 +112,56 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		SHA512 hash = media.getSHA512();
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
-		List<? extends Face> result = detector.detectFaces(image);
+		List<? extends Face> faces = detector.detectFaces(image);
 
-		if (result != null && !result.isEmpty()) {
-			media.setFaceCount(result.size());
+		if (faces != null && !faces.isEmpty()) {
+			media.setFaceCount(faces.size());
 			media.setFacedetectionFlag(FaceDetectionFlag.SUCCESS);
-			Facedetection detection = new Facedetection();
-			// FaceData params = new FaceData(hash);
-			// params.getEntries().addAll(result);
-			// TODO add face data
-			media.setFacedetectionParams(detection);
+			for (Face face : faces) {
+				VideoFace videoFace = new VideoFace(face);
+				media.appendFacedetection(toDetection(hash, videoFace));
+			}
 		}
-		// TODO handle faces / get embeddings
 		return ctx.origin(COMPUTED).next();
 	}
 
 	private ActionResult processVideo(ActionContext ctx) {
 		FacedetectMedia media = ctx.media(FACE_DETECTION);
+		SHA512 hash = media.getSHA512();
+
 		try (VideoFile video = Videos.open(media.absolutePath())) {
 			VideoFaceScannerReport report = videoDetector.scan(video, WINDOW_COUNT);
 			media.setFaceCount(report.getFaces().size());
 
-			for (Face face : report.getFaces()) {
-				BufferedImage image = face.get("image");
-				ByteBufferOutputStream os = new ByteBufferOutputStream();
-				ImageUtils.saveJPG(os, image);
-				Facedetection params = Facedetection.newBuilder()
-					.setThumbnail(ByteBufferUtils.convertToOne(os.getBufferList()))
-					.build();
-				media.setFacedetectionParams(params);
+			for (VideoFace face : report.getFaces()) {
+				media.appendFacedetection(toDetection(hash, face));
 			}
-			// TODO add params, flags
 			return ctx.origin(COMPUTED).next();
 		} catch (InterruptedException | IOException | URISyntaxException e) {
 			log.error("Failed to process video", e);
 			return ctx.failure(e.getMessage()).next();
 		}
+	}
 
+	private Facedetection toDetection(SHA512 mediaHash, VideoFace face) throws IOException {
+		BufferedImage image = face.getImage();
+		ByteBufferOutputStream os = new ByteBufferOutputStream();
+		ImageUtils.saveJPG(os, image);
+		FaceBox obox = face.box();
+		FacedetectionBox box = FacedetectionBox.newBuilder()
+			.setHeight(obox.getHeight())
+			.setWidth(obox.getWidth())
+			.setStartX(obox.getStartX())
+			.setStartY(obox.getStartY())
+			.build();
+
+		return Facedetection.newBuilder()
+			.setAssetHash(mediaHash.toString())
+			.setFrame(face.getFrame())
+			.setBlurriness(face.getBlurriness())
+			.setBox(box)
+			.setThumbnail(ByteBufferUtils.convertToOne(os.getBufferList()))
+			.build();
 	}
 
 }

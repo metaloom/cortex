@@ -21,4 +21,8 @@ public interface MetaStorageAccess {
 		return storage().has(self(), metaKey);
 	}
 
+	default <T> void append(LoomMetaKey<T> metaKey, T value) {
+		storage().append(self(), metaKey, value);
+	}
+
 }

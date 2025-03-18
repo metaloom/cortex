@@ -46,8 +46,8 @@ public interface FacedetectMedia extends LoomMedia {
 		return get(FACEDETECTION_RESULT_KEY);
 	}
 
-	default void setFacedetectionParams(Facedetection result) {
-		put(FACEDETECTION_RESULT_KEY, result);
+	default void appendFacedetection(Facedetection result) {
+		append(FACEDETECTION_RESULT_KEY, result);
 	}
 
 	default boolean hasFacedetectionFlag() {

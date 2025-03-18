@@ -1,5 +1,9 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -36,7 +40,7 @@ public class VideoFaceScannerTest {
 
 	@Test
 	public void testExampleCode() throws InterruptedException, IOException, URISyntaxException {
-		try (VideoFile video = Videos.open("/extra/vid/1.avi")) {
+		try (VideoFile video = Videos.open("/extra/vid/7.mkv")) {
 			System.out.println(video.height() + " x " + video.width());
 			long start = System.currentTimeMillis();
 			VideoFaceScannerReport report = detector.scan(video, WINDOW_COUNT);
@@ -94,12 +98,16 @@ public class VideoFaceScannerTest {
 		return clusterlist;
 	}
 
-	// @Test
-	// public void testWindowScan() throws InterruptedException {
-	// try (VideoFile video = Videos.open("/extra/vid/4.mkv")) {
-	// List<FrameWindow> windows = detector.locateWindows(video, 2);
-	// detector.fineTuneWindow(video, windows.get(0));
-	// }
-	//
-	// }
+	@Test
+	public void testSplitWindows() {
+		VideoFile video = mock(VideoFile.class);
+
+		when(video.length()).thenReturn(150L);
+		assertEquals(1, detector.splitWindows(video, 40).size());
+
+		when(video.length()).thenReturn(15_000L);
+		assertEquals(38, detector.splitWindows(video, 40).size());
+
+	}
+
 }

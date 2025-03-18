@@ -36,6 +36,16 @@ public interface MetaStorage {
 	 */
 	<T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value);
 
+	/**
+	 * Append the value to the media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metakey
+	 * @param value
+	 */
+	<T> void append(LoomMedia media, LoomMetaKey<T> metakey, T value);
+
 	void setSHA512(LoomMedia media, SHA512 hash);
 
 	SHA512 getSHA512(LoomMedia media);

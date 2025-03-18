@@ -4,25 +4,23 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.metaloom.video.facedetect.face.Face;
-
 public class VideoFaceScannerReport {
 
 	private long start = System.currentTimeMillis();
 
 	private Duration duration;
 
-	private List<Face> faces = new ArrayList<>();
+	private List<VideoFace> faces = new ArrayList<>();
 
 	private int totalWindowCount;
 
 	private int locatedWindowCount;
 
-	public List<Face> getFaces() {
+	public List<VideoFace> getFaces() {
 		return faces;
 	}
 
-	public void setFaces(List<Face> faces) {
+	public void setFaces(List<VideoFace> faces) {
 		this.duration = Duration.ofMillis(System.currentTimeMillis() - start);
 		this.faces = faces;
 	}

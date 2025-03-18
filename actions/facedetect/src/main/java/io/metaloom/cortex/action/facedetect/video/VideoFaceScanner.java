@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import org.opencv.core.Mat;
@@ -19,7 +20,6 @@ import io.metaloom.video.facedetect.FacedetectorUtils;
 import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.FaceBox;
-import io.metaloom.video.facedetect.insightface.impl.InsightfaceFacedetector;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
@@ -32,19 +32,14 @@ public class VideoFaceScanner {
 
 	public static final String FACE_DETECT_SERVER_BASEURL = "http://localhost:8001/api/v1";
 
-	public static final String BLURRINESS_KEY = "blurriness";
-
-	public static final String IMAGE_KEY = "image";
-
 	/**
 	 * Size to which the frame should be scaled down to before running initial face detection
 	 */
 	public static final int DETECTION_SCALE_SIZE = 512;
 
-	private static final double BLUR_THRESHOLD = 3;
+	public static final int WINDOW_STEPS = 15;
 
 	private static DLibFacedetector DLIB_DETECTOR;
-	private static InsightfaceFacedetector INSIGHTFACE_DETECTOR;
 	private static FaceDetectionServerClient client;
 	// private SimpleImageViewer viewer = new SimpleImageViewer();
 	// private SimpleImageViewer viewer2 = new SimpleImageViewer();
@@ -55,7 +50,6 @@ public class VideoFaceScanner {
 			DLIB_DETECTOR = DLibFacedetector.create();
 			DLIB_DETECTOR.setMinFaceHeightFactor(0.01f);
 			DLIB_DETECTOR.enableCNNDetector();
-			INSIGHTFACE_DETECTOR = InsightfaceFacedetector.create();
 			client = FaceDetectionServerClient.newBuilder()
 				.setBaseURL(FACE_DETECT_SERVER_BASEURL).build();
 		} catch (FileNotFoundException e) {
@@ -63,34 +57,59 @@ public class VideoFaceScanner {
 		}
 	}
 
-	public VideoFaceScannerReport scan(VideoFile video, int windowCount)
+	public VideoFaceScannerReport scan(VideoFile video, int maxWindowCount)
 		throws InterruptedException, IOException, URISyntaxException {
 		VideoFaceScannerReport report = new VideoFaceScannerReport();
 
 		// Locate potential windows
 		// List<FrameWindow> windows = identifyPotentialWindows(video, windowCount);
-		List<FrameWindow> windows = splitWindows(video, windowCount);
-		report.setWindowInfo(windowCount, windows.size());
+		List<FrameWindow> windows = splitWindows(video, maxWindowCount);
+		report.setWindowInfo(maxWindowCount, windows.size());
 		// logger.info("Window scan result: {} windows with faces.", windows.size());
 
 		// Process the windows and locate the best faces
-		List<Face> allFaces = new ArrayList<>();
+		List<VideoFace> allFaces = new ArrayList<>();
 		for (FrameWindow window : windows) {
 			allFaces.addAll(processWindow(video, window));
 		}
 
 		// Now process all found faces
-		for (Face dlibFace : allFaces) {
-			try {
-				processFace(dlibFace);
-			} catch (Exception e) {
-				e.printStackTrace();
+		try {
+			report.setFaces(processFaces(allFaces));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		logger.info("Got total of {} faces with embeddings in {} windows", allFaces.size(), windows.size());
+		return report;
+	}
+
+	private List<VideoFace> processFaces(List<VideoFace> faces) {
+		faces = faces.stream().sorted(this::blurComperator).toList();
+		for (VideoFace face : faces) {
+			System.out.println(face.getBlurriness());
+		}
+		List<VideoFace> output = new ArrayList<>();
+		for (VideoFace face : faces) {
+			processFace(face);
+			if (face.hasEmbedding()) {
+				output.add(face);
+			}
+			if (output.size() >= 5) {
+				break;
 			}
 		}
 
-		report.setFaces(allFaces.stream().filter(Face::hasEmbedding).toList());
-		logger.info("Got total of {} faces with embeddings in {} windows", allFaces.size(), windows.size());
-		return report;
+		// double blurriness = 0;
+		// for (VideoFace face : faces) {
+		// blurriness += face.getBlurriness();
+		// }
+		// double avgBlurriness = blurriness / (double)faces.size();
+		// System.out.println(avgBlurriness);
+		// while(faces.size() > 5) {
+		// faces.stream().sorted(this::blurComperator).limit(faces.size()-1);
+		// }
+		return output;
 	}
 
 	/**
@@ -105,18 +124,14 @@ public class VideoFaceScanner {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public List<Face> processWindow(VideoFile video, FrameWindow window)
+	public List<VideoFace> processWindow(VideoFile video, FrameWindow window)
 		throws InterruptedException, IOException, URISyntaxException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Tuning window: {}", window);
 		}
 
-		List<Face> faces = scanWindow(video, window, 15);
-		faces = faces.stream().sorted((f1, f2) -> {
-			double b1 = f1.get(BLURRINESS_KEY);
-			double b2 = f2.get(BLURRINESS_KEY);
-			return Double.compare(b2, b1);
-		}).limit(1).toList();
+		List<VideoFace> faces = scanWindow(video, window, WINDOW_STEPS);
+		faces = faces.stream().sorted(this::blurComperator).limit(1).toList();
 
 		return faces;
 	}
@@ -134,14 +149,14 @@ public class VideoFaceScanner {
 	 * @param windowSteps
 	 * @return
 	 */
-	private List<Face> scanWindow(VideoFile video, FrameWindow window, int windowSteps)
+	private List<VideoFace> scanWindow(VideoFile video, FrameWindow window, int windowSteps)
 		throws IOException, URISyntaxException, InterruptedException {
 
 		int nWindow = window.number();
 		long from = window.from();
 		long to = window.to();
 
-		List<Face> faces = new ArrayList<>();
+		List<VideoFace> faces = new ArrayList<>();
 		long start = System.currentTimeMillis();
 		long nFrame = from;
 		System.out.println("Scanning window " + from + " to " + to + " with steps " + windowSteps);
@@ -159,11 +174,11 @@ public class VideoFaceScanner {
 
 			// Stop processing when we found 10 faces
 			if (faces.size() > 3) {
-				System.out.println("Got enough faces");
+				// System.out.println("Got enough faces");
 				break;
 			}
 
-			List<Face> dlibFaces = dlibProcessFrame(frame);
+			List<VideoFace> dlibFaces = dlibProcessFrame(frame);
 			faces.addAll(dlibFaces);
 
 			// No faces found. Lets skip a few frames
@@ -194,11 +209,11 @@ public class VideoFaceScanner {
 		return faces;
 	}
 
-	private List<Face> dlibProcessFrame(VideoFrame frame) {
-		List<Face> faces = new ArrayList<>();
+	private List<VideoFace> dlibProcessFrame(VideoFrame frame) {
+		List<VideoFace> faces = new ArrayList<>();
 		FaceVideoFrame faceFrame = dlibDetectFaces(frame);
 		// FaceVideoFrame faceFrame = insightfaceDetectFaces(frame);
-		
+
 		if (faceFrame != null && faceFrame.hasFaces()) {
 			// DLIB_DETECTOR.markFaces(frame);
 			// DLIB_DETECTOR.markLandmarks(frame);
@@ -206,7 +221,9 @@ public class VideoFaceScanner {
 
 			// Process each found dlib face
 			for (Face face : faceFrame.faces()) {
-				face.set("frame", faceFrame.number());
+				VideoFace videoFace = new VideoFace(face);
+
+				videoFace.setFrame(faceFrame.number());
 				// Crop to the face and calculate the blurriness
 				// System.out.println("Crop to: " + face + " from " + faceFrame.height() + " x " + faceFrame.width());
 
@@ -215,20 +232,20 @@ public class VideoFaceScanner {
 				Mat faceImage = FacedetectorUtils.cropToFace(faceFrame.mat(), face, padding);
 				// ImageUtils.show(faceImage);
 				double blurriness = CVUtils.blurriness(faceImage);
-//				if (blurriness < BLUR_THRESHOLD) {
-//					logger.warn("Omitting face due to blur check: {}", blurriness);
-					// Skipped due to bad quality
-					// continue;
-//				}
-				face.set(BLURRINESS_KEY, blurriness);
+				// if (blurriness < BLUR_THRESHOLD) {
+				// logger.warn("Omitting face due to blur check: {}", blurriness);
+				// Skipped due to bad quality
+				// continue;
+				// }
+				videoFace.setBlurriness(blurriness);
 				BufferedImage croppedFaceImage = ImageUtils.matToBufferedImage(faceImage);
 				// System.out.println("Cropped: " + croppedFaceImage.getWidth() + " x " + croppedFaceImage.getHeight());
 				// croppedFaceImage = ImageUtils.scale(croppedFaceImage, croppedFaceImage.getWidth()*2, croppedFaceImage.getHeight()*2);
 				// BufferedImage croppedFaceImage = ImageUtils.matToBufferedImage(frame.mat());
-				face.set(IMAGE_KEY, croppedFaceImage);
+				videoFace.setImage(croppedFaceImage);
 				// faceImage.release();
 				// logger.info("Adding face for window " + nWindow + " now " + faces.size() + " in total for this window.");
-				faces.add(face);
+				faces.add(videoFace);
 			}
 
 		}
@@ -359,14 +376,21 @@ public class VideoFaceScanner {
 		}
 	}
 
-	private List<FrameWindow> splitWindows(VideoFile video, int windowCount) {
+	public List<FrameWindow> splitWindows(VideoFile video, int maxWindowCount) {
 		List<FrameWindow> windows = new ArrayList<>();
 		long totalFrames = video.length();
 		long startSpace = (long) ((double) totalFrames * 0.03d);
 		long endSpace = (long) ((double) totalFrames * 0.03d);
-		long spread = totalFrames / (windowCount + 1);
-		System.out.println("Total: " + totalFrames);
-		System.out.println("Spread: " + spread);
+		long spread = totalFrames / maxWindowCount;
+
+		while (spread < WINDOW_STEPS * 10) {
+			if (maxWindowCount <= 1) {
+				break;
+			}
+			maxWindowCount--;
+			spread = totalFrames / maxWindowCount;
+		}
+
 		long from = startSpace;
 		int nWindow = 0;
 		while (true) {
@@ -378,12 +402,13 @@ public class VideoFaceScanner {
 			if (to + endSpace > totalFrames) {
 				to = totalFrames - endSpace;
 			}
-			System.out.println("Window: " + from + " to " + to);
 			nWindow++;
 			windows.add(new FrameWindow(nWindow, from, to));
 			from++;
 		}
-		System.out.println("Windows: " + windows.size() + " for " + windowCount);
+		if (windows.isEmpty()) {
+			windows.add(new FrameWindow(0, 0, totalFrames));
+		}
 		return windows;
 	}
 
@@ -421,6 +446,12 @@ public class VideoFaceScanner {
 		}
 
 		return windows;
+	}
+
+	private int blurComperator(VideoFace f1, VideoFace f2) {
+		double b1 = f1.getBlurriness();
+		double b2 = f2.getBlurriness();
+		return Double.compare(b2, b1);
 	}
 
 }

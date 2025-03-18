@@ -65,7 +65,7 @@ public class FacedetectMediaTest extends AbstractFacedetectMediaTest {
 		// Now update the params
 		Face face = new FaceImpl();
 		// params.getEntries().add(face);
-		media2.setFacedetectionParams(params);
+		media2.appendFacedetection(params);
 
 		FacedetectMedia media3 = media(media.path()).of(FACE_DETECTION);
 		// assertEquals(2, media3.getFacedetectionParams().getEntries());

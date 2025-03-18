@@ -8,8 +8,12 @@
             "type": "string"
         },
         {
+            "name": "blurriness",
+            "type": "double"
+        },
+        {
             "name": "frame",
-            "type": "int"
+            "type": "long"
         },
         {
             "name": "box",

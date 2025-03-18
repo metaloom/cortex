@@ -60,6 +60,13 @@ public class MetaStorageImpl implements MetaStorage {
 	}
 
 	@Override
+	public <T> void append(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
+		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
+		LoomMetaTypeHandler handler = getHandler(metaKey.type());
+		handler.append(media, metaKey, value);
+	}
+
+	@Override
 	public <T> void put(LoomMedia media, LoomMetaKey<T> metaKey, T value) {
 		Objects.requireNonNull(metaKey, "There was no meta attribute key provided.");
 		LoomMetaTypeHandler handler = getHandler(metaKey.type());
