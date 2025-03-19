@@ -39,23 +39,23 @@ public class FacedetectMediaTest extends AbstractFacedetectMediaTest {
 	@Test
 	public void testFaceDetectionParameters() throws IOException {
 		FacedetectMedia media = mediaVideo2().of(FACE_DETECTION);
-		assertNull(media.getFacedetectionParams());
+		assertNull(media.getFacedetections());
 		assertNull(media.get(FACEDETECTION_RESULT_KEY));
-		
+
 		FacedetectionBox box = FacedetectionBox.newBuilder()
 			.setStartX(0)
 			.setStartY(0)
 			.setHeight(10)
 			.setWidth(10)
 			.build();
-		
+
 		Facedetection facedetection = Facedetection.newBuilder()
 			.setAssetHash(media.getSHA512().toString())
 			.setFrame(10)
 			.setBox(box)
 			.build();
 		media.put(FACEDETECTION_RESULT_KEY, facedetection);
-		assertNotNull(media.getFacedetectionParams());
+		assertEquals(2, media.getFacedetections().size());
 
 		FacedetectMedia media2 = media(media.path()).of(FACE_DETECTION);
 		assertNotNull(media2.get(FACEDETECTION_RESULT_KEY));

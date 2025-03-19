@@ -1,5 +1,7 @@
 package io.metaloom.cortex.api.meta;
 
+import java.util.List;
+
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.utils.hash.SHA512;
@@ -25,6 +27,16 @@ public interface MetaStorage {
 	 * @return
 	 */
 	<T> T get(LoomMedia media, LoomMetaKey<T> metaKey);
+
+	/**
+	 * Return the list of meta properties for the given key + media.
+	 * 
+	 * @param <T>
+	 * @param media
+	 * @param metaKey
+	 * @return
+	 */
+	<T> List<T> getAll(LoomMedia media, LoomMetaKey<T> metaKey);
 
 	/**
 	 * Store the value for the given key + media.

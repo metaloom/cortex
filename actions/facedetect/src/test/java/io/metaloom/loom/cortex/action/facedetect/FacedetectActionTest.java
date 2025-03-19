@@ -19,8 +19,6 @@ import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.client.common.LoomClientException;
-import io.metaloom.video.facedetect.FaceVideoFrame;
-import io.metaloom.video4j.Video4j;
 
 public class FacedetectActionTest extends AbstractFacedetectMediaTest {
 

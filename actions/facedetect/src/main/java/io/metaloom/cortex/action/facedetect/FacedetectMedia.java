@@ -4,6 +4,8 @@ import static io.metaloom.cortex.api.media.LoomMetaKey.metaKey;
 import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.AVRO;
 import static io.metaloom.cortex.api.media.type.LoomMetaCoreType.XATTR;
 
+import java.util.List;
+
 import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.LoomMetaKey;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
@@ -38,12 +40,12 @@ public interface FacedetectMedia extends LoomMedia {
 		return get(FACEDETECTION_FLAG_KEY);
 	}
 
-	default void setFacedetectionFlag(FaceDetectionFlag flag) {
-		put(FACEDETECTION_FLAG_KEY, flag);
+	default List<Facedetection> getFacedetections() {
+		return getAll(FACEDETECTION_RESULT_KEY);
 	}
 
-	default Facedetection getFacedetectionParams() {
-		return get(FACEDETECTION_RESULT_KEY);
+	default void setFacedetectionFlag(FaceDetectionFlag flag) {
+		put(FACEDETECTION_FLAG_KEY, flag);
 	}
 
 	default void appendFacedetection(Facedetection result) {
@@ -53,4 +55,5 @@ public interface FacedetectMedia extends LoomMedia {
 	default boolean hasFacedetectionFlag() {
 		return getFacedetectionFlag() != null;
 	}
+
 }

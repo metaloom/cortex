@@ -4,21 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
 
 import org.apache.avro.util.ByteBufferOutputStream;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.util.ByteBufferBackedInputStream;
 
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
 import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.utils.ByteBufferUtils;
 import io.metaloom.video4j.utils.ImageUtils;
 
-public class FacedetectionTest {
+public class FacedetectionTest extends AbstractFacedetectMediaTest {
 
 	@Test
 	public void testImage() throws IOException {
@@ -32,9 +27,7 @@ public class FacedetectionTest {
 			.setThumbnail(ByteBufferUtils.convertToOne(os.getBufferList()))
 			.build();
 
-		try (InputStream ins = new ByteBufferBackedInputStream(f.getThumbnail())) {
-			BufferedImage img = ImageIO.read(ins);
-			assertNotNull(img);
-		}
+		BufferedImage img = ImageUtils.loadJPG(f.getThumbnail());
+		assertNotNull(img);
 	}
 }
