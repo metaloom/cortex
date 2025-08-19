@@ -1,9 +1,5 @@
 package io.metaloom.loom.cortex.action.facedetect;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -18,10 +14,14 @@ import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.junit.jupiter.api.Test;
 
+import io.metaloom.cortex.action.facedetect.FacedetectActionModule;
+import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.action.facedetect.video.VideoFaceScannerReport;
 import io.metaloom.utils.FloatUtils;
 import io.metaloom.video.facedetect.face.Face;
+import io.metaloom.video.facedetect.inspireface.InspireFacedetector;
+import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
 import io.metaloom.video4j.utils.ImageUtils;
@@ -29,18 +29,25 @@ import io.metaloom.video4j.utils.SimpleImageViewer;
 
 public class VideoFaceScannerTest {
 
+	private static final String DEFAULT_PACK = "packs/Pikachu";
+
 	private SimpleImageViewer viewer = new SimpleImageViewer();
 
-	VideoFaceScanner detector = new VideoFaceScanner();
 	// private static final int WINDOW_COUNT = 30;
 	// private static final int WINDOW_SIZE = 120;
 	// private static final int WINDOW_STEPS = 5;
 
-	private static final int WINDOW_COUNT = 50;
+	private static final int WINDOW_COUNT = 100;
+	
+	static {
+		Video4j.init();
+	}
 
 	@Test
 	public void testExampleCode() throws InterruptedException, IOException, URISyntaxException {
-		try (VideoFile video = Videos.open("/extra/vid/7.mkv")) {
+		VideoFaceScanner detector = scanner();
+
+		try (VideoFile video = Videos.open("/extra/vid/4.mkv")) {
 			System.out.println(video.height() + " x " + video.width());
 			long start = System.currentTimeMillis();
 			VideoFaceScannerReport report = detector.scan(video, WINDOW_COUNT);
@@ -68,6 +75,14 @@ public class VideoFaceScannerTest {
 		System.out.println("Done");
 		System.in.read();
 
+	}
+
+	private VideoFaceScanner scanner() {
+		FacedetectActionOptions options = new FacedetectActionOptions();
+//		DLibFacedetector dlib = FacedetectActionModule.dlibDetector(options);
+		InspireFacedetector inspireface = FacedetectActionModule.inspirefaceDetector(options);
+		VideoFaceScanner scanner = new VideoFaceScanner(inspireface);
+		return scanner;
 	}
 
 	private List<List<Face>> clusterFaces(List<Face> faces) {
@@ -98,16 +113,6 @@ public class VideoFaceScannerTest {
 		return clusterlist;
 	}
 
-	@Test
-	public void testSplitWindows() {
-		VideoFile video = mock(VideoFile.class);
 
-		when(video.length()).thenReturn(150L);
-		assertEquals(1, detector.splitWindows(video, 40).size());
-
-		when(video.length()).thenReturn(15_000L);
-		assertEquals(38, detector.splitWindows(video, 40).size());
-
-	}
 
 }

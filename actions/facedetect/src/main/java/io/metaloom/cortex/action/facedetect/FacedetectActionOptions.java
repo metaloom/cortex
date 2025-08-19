@@ -1,10 +1,14 @@
 package io.metaloom.cortex.action.facedetect;
 
+import java.util.Set;
+
 import io.metaloom.cortex.api.option.action.AbstractActionOptions;
 
 public class FacedetectActionOptions extends AbstractActionOptions<FacedetectActionOptions> {
 
 	public static final String KEY = "facedetection";
+
+	private static final String DEFAULT_PACK_PATH = "packs/Pikachu";
 
 	@Override
 	protected FacedetectActionOptions self() {
@@ -36,6 +40,16 @@ public class FacedetectActionOptions extends AbstractActionOptions<FacedetectAct
 	 * Defines the height factor in respect to the total frame height which controls whether a found face will be processed further.
 	 */
 	private float minFaceHeightFactor = 0.05f;
+
+	/**
+	 * Defines the inspireface model pack path.
+	 */
+	private String inspirefacePackPath = DEFAULT_PACK_PATH;
+
+	/**
+	 * Set of enabled face detection capabilities.
+	 */
+	private Set<FacedetectActionCapabilities> capabilities = Set.of(FacedetectActionCapabilities.INSPIREFACE);
 
 	public int getVideoChopRate() {
 		return videoChopRate;
@@ -80,5 +94,22 @@ public class FacedetectActionOptions extends AbstractActionOptions<FacedetectAct
 	public FacedetectActionOptions setMinFaceHeightFactor(float minFaceHeightFactor) {
 		this.minFaceHeightFactor = minFaceHeightFactor;
 		return this;
+	}
+
+	public String getInspirefacePackPath() {
+		return inspirefacePackPath;
+	}
+
+	public FacedetectActionOptions setInspirefacePackPath(String inspirefacePackPath) {
+		this.inspirefacePackPath = inspirefacePackPath;
+		return this;
+	}
+
+	public Set<FacedetectActionCapabilities> getCapabilities() {
+		return capabilities;
+	}
+
+	public void setCapabilities(Set<FacedetectActionCapabilities> capabilities) {
+		this.capabilities = capabilities;
 	}
 }

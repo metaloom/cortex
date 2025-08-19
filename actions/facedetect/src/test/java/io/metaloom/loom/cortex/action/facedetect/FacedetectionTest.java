@@ -17,7 +17,7 @@ public class FacedetectionTest extends AbstractFacedetectMediaTest {
 
 	@Test
 	public void testImage() throws IOException {
-		BufferedImage image = ImageUtils.loadResource("/pexels-photo-3812743_512.jpeg");
+		BufferedImage image = ImageUtils.loadResource("/images/pexels-photo-3812743_512.jpeg");
 		ByteBufferOutputStream os = new ByteBufferOutputStream();
 		ImageUtils.saveJPG(os, image);
 		Facedetection f = Facedetection.newBuilder()
@@ -25,6 +25,7 @@ public class FacedetectionTest extends AbstractFacedetectMediaTest {
 			.setFrame(10)
 			.setBox(FacedetectionBox.newBuilder().setHeight(10).setWidth(10).setStartX(10).setStartY(10).build())
 			.setThumbnail(ByteBufferUtils.convertToOne(os.getBufferList()))
+			.setBlurriness(0f)
 			.build();
 
 		BufferedImage img = ImageUtils.loadJPG(f.getThumbnail());

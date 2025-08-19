@@ -1,12 +1,13 @@
 package io.metaloom.cortex.action.facedetect.video;
 
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.opencv.core.Mat;
 import org.slf4j.Logger;
@@ -16,21 +17,21 @@ import io.metaloom.facedetection.client.FaceDetectionServerClient;
 import io.metaloom.facedetection.client.model.DetectionResponse;
 import io.metaloom.facedetection.client.model.FaceModel;
 import io.metaloom.video.facedetect.FaceVideoFrame;
+import io.metaloom.video.facedetect.Facedetector;
 import io.metaloom.video.facedetect.FacedetectorUtils;
-import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.FaceBox;
-import io.metaloom.video4j.Video4j;
+import io.metaloom.video.facedetect.inspireface.InspireFacedetector;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.VideoFrame;
 import io.metaloom.video4j.opencv.CVUtils;
 import io.metaloom.video4j.utils.ImageUtils;
+import io.metaloom.video4j.utils.SimpleImageViewer;
 
+@Singleton
 public class VideoFaceScanner {
 
 	private final static Logger logger = LoggerFactory.getLogger(VideoFaceScanner.class);
-
-	public static final String FACE_DETECT_SERVER_BASEURL = "http://localhost:8001/api/v1";
 
 	/**
 	 * Size to which the frame should be scaled down to before running initial face detection
@@ -39,22 +40,12 @@ public class VideoFaceScanner {
 
 	public static final int WINDOW_STEPS = 15;
 
-	private static DLibFacedetector DLIB_DETECTOR;
-	private static FaceDetectionServerClient client;
-	// private SimpleImageViewer viewer = new SimpleImageViewer();
-	// private SimpleImageViewer viewer2 = new SimpleImageViewer();
+	private final InspireFacedetector inspireface;
+	private SimpleImageViewer viewer = new SimpleImageViewer();
 
-	static {
-		Video4j.init();
-		try {
-			DLIB_DETECTOR = DLibFacedetector.create();
-			DLIB_DETECTOR.setMinFaceHeightFactor(0.01f);
-			DLIB_DETECTOR.enableCNNDetector();
-			client = FaceDetectionServerClient.newBuilder()
-				.setBaseURL(FACE_DETECT_SERVER_BASEURL).build();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+	@Inject
+	public VideoFaceScanner(InspireFacedetector inspireface) {
+		this.inspireface = inspireface;
 	}
 
 	public VideoFaceScannerReport scan(VideoFile video, int maxWindowCount)
@@ -63,9 +54,9 @@ public class VideoFaceScanner {
 
 		// Locate potential windows
 		// List<FrameWindow> windows = identifyPotentialWindows(video, windowCount);
-		List<FrameWindow> windows = splitWindows(video, maxWindowCount);
+		List<FrameWindow> windows = VideoFaceScannerUtils.splitWindows(video.length(), WINDOW_STEPS, maxWindowCount);
 		report.setWindowInfo(maxWindowCount, windows.size());
-		// logger.info("Window scan result: {} windows with faces.", windows.size());
+		logger.info("Split Window: {} windows to be scanned.", windows.size());
 
 		// Process the windows and locate the best faces
 		List<VideoFace> allFaces = new ArrayList<>();
@@ -91,7 +82,7 @@ public class VideoFaceScanner {
 		}
 		List<VideoFace> output = new ArrayList<>();
 		for (VideoFace face : faces) {
-			processFace(face);
+			// processFace(face);
 			if (face.hasEmbedding()) {
 				output.add(face);
 			}
@@ -131,8 +122,9 @@ public class VideoFaceScanner {
 		}
 
 		List<VideoFace> faces = scanWindow(video, window, WINDOW_STEPS);
-		faces = faces.stream().sorted(this::blurComperator).limit(1).toList();
-
+		// Only keep the sharpest face from the window
+		// faces = faces.stream().sorted(this::blurComperator).limit(1).toList();
+		logger.info("Window scan of window {} yield {} faces", window, faces.size());
 		return faces;
 	}
 
@@ -159,7 +151,7 @@ public class VideoFaceScanner {
 		List<VideoFace> faces = new ArrayList<>();
 		long start = System.currentTimeMillis();
 		long nFrame = from;
-		System.out.println("Scanning window " + from + " to " + to + " with steps " + windowSteps);
+		logger.info("Scanning window {} to {} with steps {}", from, to, windowSteps);
 		while (nFrame + windowSteps < to) {
 
 			// Skip frames
@@ -172,17 +164,17 @@ public class VideoFaceScanner {
 			// }
 			// System.out.println("Skip took: " + (System.currentTimeMillis() - startSkip));
 
-			// Stop processing when we found 10 faces
-			if (faces.size() > 3) {
+			// Stop processing when we found n faces
+			if (faces.size() > 5) {
 				// System.out.println("Got enough faces");
 				break;
 			}
 
-			List<VideoFace> dlibFaces = dlibProcessFrame(frame);
-			faces.addAll(dlibFaces);
+			List<VideoFace> dFaces = processFrame(frame);
+			faces.addAll(dFaces);
 
 			// No faces found. Lets skip a few frames
-			if (dlibFaces.isEmpty()) {
+			if (dFaces.isEmpty()) {
 				break;
 			}
 		}
@@ -205,21 +197,20 @@ public class VideoFaceScanner {
 		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
-		logger.info("Faces: {}, window: {}", faces.size(), nWindow);
 		return faces;
 	}
 
-	private List<VideoFace> dlibProcessFrame(VideoFrame frame) {
+	private List<VideoFace> processFrame(VideoFrame frame) {
 		List<VideoFace> faces = new ArrayList<>();
-		FaceVideoFrame faceFrame = dlibDetectFaces(frame);
-		// FaceVideoFrame faceFrame = insightfaceDetectFaces(frame);
+		// FaceVideoFrame faceFrame = dlibDetectFaces(frame);
+		FaceVideoFrame faceFrame = detectFaces(inspireface, frame);
 
 		if (faceFrame != null && faceFrame.hasFaces()) {
 			// DLIB_DETECTOR.markFaces(frame);
 			// DLIB_DETECTOR.markLandmarks(frame);
 			// viewer2.show(frame);
 
-			// Process each found dlib face
+			// Process each found face
 			for (Face face : faceFrame.faces()) {
 				VideoFace videoFace = new VideoFace(face);
 
@@ -230,6 +221,7 @@ public class VideoFaceScanner {
 				// Mat faceImage = faceFrame.mat().clone();
 				int padding = (int) ((double) face.box().getWidth() * 1d);
 				Mat faceImage = FacedetectorUtils.cropToFace(faceFrame.mat(), face, padding);
+				viewer.show(faceImage);
 				// ImageUtils.show(faceImage);
 				double blurriness = CVUtils.blurriness(faceImage);
 				// if (blurriness < BLUR_THRESHOLD) {
@@ -253,11 +245,12 @@ public class VideoFaceScanner {
 
 	}
 
-	private FaceVideoFrame dlibDetectFaces(VideoFrame frame) {
+	public FaceVideoFrame detectFaces(Facedetector detector, VideoFrame frame) {
 		long start = System.currentTimeMillis();
 		Mat original = frame.mat();
 
-		boolean scaleDown = frame.height() >= DETECTION_SCALE_SIZE + 128;
+		// boolean scaleDown = frame.height() >= DETECTION_SCALE_SIZE + 128;
+		boolean scaleDown = false;
 		Mat smaller = null;
 		if (scaleDown) {
 			// Resize to smaller size for detection
@@ -269,7 +262,7 @@ public class VideoFaceScanner {
 		}
 
 		// Run detection
-		FaceVideoFrame videoFrame = DLIB_DETECTOR.detectFaces(frame);
+		FaceVideoFrame videoFrame = detector.detectFaces(frame);
 
 		if (scaleDown) {
 			// Reset original and free smaller version
@@ -296,7 +289,7 @@ public class VideoFaceScanner {
 			}
 			smaller.release();
 		}
-		System.out.println("DLIB Duration: " + (System.currentTimeMillis() - start) + " " + videoFrame.hasFaces());
+		System.out.println("Inspireface Duration: " + (System.currentTimeMillis() - start) + " " + videoFrame.hasFaces());
 		return videoFrame;
 	}
 
@@ -347,8 +340,8 @@ public class VideoFaceScanner {
 	// return videoFrame;
 	// }
 
-	private void processFace(Face dlibFace) {
-		BufferedImage croppedFaceImage = dlibFace.get("image");
+	private void processFaceWithClient(FaceDetectionServerClient client, Face dFace) {
+		BufferedImage croppedFaceImage = dFace.get("image");
 		try {
 			// Graphics g = croppedFaceImage.getGraphics();
 			// g.setColor(Color.RED);
@@ -369,47 +362,11 @@ public class VideoFaceScanner {
 			// ArrayList<? extends Face> faces = new ArrayList<>();
 			// ImageUtils.show(croppedFaceImage);
 			for (FaceModel face : detectedFaces) {
-				dlibFace.setEmbedding(face.getEmbedding());
+				dFace.setEmbedding(face.getEmbedding());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public List<FrameWindow> splitWindows(VideoFile video, int maxWindowCount) {
-		List<FrameWindow> windows = new ArrayList<>();
-		long totalFrames = video.length();
-		long startSpace = (long) ((double) totalFrames * 0.03d);
-		long endSpace = (long) ((double) totalFrames * 0.03d);
-		long spread = totalFrames / maxWindowCount;
-
-		while (spread < WINDOW_STEPS * 10) {
-			if (maxWindowCount <= 1) {
-				break;
-			}
-			maxWindowCount--;
-			spread = totalFrames / maxWindowCount;
-		}
-
-		long from = startSpace;
-		int nWindow = 0;
-		while (true) {
-			from += spread;
-			long to = from + spread;
-			if (from >= totalFrames) {
-				break;
-			}
-			if (to + endSpace > totalFrames) {
-				to = totalFrames - endSpace;
-			}
-			nWindow++;
-			windows.add(new FrameWindow(nWindow, from, to));
-			from++;
-		}
-		if (windows.isEmpty()) {
-			windows.add(new FrameWindow(0, 0, totalFrames));
-		}
-		return windows;
 	}
 
 	/**
@@ -432,7 +389,7 @@ public class VideoFaceScanner {
 			video.seekToFrame(nFrame);
 			VideoFrame frame = video.frame();
 			CVUtils.resize(frame, 512);
-			FaceVideoFrame faceFrame = DLIB_DETECTOR.detectFaces(frame);
+			FaceVideoFrame faceFrame = inspireface.detectFaces(frame);
 
 			// The middle frame of the vindow contains a face - thus add it to the list of windows.
 			if (faceFrame.hasFaces()) {

@@ -12,13 +12,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.metaloom.cortex.action.facedetect.FacedetectAction;
+import io.metaloom.cortex.action.facedetect.FacedetectActionModule;
 import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
 import io.metaloom.cortex.action.facedetect.FacedetectMedia;
+import io.metaloom.cortex.action.facedetect.video.VideoFaceScanner;
 import io.metaloom.cortex.api.action.ActionResult;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.client.common.LoomClientException;
+import io.metaloom.video.facedetect.dlib.DLibFacedetector;
+import io.metaloom.video.facedetect.inspireface.InspireFacedetector;
 
 public class FacedetectActionTest extends AbstractFacedetectMediaTest {
 
@@ -41,7 +45,6 @@ public class FacedetectActionTest extends AbstractFacedetectMediaTest {
 
 	@Test
 	public void testImage() throws IOException, LoomClientException {
-		FacedetectAction action = mockAction();
 		FacedetectMedia media = mediaImage1().of(FACE_DETECTION);
 		ActionResult result = action.process(ctx(media));
 		assertThat(result).isSuccess();
@@ -52,8 +55,12 @@ public class FacedetectActionTest extends AbstractFacedetectMediaTest {
 	public FacedetectAction mockAction() throws FileNotFoundException, LoomClientException {
 		LoomClient client = LoomClientMock.mockClient();
 		FacedetectActionOptions option = new FacedetectActionOptions();
+		option.setInspirefacePackPath("packs/Pikachu");
 		option.setMinFaceHeightFactor(0.05f).setVideoScaleSize(512);
-		return new FacedetectAction(client, new CortexOptions(), option);
+//		DLibFacedetector dlib = FacedetectActionModule.dlibDetector(option);
+		InspireFacedetector inspireface = FacedetectActionModule.inspirefaceDetector(option);
+		VideoFaceScanner videoScanner = new VideoFaceScanner(inspireface);
+		return new FacedetectAction(client, new CortexOptions(), option, inspireface, videoScanner);
 	}
 
 }

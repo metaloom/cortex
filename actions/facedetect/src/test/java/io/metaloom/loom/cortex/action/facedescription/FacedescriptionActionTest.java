@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.metaloom.cortex.action.facedescription.FaceDescription;
 import io.metaloom.cortex.action.facedescription.FacedescriptionAction;
 import io.metaloom.cortex.action.facedetect.FacedetectActionOptions;
+import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.media.LoomClientMock;
 import io.metaloom.loom.client.common.LoomClient;
@@ -25,7 +26,13 @@ import io.metaloom.video4j.utils.ImageUtils;
 public class FacedescriptionActionTest extends AbstractFacedetectMediaTest {
 
 	@Test
-	public void testDescription() throws IOException, LoomClientException {
+	public void testProcessMedia() throws FileNotFoundException, IOException, LoomClientException {
+		LoomMedia video = mediaVideo1();
+		mockAction().process(video);
+	}
+
+	@Test
+	public void testProcessImage() throws IOException, LoomClientException {
 		BufferedImage image = ImageUtils.loadResource("/images/face_occluded.jpg");
 		for (int i = 0; i < 10; i++) {
 			FaceDescription result = mockAction().processFace(image);

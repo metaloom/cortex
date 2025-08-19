@@ -4,10 +4,8 @@ import static io.metaloom.cortex.action.facedetect.FacedetectMedia.FACE_DETECTIO
 import static io.metaloom.cortex.api.action.ResultOrigin.COMPUTED;
 
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -28,16 +26,15 @@ import io.metaloom.cortex.api.media.LoomMedia;
 import io.metaloom.cortex.api.media.flag.FaceDetectionFlag;
 import io.metaloom.cortex.api.option.CortexOptions;
 import io.metaloom.cortex.common.action.AbstractMediaAction;
-import io.metaloom.cortex.common.dlib.DLibModelProvisioner;
 import io.metaloom.loom.client.common.LoomClient;
 import io.metaloom.loom.cortex.action.facedetect.avro.Facedetection;
 import io.metaloom.loom.cortex.action.facedetect.avro.FacedetectionBox;
 import io.metaloom.loom.rest.model.asset.AssetResponse;
 import io.metaloom.utils.ByteBufferUtils;
 import io.metaloom.utils.hash.SHA512;
-import io.metaloom.video.facedetect.dlib.impl.DLibFacedetector;
 import io.metaloom.video.facedetect.face.Face;
 import io.metaloom.video.facedetect.face.FaceBox;
+import io.metaloom.video.facedetect.inspireface.InspireFacedetector;
 import io.metaloom.video4j.Video4j;
 import io.metaloom.video4j.VideoFile;
 import io.metaloom.video4j.Videos;
@@ -50,30 +47,20 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 
 	private static final int WINDOW_COUNT = 50;
 
-	protected VideoFaceScanner videoDetector;
-	protected DLibFacedetector detector;
+	private InspireFacedetector inspireface;
+	private VideoFaceScanner videoScanner;
 
 	@Inject
-	public FacedetectAction(@Nullable LoomClient client, CortexOptions cortexOption, FacedetectActionOptions options) {
+	public FacedetectAction(@Nullable LoomClient client, CortexOptions cortexOption, FacedetectActionOptions options, InspireFacedetector inspireface, VideoFaceScanner videoScanner) {
 		super(client, cortexOption, options);
+		this.inspireface = inspireface;
+		this.videoScanner = videoScanner;
 	}
 
 	@Override
 	public void initialize() {
 		Video4j.init();
-		videoDetector = new VideoFaceScanner();
-		try {
-			DLibModelProvisioner.extractModelData(Paths.get("dlib"));
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to extract dlib models", e);
-		}
-		try {
-			this.detector = DLibFacedetector.create();
-			this.detector.setMinFaceHeightFactor(options().getMinFaceHeightFactor());
-		} catch (FileNotFoundException e) {
-			log.error("Failed to load dlib", e);
-			throw new RuntimeException(e);
-		}
+
 	}
 
 	@Override
@@ -112,7 +99,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		SHA512 hash = media.getSHA512();
 		// 1. Read image
 		BufferedImage image = ImageIO.read(media.file());
-		List<? extends Face> faces = detector.detectFaces(image);
+		List<? extends Face> faces = inspireface.detectFaces(image);
 
 		if (faces != null && !faces.isEmpty()) {
 			media.setFaceCount(faces.size());
@@ -130,7 +117,7 @@ public class FacedetectAction extends AbstractMediaAction<FacedetectActionOption
 		SHA512 hash = media.getSHA512();
 
 		try (VideoFile video = Videos.open(media.absolutePath())) {
-			VideoFaceScannerReport report = videoDetector.scan(video, WINDOW_COUNT);
+			VideoFaceScannerReport report = videoScanner.scan(video, WINDOW_COUNT);
 			media.setFaceCount(report.getFaces().size());
 
 			for (VideoFace face : report.getFaces()) {
