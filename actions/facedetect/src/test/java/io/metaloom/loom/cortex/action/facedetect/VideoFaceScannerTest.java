@@ -38,7 +38,7 @@ public class VideoFaceScannerTest {
 	// private static final int WINDOW_STEPS = 5;
 
 	private static final int WINDOW_COUNT = 100;
-	
+
 	static {
 		Video4j.init();
 	}
@@ -47,14 +47,14 @@ public class VideoFaceScannerTest {
 	public void testExampleCode() throws InterruptedException, IOException, URISyntaxException {
 		VideoFaceScanner detector = scanner();
 
-		try (VideoFile video = Videos.open("/extra/vid/4.mkv")) {
+		try (VideoFile video = Videos.open("/extra/vid/5.mp4")) {
 			System.out.println(video.height() + " x " + video.width());
 			long start = System.currentTimeMillis();
 			VideoFaceScannerReport report = detector.scan(video, WINDOW_COUNT);
 			long dur = System.currentTimeMillis() - start;
 			System.out.println("Scan took " + dur + " ms / " + (dur / 1000) + " s");
 			for (Face face : report.getFaces()) {
-				double b = face.get("blurriness");
+				double b = face.getBluriness();
 				System.out.println("Face [" + b + "][" + face.get("frame") + "] " + Arrays.toString(face.getEmbedding()));
 				BufferedImage img = (BufferedImage) face.get("image");
 				Graphics g = img.getGraphics();
@@ -79,7 +79,7 @@ public class VideoFaceScannerTest {
 
 	private VideoFaceScanner scanner() {
 		FacedetectActionOptions options = new FacedetectActionOptions();
-//		DLibFacedetector dlib = FacedetectActionModule.dlibDetector(options);
+		// DLibFacedetector dlib = FacedetectActionModule.dlibDetector(options);
 		InspireFacedetector inspireface = FacedetectActionModule.inspirefaceDetector(options);
 		VideoFaceScanner scanner = new VideoFaceScanner(inspireface);
 		return scanner;
@@ -112,7 +112,5 @@ public class VideoFaceScannerTest {
 		System.out.println("Cluster: " + clusterlist.size());
 		return clusterlist;
 	}
-
-
 
 }

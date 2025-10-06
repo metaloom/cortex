@@ -36,9 +36,11 @@ public class VideoFaceScanner {
 	/**
 	 * Size to which the frame should be scaled down to before running initial face detection
 	 */
-	public static final int DETECTION_SCALE_SIZE = 512;
+	public static final int DETECTION_SCALE_SIZE = 640;
 
 	public static final int WINDOW_STEPS = 15;
+
+	private static final double BLUR_THRESHOLD = 10f;
 
 	private final InspireFacedetector inspireface;
 	private SimpleImageViewer viewer = new SimpleImageViewer();
@@ -77,16 +79,16 @@ public class VideoFaceScanner {
 
 	private List<VideoFace> processFaces(List<VideoFace> faces) {
 		faces = faces.stream().sorted(this::blurComperator).toList();
-		for (VideoFace face : faces) {
-			System.out.println(face.getBlurriness());
-		}
+		// for (VideoFace face : faces) {
+		// System.out.println(face.getBlurriness());
+		// }
 		List<VideoFace> output = new ArrayList<>();
 		for (VideoFace face : faces) {
 			// processFace(face);
 			if (face.hasEmbedding()) {
 				output.add(face);
 			}
-			if (output.size() >= 5) {
+			if (output.size() >= 10) {
 				break;
 			}
 		}
@@ -149,9 +151,9 @@ public class VideoFaceScanner {
 		long to = window.to();
 
 		List<VideoFace> faces = new ArrayList<>();
-		long start = System.currentTimeMillis();
+		// long start = System.currentTimeMillis();
 		long nFrame = from;
-		logger.info("Scanning window {} to {} with steps {}", from, to, windowSteps);
+		logger.info("Scanning window {} from {} to {} with steps {}", nWindow, from, to, windowSteps);
 		while (nFrame + windowSteps < to) {
 
 			// Skip frames
@@ -165,7 +167,7 @@ public class VideoFaceScanner {
 			// System.out.println("Skip took: " + (System.currentTimeMillis() - startSkip));
 
 			// Stop processing when we found n faces
-			if (faces.size() > 5) {
+			if (faces.size() > 10) {
 				// System.out.println("Got enough faces");
 				break;
 			}
@@ -206,6 +208,8 @@ public class VideoFaceScanner {
 		FaceVideoFrame faceFrame = detectFaces(inspireface, frame);
 
 		if (faceFrame != null && faceFrame.hasFaces()) {
+
+			// viewer.show(frame);
 			// DLIB_DETECTOR.markFaces(frame);
 			// DLIB_DETECTOR.markLandmarks(frame);
 			// viewer2.show(frame);
@@ -221,15 +225,17 @@ public class VideoFaceScanner {
 				// Mat faceImage = faceFrame.mat().clone();
 				int padding = (int) ((double) face.box().getWidth() * 1d);
 				Mat faceImage = FacedetectorUtils.cropToFace(faceFrame.mat(), face, padding);
-				viewer.show(faceImage);
-				// ImageUtils.show(faceImage);
 				double blurriness = CVUtils.blurriness(faceImage);
-				// if (blurriness < BLUR_THRESHOLD) {
-				// logger.warn("Omitting face due to blur check: {}", blurriness);
-				// Skipped due to bad quality
-				// continue;
-				// }
-				videoFace.setBlurriness(blurriness);
+				face.setBluriness(blurriness);
+				if (blurriness < BLUR_THRESHOLD) {
+					viewer.show(faceImage);
+					// ImageUtils.show(faceImage);
+					logger.warn("Omitting face due to blur check: {}", blurriness);
+					// Skipped due to bad quality
+					continue;
+				} else {
+					logger.info("Bluriness is {}", face.getBluriness());
+				}
 				BufferedImage croppedFaceImage = ImageUtils.matToBufferedImage(faceImage);
 				// System.out.println("Cropped: " + croppedFaceImage.getWidth() + " x " + croppedFaceImage.getHeight());
 				// croppedFaceImage = ImageUtils.scale(croppedFaceImage, croppedFaceImage.getWidth()*2, croppedFaceImage.getHeight()*2);
@@ -257,6 +263,7 @@ public class VideoFaceScanner {
 			smaller = original.clone();
 			double aspectRatio = (double) original.height() / (double) original.width();
 			int width = (int) ((double) DETECTION_SCALE_SIZE * aspectRatio);
+			logger.info("Scaling down image to width {} ", width);
 			CVUtils.resize(smaller, smaller, DETECTION_SCALE_SIZE, width);
 			frame.setMat(smaller);
 		}

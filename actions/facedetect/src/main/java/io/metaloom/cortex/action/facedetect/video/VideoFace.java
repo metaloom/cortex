@@ -11,8 +11,6 @@ import io.metaloom.video.facedetect.face.FaceBox;
 
 public class VideoFace implements Face {
 
-	public static final String BLURRINESS_KEY = "blurriness";
-
 	public static final String IMAGE_KEY = "image";
 
 	public static final String FRAME_KEY = "frame";
@@ -98,12 +96,12 @@ public class VideoFace implements Face {
 	}
 
 	public VideoFace setBlurriness(double blurriness) {
-		face.set(BLURRINESS_KEY, blurriness);
+		face.setBluriness(blurriness);
 		return this;
 	}
 
 	public double getBlurriness() {
-		return face.get(BLURRINESS_KEY);
+		return face.getBluriness();
 	}
 
 	public VideoFace setImage(BufferedImage croppedFaceImage) {
@@ -117,6 +115,17 @@ public class VideoFace implements Face {
 
 	public VideoFace setFrame(long number) {
 		face.set(FRAME_KEY, number);
+		return this;
+	}
+
+	@Override
+	public double getBluriness() {
+		return face.getBluriness();
+	}
+
+	@Override
+	public VideoFace setBluriness(double bluriness) {
+		face.setBluriness(bluriness);
 		return this;
 	}
 
