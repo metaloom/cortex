@@ -22,6 +22,7 @@
         <module>ocr</module>
         <module>llm</module>
         <module>tika</module>
+        <module>whisper</module>
         <module>captioning</module>
         <module>loom</module>
     </modules>
